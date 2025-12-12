@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Crisp Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background: #f0f2f5;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            padding: 20px;
+            margin: 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .visitor-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .visitor-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .visitor-item:hover,
+        .visitor-item.active {
+            background: #f9f9f9;
+        }
+
+        .visitor-item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .visitor-item p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            font-weight: 600;
+        }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message.visitor {
+            align-self: flex-start;
+            background: #f0f0f0;
+        }
+
+        .message.admin {
+            align-self: flex-end;
+            background: #1a73e8;
+            color: white;
+        }
+
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .input-area button {
+            padding: 10px 20px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .input-area button:hover {
+            background: #1557b0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h2>Inbox</h2>
+        <div class="visitor-list" id="visitor-list">
+            <!-- Visitor items will go here -->
+        </div>
+    </div>
+
+    <div class="main-chat">
+        <div class="chat-header" id="chat-header">Select a conversation</div>
+        <div class="messages-area" id="messages-area"></div>
+        <div class="input-area">
+            <input type="text" id="reply-input" placeholder="Type a reply...">
+            <button id="send-reply">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let allMessages = [];
+        let currentVisitorId = null; // Can be email or guest_id
+
+        async function fetchMessages() {
+            const res = await fetch('/api/admin/messages');
+            const data = await res.json();
+            allMessages = data.messages;
+            renderVisitorList();
+            if (currentVisitorId) {
+                renderChat(currentVisitorId);
+            }
+        }
+
+        function renderVisitorList() {
+            const visitors = {};
+            allMessages.forEach(msg => {
+                // Identifier: email or guest_id
+                const id = msg.email || msg.guest_id || "Anonymous";
+                if (!visitors[id]) visitors[id] = [];
+                visitors[id].push(msg);
+            });
+
+            const list = document.getElementById('visitor-list');
+            list.innerHTML = '';
+
+            Object.keys(visitors).forEach(id => {
+                const msgs = visitors[id];
+                const lastMsg = msgs[msgs.length - 1];
+
+                const div = document.createElement('div');
+                div.className = `visitor-item ${currentVisitorId === id ? 'active' : ''}`;
+
+                // Display: Email if available, else Guest ID
+                const displayName = (msgs[0].email) ? msgs[0].email : (msgs[0].guest_id ? `Guest: ${msgs[0].guest_id.substr(0, 8)}...` : 'Anonymous');
+
+                div.innerHTML = `<strong>${displayName}</strong><p>${lastMsg.text}</p>`;
+                div.onclick = () => {
+                    currentVisitorId = id;
+                    renderChat(id);
+                    renderVisitorList();
+                };
+                list.appendChild(div);
+            });
+        }
+
+        function renderChat(id) {
+            document.getElementById('chat-header').textContent = `Chat with ${id}`;
+            const area = document.getElementById('messages-area');
+            area.innerHTML = '';
+
+            // Filter: match email OR guest_id
+            const msgs = allMessages.filter(m => (m.email === id || m.recipient === id || m.guest_id === id));
+            msgs.forEach(m => {
+                const div = document.createElement('div');
+                div.className = `message ${m.sender}`;
+                div.textContent = m.text;
+                area.appendChild(div);
+            });
+            area.scrollTop = area.scrollHeight;
+        }
+
+        document.getElementById('send-reply').onclick = async () => {
+            const text = document.getElementById('reply-input').value.trim();
+            if (!text || !currentVisitorId) return;
+
+            // Determine if ID is email or guest_id
+            const payload = { text };
+            if (currentVisitorId.includes('@')) {
+                payload.visitor_email = currentVisitorId;
+            } else {
+                payload.guest_id = currentVisitorId;
+            }
+
+            await fetch('/api/reply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            document.getElementById('reply-input').value = '';
+            fetchMessages();
+        };
+
+        // Poll every 2 seconds
+        setInterval(fetchMessages, 2000);
+        fetchMessages();
+    </script>
+
+</body>
+
+</html>

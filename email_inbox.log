@@ -1,0 +1,2842 @@
+2025-12-11 11:38:23 - New message from py@test.com: Hello py
+2025-12-11 11:38:23 - New message from py@test.com: Hello py
+2025-12-11 12:06:04 - New message from Anonymous Visitor: hi
+2025-12-11 12:06:04 - New message from Anonymous Visitor: hi
+2025-12-11 12:07:22 - New message from samikshajagne2@gmail.com: hi
+2025-12-11 12:07:22 - New message from samikshajagne2@gmail.com: hi
+2025-12-11 12:17:03 - New message from Anonymous Visitor: Hello
+2025-12-11 12:17:03 - New message from Anonymous Visitor: Hello
+2025-12-11 12:21:26 - New message from Anonymous Visitor: Can I get a demo?
+2025-12-11 12:21:26 - New message from Anonymous Visitor: Can I get a demo?
+2025-12-11 12:26:22 - New message from test@example.com: Test SMTP fallback
+2025-12-11 12:26:22 - New message from test@example.com: Test SMTP fallback
+2025-12-11 12:26:22 - SMTP Config not set. Email NOT sent. Update email_service.py to enable real emails.
+2025-12-11 12:35:38 - New message from samikshajagne2@gmail.com: hi
+2025-12-11 12:35:38 - New message from samikshajagne2@gmail.com: hi
+2025-12-11 12:35:41 - Email successfully sent to admin_email@gmail.com
+2025-12-11 12:37:25 - New message from samikshajagne2@gmail.com: hi
+2025-12-11 12:37:25 - New message from samikshajagne2@gmail.com: hi
+2025-12-11 12:37:29 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 13:10:27,463 - New message from Anonymous Visitor: hi
+2025-12-11 13:10:27,463 - New message from Anonymous Visitor: hi
+2025-12-11 13:10:30,972 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 13:11:34,540 - New message from Anonymous Visitor: hi
+2025-12-11 13:11:34,540 - New message from Anonymous Visitor: hi
+2025-12-11 13:11:38,805 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 13:42:42,725 - New message from Anonymous Visitor: What support options are available?
+2025-12-11 13:42:42,725 - New message from Anonymous Visitor: What support options are available?
+2025-12-11 13:42:45,996 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 13:48:51,717 - New message from Anonymous Visitor: How do I integrate this?
+2025-12-11 13:48:51,718 - New message from Anonymous Visitor: How do I integrate this?
+2025-12-11 13:48:55,035 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 13:50:36,113 - New message from Anonymous Visitor: Can I get a demo?
+2025-12-11 13:50:36,114 - New message from Anonymous Visitor: Can I get a demo?
+2025-12-11 13:50:39,319 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 13:57:15,988 - New message from guest_bx5kp078r: hi
+2025-12-11 13:57:15,989 - New message from guest_bx5kp078r: hi
+2025-12-11 13:57:19,311 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 14:04:22,722 - New message from guest_bx5kp078r: How secure is my data?
+2025-12-11 14:04:22,722 - New message from guest_bx5kp078r: How secure is my data?
+2025-12-11 14:04:25,958 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 14:07:02,136 - New message from guest_bx5kp078r: Can I get a demo?
+2025-12-11 14:07:02,136 - New message from guest_bx5kp078r: Can I get a demo?
+2025-12-11 14:07:05,458 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 14:09:40,045 - New message from guest_panrz9cwb: hi
+2025-12-11 14:09:40,045 - New message from guest_panrz9cwb: hi
+2025-12-11 14:09:43,406 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 14:10:29,920 - New message from guest_id39nol7o: sam
+2025-12-11 14:10:29,921 - New message from guest_id39nol7o: sam
+2025-12-11 14:10:33,069 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 14:22:00,152 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:22:15,163 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:22:16,607 - New message from guest_bttizzsrx: hi
+2025-12-11 14:22:16,607 - New message from guest_bttizzsrx: hi
+2025-12-11 14:22:19,802 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 14:22:30,206 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:22:42,969 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:22:43,645 - New message from guest_bttizzsrx: What support options are available?
+2025-12-11 14:22:43,646 - New message from guest_bttizzsrx: What support options are available?
+2025-12-11 14:22:47,566 - Email successfully sent to ai.intern@cetl.in
+2025-12-11 14:22:49,925 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:23:38,425 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:23:46,768 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:24:06,161 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:24:09,186 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:24:21,179 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:24:27,223 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:25:14,141 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:25:58,571 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:26:12,557 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:26:21,551 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:26:24,579 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:27:25,891 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:27:35,003 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:27:35,129 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:27:40,784 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:27:49,939 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:27:50,516 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:28:17,195 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:28:18,627 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:28:23,191 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:28:24,706 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:28:34,610 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:28:38,539 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:28:44,610 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:28:55,744 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:28:59,297 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:29:03,187 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:29:08,129 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:29:16,205 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:29:28,878 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:29:54,815 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:29:58,925 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:30:07,754 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:30:14,424 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:30:19,221 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:30:23,387 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:30:35,239 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:30:38,224 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:30:46,858 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:30:53,937 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:04,364 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:07,399 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:12,535 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:16,208 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:23,706 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:30,722 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:32,487 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:34,565 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:42,704 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:31:59,447 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:32:01,946 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:32:04,846 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:32:14,255 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:32:20,287 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:32:33,550 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:32:40,987 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:32:41,387 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:33:04,409 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:34:02,552 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:38:02,546 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:44:02,551 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:50:02,549 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 14:51:02,550 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:03:02,563 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:17:03,168 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:17:12,550 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:17:15,033 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:17:30,168 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:17:41,832 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:18:22,721 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:18:22,881 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:18:26,470 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:18:32,421 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:20:50,544 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:20:53,547 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:20:56,143 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:20:59,541 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:21:08,133 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:21:11,141 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:21:13,560 - New message from guest_bttizzsrx: How do I integrate this?
+2025-12-11 15:21:13,560 - New message from guest_bttizzsrx: How do I integrate this?
+2025-12-11 15:21:16,855 - Email sent (threaded) for visitor guest_bttizzsrx
+2025-12-11 15:21:17,595 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:21:20,676 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:21:44,173 - New message from guest_bttizzsrx: yup
+2025-12-11 15:21:44,173 - New message from guest_bttizzsrx: yup
+2025-12-11 15:21:47,334 - Email sent (threaded) for visitor guest_bttizzsrx
+2025-12-11 15:21:52,109 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:21:53,541 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:22:12,737 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:22:25,283 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:22:49,285 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:22:54,096 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:23:16,941 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:23:43,016 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:23:50,865 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:23:56,188 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:24:03,330 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 15:26:44,458 - New message from guest_hg70hxa4f: hi
+2025-12-11 15:26:44,458 - New message from guest_hg70hxa4f: hi
+2025-12-11 15:26:47,645 - Email sent (threaded) for visitor guest_hg70hxa4f
+2025-12-11 15:26:56,171 - New message from guest_hg70hxa4f: hello how r u sir
+2025-12-11 15:26:56,172 - New message from guest_hg70hxa4f: hello how r u sir
+2025-12-11 15:26:59,284 - Email sent (threaded) for visitor guest_hg70hxa4f
+2025-12-11 15:27:09,318 - New message from guest_hg70hxa4f: i am good
+2025-12-11 15:27:09,319 - New message from guest_hg70hxa4f: i am good
+2025-12-11 15:27:12,459 - Email sent (threaded) for visitor guest_hg70hxa4f
+2025-12-11 15:33:08,246 - New message from samikshajagne2@gmail.com: hey
+2025-12-11 15:33:08,246 - New message from samikshajagne2@gmail.com: hey
+2025-12-11 15:33:11,961 - Email sent (threaded) for visitor samikshajagne2@gmail.com
+2025-12-11 15:33:20,252 - New message from samikshajagne2@gmail.com: hi how r u samiksha
+2025-12-11 15:33:20,252 - New message from samikshajagne2@gmail.com: hi how r u samiksha
+2025-12-11 15:33:24,245 - Email sent (threaded) for visitor samikshajagne2@gmail.com
+2025-12-11 15:33:24,249 - New message from samikshajagne2@gmail.com: hi how r u samiksha
+2025-12-11 15:33:24,250 - New message from samikshajagne2@gmail.com: hi how r u samiksha
+2025-12-11 15:33:27,555 - Email sent (threaded) for visitor samikshajagne2@gmail.com
+2025-12-11 15:42:54,513 - Guest -> guest_hg70hxa4f: hi
+2025-12-11 15:42:54,513 - Guest -> guest_hg70hxa4f: hi
+2025-12-11 15:42:57,908 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 15:43:04,548 - Admin -> guest_hg70hxa4f: hey
+2025-12-11 15:43:04,549 - Admin -> guest_hg70hxa4f: hey
+2025-12-11 15:43:07,709 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 15:43:07,713 - Admin -> guest_hg70hxa4f: hey
+2025-12-11 15:43:07,713 - Admin -> guest_hg70hxa4f: hey
+2025-12-11 15:43:10,860 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 15:43:31,548 - Guest -> guest_hg70hxa4f: ok
+2025-12-11 15:43:31,548 - Guest -> guest_hg70hxa4f: ok
+2025-12-11 15:43:34,600 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 15:50:48,415 - Guest -> samikshajagne2@gmail.com: hey
+2025-12-11 15:50:48,415 - Guest -> samikshajagne2@gmail.com: hey
+2025-12-11 15:50:51,755 - Threaded email sent for visitor samikshajagne2@gmail.com
+2025-12-11 15:54:34,334 - Guest -> guest_hg70hxa4f: 1456
+2025-12-11 15:54:34,335 - Guest -> guest_hg70hxa4f: 1456
+2025-12-11 15:54:38,835 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 15:54:45,435 - Admin -> guest_hg70hxa4f: 798
+2025-12-11 15:54:45,435 - Admin -> guest_hg70hxa4f: 798
+2025-12-11 15:54:48,522 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 15:56:31,016 - Admin -> guest_hg70hxa4f: admin
+2025-12-11 15:56:31,016 - Admin -> guest_hg70hxa4f: admin
+2025-12-11 15:56:34,307 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 16:05:02,239 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 16:13:54,297 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:15:19,255 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:15:31,226 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:15:42,135 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:15:47,136 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:15:52,137 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:15:57,138 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:02,138 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:07,139 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:12,140 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:17,140 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:22,140 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:27,141 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:32,142 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:37,143 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:42,143 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:47,144 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:52,145 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:16:57,146 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:02,146 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:07,147 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:09,846 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:14,847 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:19,847 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:24,848 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:29,849 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:34,850 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:39,851 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:44,851 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:49,852 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:54,853 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:17:59,854 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:04,854 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:09,855 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:14,856 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:19,856 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:24,857 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:29,858 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:34,858 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:39,859 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:44,860 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:49,860 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:54,861 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:18:59,862 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:04,862 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:09,863 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:14,863 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:19,864 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:24,864 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:29,865 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:34,866 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:39,867 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:44,867 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:49,868 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:54,869 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:19:59,870 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:04,870 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:09,871 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:14,872 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:19,872 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:24,873 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:29,873 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:34,873 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:39,874 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:44,874 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:49,875 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:52,309 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:20:57,310 - IMAP_PASSWORD not set � cannot read Gmail.
+2025-12-11 16:28:45,214 - IMAP login successful
+2025-12-11 16:29:01,775 - Guest -> guest_hg70hxa4f: hi
+2025-12-11 16:29:01,776 - Guest -> guest_hg70hxa4f: hi
+2025-12-11 16:29:04,985 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 16:30:21,236 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 16:32:02,242 - Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 16:33:13,437 - IMAP login successful
+2025-12-11 16:33:42,233 - Guest -> guest_hg70hxa4f: hey
+2025-12-11 16:33:42,233 - Guest -> guest_hg70hxa4f: hey
+2025-12-11 16:33:45,539 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 16:34:00,548 - Admin -> guest_hg70hxa4f: admin
+2025-12-11 16:34:00,548 - Admin -> guest_hg70hxa4f: admin
+2025-12-11 16:34:03,766 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 16:37:34,980 - IMAP login successful
+2025-12-11 16:37:46,117 - IMAP login successful
+2025-12-11 16:37:53,730 - IMAP login successful
+2025-12-11 16:38:01,507 - IMAP login successful
+2025-12-11 16:38:08,887 - IMAP login successful
+2025-12-11 16:38:16,273 - IMAP login successful
+2025-12-11 16:38:23,324 - IMAP login successful
+2025-12-11 16:38:30,730 - IMAP login successful
+2025-12-11 16:38:38,144 - IMAP login successful
+2025-12-11 16:38:45,569 - IMAP login successful
+2025-12-11 16:38:52,740 - IMAP login successful
+2025-12-11 16:39:00,218 - IMAP login successful
+2025-12-11 16:39:09,626 - IMAP login successful
+2025-12-11 16:39:19,306 - IMAP login successful
+2025-12-11 16:39:26,936 - IMAP login successful
+2025-12-11 16:39:34,394 - IMAP login successful
+2025-12-11 16:39:42,141 - IMAP login successful
+2025-12-11 16:39:51,091 - IMAP login successful
+2025-12-11 16:40:00,628 - IMAP login successful
+2025-12-11 16:40:08,380 - IMAP login successful
+2025-12-11 16:40:15,401 - IMAP login successful
+2025-12-11 16:40:22,631 - IMAP login successful
+2025-12-11 16:40:30,038 - IMAP login successful
+2025-12-11 16:40:37,301 - IMAP login successful
+2025-12-11 16:40:45,001 - IMAP login successful
+2025-12-11 16:40:52,446 - IMAP login successful
+2025-12-11 16:41:00,095 - IMAP login successful
+2025-12-11 16:41:08,066 - IMAP login successful
+2025-12-11 16:41:15,987 - IMAP login successful
+2025-12-11 16:41:23,726 - IMAP login successful
+2025-12-11 16:41:31,532 - IMAP login successful
+2025-12-11 16:41:38,856 - IMAP login successful
+2025-12-11 16:41:46,554 - IMAP login successful
+2025-12-11 16:41:53,766 - IMAP login successful
+2025-12-11 16:42:01,260 - IMAP login successful
+2025-12-11 16:42:08,793 - IMAP login successful
+2025-12-11 16:42:15,721 - IMAP login successful
+2025-12-11 16:42:23,517 - IMAP login successful
+2025-12-11 16:42:31,500 - IMAP login successful
+2025-12-11 16:42:39,507 - IMAP login successful
+2025-12-11 16:42:46,589 - IMAP login successful
+2025-12-11 16:42:54,202 - IMAP login successful
+2025-12-11 16:43:01,781 - IMAP login successful
+2025-12-11 16:43:09,461 - IMAP login successful
+2025-12-11 16:43:17,647 - IMAP login successful
+2025-12-11 16:43:24,719 - IMAP login successful
+2025-12-11 16:46:17,585 - IMAP login successful
+2025-12-11 16:47:05,388 - IMAP login successful
+2025-12-11 16:47:12,708 - IMAP login successful
+2025-12-11 16:47:51,134 - Guest -> guest_hg70hxa4f: hi
+2025-12-11 16:47:51,134 - Guest -> guest_hg70hxa4f: hi
+2025-12-11 16:47:54,237 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 16:48:08,289 - Admin -> guest_hg70hxa4f: admin
+2025-12-11 16:48:08,289 - Admin -> guest_hg70hxa4f: admin
+2025-12-11 16:48:11,406 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 16:50:22,975 - IMAP login successful
+2025-12-11 16:51:16,175 - IMAP login successful
+2025-12-11 16:52:19,963 - IMAP login successful
+2025-12-11 16:52:50,386 - Guest -> guest_hg70hxa4f: visitor
+2025-12-11 16:52:50,386 - Guest -> guest_hg70hxa4f: visitor
+2025-12-11 16:52:53,691 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 16:53:03,151 - Admin -> guest_hg70hxa4f: admin
+2025-12-11 16:53:03,152 - Admin -> guest_hg70hxa4f: admin
+2025-12-11 16:53:06,266 - Threaded email sent for visitor guest_hg70hxa4f
+2025-12-11 16:54:35,401 - IMAP login successful
+2025-12-11 16:56:50,393 - IMAP login successful
+2025-12-11 16:59:08,449 - IMAP login successful
+2025-12-11 17:01:21,819 - IMAP login successful
+2025-12-11 17:03:44,796 - IMAP login successful
+2025-12-11 17:06:04,775 - IMAP login successful
+2025-12-11 17:08:25,595 - IMAP login successful
+2025-12-11 17:10:54,831 - IMAP login successful
+2025-12-11 17:17:04,465 - Error processing message b'340': [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1056, in _command_complete
+    typ, data = self._get_tagged_response(tag, expect_bye=logout)
+                ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1182, in _get_tagged_response
+    self._get_response()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1084, in _get_response
+    resp = self._get_line()
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1192, in _get_line
+    line = self.readline()
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 332, in readline
+    line = self.file.readline(_MAXLINE + 1)
+  File "C:\Users\yashj\anaconda3\Lib\socket.py", line 719, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1304, in recv_into
+    return self.read(nbytes, buffer)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1138, in read
+    return self._sslobj.read(len, buffer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,219 - Error processing message b'341': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,410 - Error processing message b'342': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,454 - Error processing message b'343': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,460 - Error processing message b'344': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,494 - Error processing message b'345': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,526 - Error processing message b'346': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,618 - Error processing message b'347': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,653 - Error processing message b'348': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,730 - Error processing message b'349': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,762 - Error processing message b'350': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,770 - Error processing message b'351': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,777 - Error processing message b'352': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,784 - Error processing message b'353': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,790 - Error processing message b'354': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,797 - Error processing message b'355': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,887 - Error processing message b'356': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:05,965 - Error processing message b'357': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,051 - Error processing message b'358': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,103 - Error processing message b'359': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,124 - Error processing message b'360': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,132 - Error processing message b'361': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,144 - Error processing message b'362': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,152 - Error processing message b'363': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,162 - Error processing message b'364': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,169 - Error processing message b'365': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,177 - Error processing message b'366': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,197 - Error processing message b'367': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,219 - Error processing message b'368': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,231 - Error processing message b'369': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,241 - Error processing message b'370': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,249 - Error processing message b'371': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,259 - Error processing message b'372': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,272 - Error processing message b'373': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,283 - Error processing message b'374': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,290 - Error processing message b'375': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,296 - Error processing message b'376': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,306 - Error processing message b'377': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,315 - Error processing message b'378': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,330 - Error processing message b'379': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,340 - Error processing message b'380': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,353 - Error processing message b'381': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,362 - Error processing message b'382': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,369 - Error processing message b'383': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,377 - Error processing message b'384': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,386 - Error processing message b'385': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,394 - Error processing message b'386': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,401 - Error processing message b'387': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,411 - Error processing message b'388': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,428 - Error processing message b'389': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,437 - Error processing message b'390': socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 118, in fetch_unread_replies
+    typ, flags_data = mail.fetch(num, '(FLAGS)')
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 557, in fetch
+    typ, dat = self._simple_command(name, message_set, message_parts)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] An existing connection was forcibly closed by the remote host
+2025-12-11 17:17:06,445 - IMAP error: socket error: [SSL: BAD_LENGTH] bad length (_ssl.c:2493)
+Traceback (most recent call last):
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1015, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Users\yashj\anaconda3\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ssl.SSLError: [SSL: BAD_LENGTH] bad length (_ssl.c:2493)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 150, in fetch_unread_replies
+    mail.logout()
+    ~~~~~~~~~~~^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 651, in logout
+    typ, dat = self._simple_command('LOGOUT')
+               ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1239, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\imaplib.py", line 1017, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [SSL: BAD_LENGTH] bad length (_ssl.c:2493)
+2025-12-11 17:17:12,820 - IMAP login successful
+2025-12-11 17:19:27,584 - IMAP login successful
+2025-12-11 17:21:38,136 - IMAP login successful
+2025-12-11 17:23:55,247 - IMAP login successful
+2025-12-11 17:26:03,237 - IMAP login successful
+2025-12-11 17:28:21,104 - IMAP login successful
+2025-12-11 17:30:37,676 - IMAP login successful
+2025-12-11 17:33:02,344 - IMAP login successful
+2025-12-11 17:35:51,134 - IMAP login successful
+2025-12-11 17:38:22,678 - IMAP login successful
+2025-12-11 17:40:38,824 - IMAP login successful
+2025-12-11 17:42:59,481 - IMAP login successful
+2025-12-11 17:45:17,504 - IMAP login successful
+2025-12-11 17:47:35,072 - IMAP login successful
+2025-12-11 17:49:51,283 - IMAP login successful
+2025-12-11 17:52:11,575 - IMAP login successful
+2025-12-11 17:54:23,281 - IMAP login successful
+2025-12-11 17:56:42,547 - IMAP login successful
+2025-12-11 17:59:04,767 - IMAP login successful
+2025-12-11 18:01:16,905 - IMAP login successful
+2025-12-11 18:03:28,186 - IMAP login successful
+2025-12-11 18:05:45,279 - IMAP login successful
+2025-12-11 18:08:01,591 - IMAP login successful
+2025-12-11 18:10:21,998 - IMAP login successful
+2025-12-11 18:12:44,157 - IMAP login successful

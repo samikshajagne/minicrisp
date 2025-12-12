@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Crisp Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/widget.css">
+</head>
+
+<body>
+    <div style="text-align: center; color: #555;">
+        <h1>Welcome to Mini Crisp</h1>
+        <p>Click the bubble in the bottom right to start chatting.</p>
+    </div>
+
+    <!-- Chat Widget Components -->
+    <div class="chat-launcher" id="chat-launcher">
+        <i class="fas fa-comment-alt"></i>
+    </div>
+
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <div>
+                <h3>Support</h3>
+                <span class="status">Online</span>
+            </div>
+            <i class="fas fa-times" onclick="document.getElementById('chat-container').classList.remove('active')"
+                style="cursor: pointer;"></i>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <div class="message system">
+                System: Welcome! Ask us anything.
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="email" id="email-input" class="email-input" placeholder="Your Email (Optional)">
+            <div class="input-wrapper">
+                <button class="magic-btn" id="magic-btn" title="Get Ideas">
+                    <i class="fas fa-magic"></i>
+                </button>
+                <textarea id="message-input" placeholder="Write a message..."></textarea>
+                <button class="send-btn" id="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/widget.js?v=2"></script>
+</body>
+
+</html>

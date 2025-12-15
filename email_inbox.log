@@ -2840,3 +2840,229 @@ imaplib.IMAP4.abort: socket error: [SSL: BAD_LENGTH] bad length (_ssl.c:2493)
 2025-12-11 18:08:01,591 - IMAP login successful
 2025-12-11 18:10:21,998 - IMAP login successful
 2025-12-11 18:12:44,157 - IMAP login successful
+2025-12-12 10:29:19,463 - IMAP login successful
+2025-12-12 10:52:46,430 - IMAP login successful
+2025-12-12 10:57:07,580 - Email event: admin - samikshajagne2@gmail.com: visitor
+2025-12-12 10:57:12,704 - Email sent to ai.intern@cetl.in
+2025-12-12 10:57:12,705 - Email event: customer - samikshajagne2@gmail.com: visitor
+2025-12-12 10:57:16,484 - Email sent to samikshajagne2@gmail.com
+2025-12-12 10:57:27,948 - Email event: samikshajagne2@gmail.com - admin: admin
+2025-12-12 10:57:27,949 - Email event: customer - samikshajagne2@gmail.com: admin
+2025-12-12 10:57:31,174 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:03:25,694 - IMAP login successful
+2025-12-12 11:03:51,375 - IMAP login successful
+2025-12-12 11:03:57,507 - Email event: admin - samikshajagne2@gmail.com: hi
+2025-12-12 11:04:00,881 - Email sent to ai.intern@cetl.in
+2025-12-12 11:04:00,882 - Email event: customer - samikshajagne2@gmail.com: hi
+2025-12-12 11:04:04,431 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:04:10,812 - Email event: samikshajagne2@gmail.com - hey: admin
+2025-12-12 11:04:10,812 - Email event: customer - samikshajagne2@gmail.com: hey
+2025-12-12 11:04:14,060 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:07:19,654 - IMAP login successful
+2025-12-12 11:09:02,210 - IMAP connected.
+2025-12-12 11:11:08,149 - Email event: admin - samikshajagne2@gmail.com: visitor
+2025-12-12 11:11:11,683 - Email sent to ai.intern@cetl.in
+2025-12-12 11:11:11,683 - Email event: customer - samikshajagne2@gmail.com: visitor
+2025-12-12 11:11:15,021 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:11:15,672 - Error parsing email b'356': 'int' object has no attribute 'decode'
+2025-12-12 11:11:21,421 - Email event: samikshajagne2@gmail.com - admin: admin
+2025-12-12 11:11:21,421 - Email event: customer - samikshajagne2@gmail.com: admin
+2025-12-12 11:11:24,933 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:12:05,572 - Error parsing email b'357': 'int' object has no attribute 'decode'
+2025-12-12 11:16:43,756 - IMAP reconnect triggered.
+2025-12-12 11:16:46,005 - IMAP connected.
+2025-12-12 11:18:53,666 - IMAP connected.
+2025-12-12 11:22:47,597 - IMAP connected.
+2025-12-12 11:23:14,801 - Email event: admin - samikshajagne2@gmail.com: visitor
+2025-12-12 11:23:18,272 - Email sent to samikshajagne7@gmail.com
+2025-12-12 11:23:18,272 - Email event: customer - samikshajagne2@gmail.com: visitor
+2025-12-12 11:23:21,537 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:23:29,146 - Email event: samikshajagne2@gmail.com - admin: admin
+2025-12-12 11:23:29,146 - Email event: customer - samikshajagne2@gmail.com: admin
+2025-12-12 11:23:32,404 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:34:09,008 - IMAP connected.
+2025-12-12 11:34:45,043 - IMAP connected.
+2025-12-12 11:34:53,496 - IMAP connected.
+2025-12-12 11:42:37,349 - IMAP connected.
+2025-12-12 11:42:40,001 - IMAP connected.
+2025-12-12 11:43:55,491 - IMAP connected.
+2025-12-12 11:44:58,210 - Email event: admin - samikshajagne2@gmail.com: hi
+2025-12-12 11:45:01,611 - Email sent to samikshajagne7@gmail.com
+2025-12-12 11:45:01,611 - Email event: customer - samikshajagne2@gmail.com: hi
+2025-12-12 11:45:05,401 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:45:14,666 - Email event: customer - samikshajagne2@gmail.com: admin
+2025-12-12 11:45:18,736 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:45:18,741 - Email event: customer - samikshajagne2@gmail.com: admin
+2025-12-12 11:45:22,360 - Email sent to samikshajagne2@gmail.com
+2025-12-12 11:46:35,083 - Error parsing email b'352': 'int' object has no attribute 'decode'
+2025-12-12 11:59:56,385 - Error parsing email b'353': 'int' object has no attribute 'decode'
+2025-12-12 12:14:09,558 - IMAP connected.
+2025-12-12 12:14:34,013 - IMAP connected.
+2025-12-12 12:14:57,166 - Email event: admin - samikshajagne2@gmail.com: visitor chat
+2025-12-12 12:15:00,409 - Email sent to samikshajagne7@gmail.com
+2025-12-12 12:15:00,409 - Email event: customer - samikshajagne2@gmail.com: visitor chat
+2025-12-12 12:15:05,216 - Email sent to samikshajagne2@gmail.com
+2025-12-12 12:15:12,979 - Email event: customer - samikshajagne2@gmail.com: admin chat
+2025-12-12 12:15:16,655 - Email sent to samikshajagne2@gmail.com
+2025-12-12 12:16:58,794 - Error parsing email b'355': 'int' object has no attribute 'decode'
+2025-12-12 12:22:53,810 - Error parsing email b'356': 'int' object has no attribute 'decode'
+2025-12-12 12:24:31,507 - Error parsing email b'357': 'int' object has no attribute 'decode'
+2025-12-12 15:13:49,327 - IMAP connected
+2025-12-12 15:15:40,556 - IMAP connected
+2025-12-12 15:15:51,530 - IMAP connected
+2025-12-12 15:16:23,476 - Email sent to samikshajagne7@gmail.com subject=Conversation with samikshajagne2@gmail.com msgid=<176553278031.12360.138528318021824217@mini-crisp>
+2025-12-12 15:16:26,828 - Email sent to samikshajagne2@gmail.com subject=Your conversation with support msgid=<176553278031.12360.13937146408837041548@mini-crisp>
+2025-12-12 15:18:59,032 - Email sent to samikshajagne2@gmail.com subject=Reply from support msgid=<176553293585.12360.16064835551915630454@mini-crisp>
+2025-12-12 15:19:18,131 - Email sent to samikshajagne2@gmail.com subject=Reply from support msgid=<176553295463.12360.16137280742240498933@mini-crisp>
+2025-12-12 15:21:29,117 - Error parsing message b'362': 'int' object has no attribute 'decode'
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 110, in fetch_unseen
+    msg = email.message_from_bytes(raw)
+  File "C:\Users\yashj\anaconda3\Lib\email\__init__.py", line 45, in message_from_bytes
+    return BytesParser(*args, **kws).parsebytes(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\yashj\anaconda3\Lib\email\parser.py", line 118, in parsebytes
+    text = text.decode('ASCII', errors='surrogateescape')
+           ^^^^^^^^^^^
+AttributeError: 'int' object has no attribute 'decode'
+2025-12-12 15:27:00,149 - Gmail sync error: no running event loop
+2025-12-12 15:27:52,585 - Email sent to samikshajagne7@gmail.com subject=Conversation with samikshajagne2@gmail.com msgid=<176553346943.17656.10279687093657413758@mini-crisp>
+2025-12-12 15:27:55,802 - Email sent to samikshajagne2@gmail.com subject=Your conversation with support msgid=<176553346943.17656.16472603154907995615@mini-crisp>
+2025-12-12 15:28:16,063 - Email sent to samikshajagne2@gmail.com subject=Reply from support msgid=<176553349280.17656.13018160425274876447@mini-crisp>
+2025-12-12 15:28:27,403 - Email sent to samikshajagne7@gmail.com subject=Conversation with samikshajagne2@gmail.com msgid=<176553350415.17656.15517020638571015471@mini-crisp>
+2025-12-12 15:28:30,594 - Email sent to samikshajagne2@gmail.com subject=Your conversation with support msgid=<176553350415.17656.16293410398243235109@mini-crisp>
+2025-12-12 15:28:40,593 - Email sent to samikshajagne7@gmail.com subject=Conversation with samikshajagne2@gmail.com msgid=<176553351726.17656.16968275265901950947@mini-crisp>
+2025-12-12 15:28:43,846 - Email sent to samikshajagne2@gmail.com subject=Your conversation with support msgid=<176553351726.17656.2892764119796628625@mini-crisp>
+2025-12-12 15:28:59,904 - Email sent to samikshajagne2@gmail.com subject=Reply from support msgid=<176553353659.17656.6818848021936214886@mini-crisp>
+2025-12-12 15:34:42,869 - Gmail sync error: no running event loop
+2025-12-12 15:38:19,216 - Email sent to samikshajagne7@gmail.com subject=Conversation with samikshajagne2@gmail.com msgid=<176553409608.16616.17478252110764659624@mini-crisp>
+2025-12-12 15:38:23,088 - Email sent to samikshajagne2@gmail.com subject=Your conversation with support msgid=<176553409608.16616.5106599821069821516@mini-crisp>
+2025-12-12 15:38:32,827 - Email sent to samikshajagne2@gmail.com subject=Reply from support msgid=<176553410935.16616.10563941325580018942@mini-crisp>
+2025-12-12 15:40:00,211 - Gmail sync error: no running event loop
+2025-12-12 15:45:13,485 - Gmail sync error: no running event loop
+2025-12-12 15:56:12,000 - Gmail sync error: no running event loop
+2025-12-12 16:10:33,165 - Gmail sync error: no running event loop
+2025-12-12 16:12:11,285 - Email sent to samikshajagne7@gmail.com subject=Conversation with samikshajagne2@gmail.com msgid=<176553612809.17840.13848511069887112046@mini-crisp>
+2025-12-12 16:12:14,498 - Email sent to samikshajagne2@gmail.com subject=Your conversation with support msgid=<176553612809.17840.14419159909110371098@mini-crisp>
+2025-12-12 16:12:57,792 - Gmail sync error: no running event loop
+2025-12-12 16:14:06,824 - Gmail sync error: no running event loop
+2025-12-12 16:26:43,180 - Gmail sync error: no running event loop
+2025-12-12 16:31:55,037 - Gmail sync error: no running event loop
+2025-12-12 16:36:30,249 - Gmail sync error: no running event loop
+2025-12-12 16:41:25,592 - Processing email: Subject='Re: Conversation with samikshajagne2@gmail.com', From='samikshajagne7@gmail.com', In-Reply-To='CAENoMFipOXmv-Xfsf+s8SZT58Pc0tt5t8P27DHdSV3zXF=pKpg@mail.gmail.com'
+2025-12-12 16:41:25,592 - Admin reply found but NO thread context match! Cannot deliver to a visitor. In-Reply-To: CAENoMFipOXmv-Xfsf+s8SZT58Pc0tt5t8P27DHdSV3zXF=pKpg@mail.gmail.com
+2025-12-12 16:47:49,093 - Processing email: Subject='Re: Your conversation with support', From='samikshajagne2@gmail.com', In-Reply-To='CAFvZWoFjLz0CiKwF8KD8i0jAnh1HoFO_uq2-+_1oD35q-CYEUg@mail.gmail.com'
+2025-12-12 16:47:49,950 - Gmail sync error: no running event loop
+2025-12-12 16:48:32,886 - Processing email: Subject='Re: Conversation with samikshajagne2@gmail.com', From='samikshajagne7@gmail.com', In-Reply-To='CAENoMFhE2a+fH+yT6Qx-EEFuMkxogDHDbMxiOAfu4HiE9aQV6w@mail.gmail.com'
+2025-12-12 16:48:32,887 - Admin reply found but NO thread context match! Cannot deliver to a visitor. In-Reply-To: CAENoMFhE2a+fH+yT6Qx-EEFuMkxogDHDbMxiOAfu4HiE9aQV6w@mail.gmail.com
+2025-12-12 16:53:18,717 - Processing email: Subject='Re: Your conversation with support', From='samikshajagne2@gmail.com', In-Reply-To='CAFvZWoFjLz0CiKwF8KD8i0jAnh1HoFO_uq2-+_1oD35q-CYEUg@mail.gmail.com'
+2025-12-12 16:53:19,351 - Gmail sync error: no running event loop
+2025-12-12 17:03:14,610 - IMAP login successful
+2025-12-12 17:05:26,411 - Error processing message b'379': name '_decode_mime_words' is not defined
+Traceback (most recent call last):
+  File "D:\anticrisp\gmail_reader.py", line 83, in fetch_unread_replies
+    subject = _decode_mime_words(msg.get("Subject", ""))
+              ^^^^^^^^^^^^^^^^^^
+NameError: name '_decode_mime_words' is not defined
+2025-12-12 17:05:29,639 - IMAP login successful
+2025-12-12 17:06:46,556 - Processing email: Subject='Re: Conversation with samikshajagne2@gmail.com', From='samikshajagne7@gmail.com' In-Reply-To='CAENoMFg_RTOWaw5SbJce0qVCSfDENVaiiG-dcukwiAy0pjLMEw@mail.gmail.com'
+2025-12-12 17:06:46,557 - Could not identify visitor. Skipping.
+2025-12-12 17:11:30,719 - Processing email: Subject='Re: Conversation with samikshajagne2@gmail.com', From='samikshajagne7@gmail.com' In-Reply-To='CAENoMFjAKNaw3itgmCfy1kSaw4DNC_YkM2+6eDQgzPQOGMPJ+w@mail.gmail.com'
+2025-12-12 17:11:30,720 - Could not identify visitor. Skipping.
+2025-12-12 17:22:53,566 - Email sent to samikshajagne7@gmail.com subject=Conversation with varun.gupta@rmc.in msgid=<176554037024.13064.13826863064853444799@mini-crisp>
+2025-12-12 17:22:56,717 - Email sent to varun.gupta@rmc.in subject=Your conversation with support msgid=<176554037024.13064.9861002642991922466@mini-crisp>
+2025-12-12 17:23:37,711 - Processing email: Subject='Re: Your conversation with support', From='varun.gupta@rmc.in' In-Reply-To='176554037024.13064.9861002642991922466@mini-crisp'
+2025-12-12 17:23:38,359 - Gmail sync error: no running event loop
+2025-12-12 17:24:11,160 - Email sent to varun.gupta@rmc.in subject=Reply from support msgid=<176554044815.13064.10066497434183389780@mini-crisp>
+2025-12-12 17:55:23,523 - Processing email: Subject='', From='ai.intern@cetl.in' In-Reply-To=''
+2025-12-12 17:55:23,524 - Could not identify visitor. Skipping.
+2025-12-12 17:56:47,704 - Processing email: Subject='Re: Conversation with varun.gupta@rmc.in', From='samikshajagne7@gmail.com' In-Reply-To='176554037024.13064.13826863064853444799@mini-crisp'
+2025-12-12 17:56:47,705 - Matched thread ID 176554037024.13064.13826863064853444799@mini-crisp to visitor varun.gupta@rmc.in
+2025-12-12 17:56:52,930 - Gmail sync error: no running event loop
+2025-12-12 18:00:19,741 - Email sent to samikshajagne7@gmail.com subject=Conversation with samikshajagne2@gmail.com msgid=<176554261662.12620.11774338401431863442@mini-crisp>
+2025-12-12 18:00:22,927 - Email sent to samikshajagne2@gmail.com subject=Your conversation with support msgid=<176554261662.12620.387977292506453172@mini-crisp>
+2025-12-12 18:01:25,144 - Processing email: Subject='Re: Conversation with samikshajagne2@gmail.com', From='samikshajagne7@gmail.com' In-Reply-To='176554261662.12620.11774338401431863442@mini-crisp'
+2025-12-12 18:01:25,145 - Matched thread ID 176554261662.12620.11774338401431863442@mini-crisp to visitor samikshajagne2@gmail.com
+2025-12-12 18:01:35,112 - Gmail sync error: no running event loop
+2025-12-12 18:02:38,976 - Processing email: Subject='Re: Your conversation with support', From='samikshajagne2@gmail.com' In-Reply-To='176554261662.12620.387977292506453172@mini-crisp'
+2025-12-12 18:02:42,447 - Gmail sync error: no running event loop
+2025-12-12 18:04:18,304 - Email sent to samikshajagne2@gmail.com subject=Reply from support msgid=<176554285490.12620.7869405965283493555@mini-crisp>
+2025-12-12 18:07:42,965 - Processing email: Subject='Security Update: Two additional React Server Components
+ vulnerabilities', From='ship@info.vercel.com' In-Reply-To=''
+2025-12-12 18:07:48,172 - Gmail sync error: no running event loop
+2025-12-15 10:56:20,319 - Processing email: Subject='Apache Airflow Best Practices: The Hard Lessons I Learned So YouDon’t Have To | Cloud Shark', From='noreply@medium.com' In-Reply-To=''
+2025-12-15 10:56:21,452 - Processing email: Subject='Final Notice: Your Email Verification Expires Today', From='welcome@zenrows.com' In-Reply-To=''
+2025-12-15 10:56:22,850 - Processing email: Subject='OpenBB: The Free, Open-Source Alternative to the $2000 Bloomberg
+ Terminal | Sonu Yadav in Coding Nexus', From='noreply@medium.com' In-Reply-To=''
+2025-12-15 10:56:24,006 - Processing email: Subject='The LinkedIn just messaged you', From='messaging-digest-noreply@linkedin.com' In-Reply-To=''
+2025-12-15 10:56:25,011 - Processing email: Subject='Your ZenRows weekly account usage summary (2025-12-08 to 2025-12-14)', From='notifications@e.zenrows.com' In-Reply-To=''
+2025-12-15 10:56:26,329 - Processing email: Subject='Django 6.0: A New Era for Python Web Development |
+ Yogeshkrishnanseeniraj', From='noreply@medium.com' In-Reply-To=''
+2025-12-15 10:56:27,204 - Processing email: Subject='Tired of bounced emails? Fix that in seconds', From='support@salesql.com' In-Reply-To=''
+2025-12-15 10:56:28,336 - Gmail sync error: no running event loop
+2025-12-15 12:06:01,641 - Email sent to samikshajagne7@gmail.com subject=Conversation with samikshajagne2@gmail.com msgid=<176578055762.30228.2200591702453084093@mini-crisp>
+2025-12-15 12:06:04,948 - Email sent to samikshajagne2@gmail.com subject=Your conversation with support msgid=<176578055762.30228.6361113269494902037@mini-crisp>
+2025-12-15 12:06:15,065 - Email sent to samikshajagne2@gmail.com subject=Reply from support msgid=<176578057160.30228.17925281567925130711@mini-crisp>
+2025-12-15 12:07:04,026 - Processing email: Subject='Re: Conversation with samikshajagne2@gmail.com', From='samikshajagne7@gmail.com' In-Reply-To='176578055762.30228.2200591702453084093@mini-crisp'
+2025-12-15 12:07:04,028 - Matched thread ID 176578055762.30228.2200591702453084093@mini-crisp to visitor samikshajagne2@gmail.com
+2025-12-15 12:07:04,696 - Gmail sync error: no running event loop
+2025-12-15 12:07:28,272 - Processing email: Subject='Re: Reply from support', From='samikshajagne2@gmail.com' In-Reply-To='176578057160.30228.17925281567925130711@mini-crisp'
+2025-12-15 12:07:28,273 - Extracted visitor from subject: support
+2025-12-15 12:07:28,888 - Gmail sync error: no running event loop
+2025-12-15 12:16:24,916 - Email sent to samikshajagne2@gmail.com subject=Reply from support msgid=<176578118145.11736.10852821985222386222@mini-crisp>
+2025-12-15 12:17:06,848 - Processing email: Subject='Re: Reply from support', From='samikshajagne2@gmail.com' In-Reply-To='176578118145.11736.10852821985222386222@mini-crisp'
+2025-12-15 12:17:07,565 - Gmail sync error: no running event loop
+2025-12-15 12:30:17,466 - Processing email: Subject='5 features to better use your Crisp Trial', From='support@crisp.chat' In-Reply-To=''
+2025-12-15 12:30:21,469 - Gmail sync error: no running event loop
+2025-12-15 13:17:57,564 - Email sent to samikshajagne7@gmail.com subject=Conversation with tashifkapoor05@gmail.com msgid=<176578487433.11736.6714983788283102410@mini-crisp>
+2025-12-15 13:18:00,661 - Email sent to tashifkapoor05@gmail.com subject=Your conversation with support msgid=<176578487433.11736.3771737472688568592@mini-crisp>
+2025-12-15 13:18:11,314 - Email sent to tashifkapoor05@gmail.com subject=Reply from support msgid=<176578488804.11736.10346649540602350176@mini-crisp>
+2025-12-15 13:18:48,662 - Processing email: Subject='Re: Conversation with tashifkapoor05@gmail.com', From='samikshajagne7@gmail.com' In-Reply-To='176578487433.11736.6714983788283102410@mini-crisp'
+2025-12-15 13:18:48,664 - Matched thread ID 176578487433.11736.6714983788283102410@mini-crisp to visitor tashifkapoor05@gmail.com
+2025-12-15 13:18:49,370 - Gmail sync error: no running event loop
+2025-12-15 13:19:53,859 - Processing email: Subject='Re: Reply from support', From='tashifkapoor05@gmail.com' In-Reply-To='176578488804.11736.10346649540602350176@mini-crisp'
+2025-12-15 13:19:54,447 - Gmail sync error: no running event loop
+2025-12-15 14:26:54,343 - Processing email: Subject='LIVE COLD CALLS', From='marketing@cognism.com' In-Reply-To=''
+2025-12-15 14:26:54,959 - Gmail sync error: no running event loop
+2025-12-15 14:56:14,963 - Processing email: Subject='us data', From='samikshajagne2@gmail.com' In-Reply-To=''
+2025-12-15 14:56:15,602 - Gmail sync error: no running event loop
+2025-12-15 15:13:21,066 - Email sent \u2192 samikshajagne7@gmail.com | subject=Conversation with samikshajagne2@gmail.com
+2025-12-15 15:13:24,306 - Email sent \u2192 samikshajagne2@gmail.com | subject=Your conversation with support
+2025-12-15 15:27:36,743 - Ignoring email from non-widget user: samikshajagne2@gmail.com
+2025-12-15 15:27:40,026 - Email sent \u2192 samikshajagne2@gmail.com | subject=Reply from support
+2025-12-15 15:27:49,394 - Ignoring email from non-widget user: samikshajagne2@gmail.com
+2025-12-15 15:27:53,370 - Email sent \u2192 samikshajagne2@gmail.com | subject=Reply from support
+2025-12-15 15:28:09,865 - Ignoring email from non-widget user: samikshajagne2@gmail.com
+2025-12-15 15:28:13,248 - Email sent \u2192 samikshajagne2@gmail.com | subject=Reply from support
+2025-12-15 15:31:27,466 - Admin replied to unknown user: samikshajagne2@gmail.com
+2025-12-15 15:31:30,970 - Email sent \u2192 samikshajagne2@gmail.com | subject=Reply from support
+2025-12-15 15:32:12,327 - Admin replied to unknown user: samikshajagne2@gmail.com
+2025-12-15 15:32:15,550 - Email sent \u2192 samikshajagne2@gmail.com | subject=Reply from support
+2025-12-15 15:34:09,132 - Processing email: Subject='4 days left to save $2,106 (no pressure though)', From='team@phantombuster.com' In-Reply-To=''
+2025-12-15 15:34:25,717 - Admin replied to unknown user: samikshajagne2@gmail.com
+2025-12-15 15:34:29,022 - Email sent \u2192 samikshajagne2@gmail.com | subject=Reply from support
+2025-12-15 15:35:19,972 - Processing email: Subject='Re: Data of Paper Mills', From='varun.gupta@rmc.in' In-Reply-To='JH0PR04MB83659477FCD4C9B68D6C55D3F5ADA@JH0PR04MB8365.apcprd04.prod.outlook.com'
+2025-12-15 15:35:23,148 - Ignoring Gmail email from non-widget user: varun.gupta@rmc.in
+2025-12-15 15:39:26,516 - Email sent \u2192 samikshajagne2@gmail.com | subject=Reply from support
+2025-12-15 15:40:20,273 - Processing email: Subject='Re: Reply from support', From='samikshajagne2@gmail.com' In-Reply-To='176579336310.6400.9528597548142194239@mini-crisp'
+2025-12-15 15:40:21,631 - Gmail sync error: no running event loop
+2025-12-15 15:41:01,442 - Processing email: Subject='Re: Conversation with samikshajagne2@gmail.com', From='samikshajagne7@gmail.com' In-Reply-To='176579179771.32700.12620714559250615188@mini-crisp'
+2025-12-15 15:41:01,442 - Matched thread ID 176579179771.32700.12620714559250615188@mini-crisp to visitor samikshajagne2@gmail.com
+2025-12-15 15:41:02,356 - Gmail sync error: no running event loop
+2025-12-15 15:45:10,628 - Email sent \u2192 samikshajagne7@gmail.com | subject=Conversation with varun.gupt@rmc.in
+2025-12-15 15:45:13,661 - Email sent \u2192 varun.gupt@rmc.in | subject=Your conversation with support
+2025-12-15 15:45:18,844 - Processing email: Subject='Delivery Status Notification (Failure)', From='mailer-daemon@googlemail.com' In-Reply-To='693fdfb1.170a0220.1e8c6.a1a1@mx.google.com'
+2025-12-15 15:45:19,763 - Gmail sync error: no running event loop
+2025-12-15 15:45:31,220 - Email sent \u2192 samikshajagne7@gmail.com | subject=Conversation with varun.gupta@rmc.in
+2025-12-15 15:45:34,309 - Email sent \u2192 varun.gupta@rmc.in | subject=Your conversation with support
+2025-12-15 15:46:05,933 - Processing email: Subject='Re: Your conversation with support', From='varun.gupta@rmc.in' In-Reply-To='693fdfc5.170a0220.34e3b5.31f6@mx.google.com'
+2025-12-15 15:46:06,577 - Gmail sync error: no running event loop
+2025-12-15 15:47:23,093 - Processing email: Subject='Re: Conversation with varun.gupta@rmc.in', From='samikshajagne7@gmail.com' In-Reply-To='176579372820.6400.11182531887069528502@mini-crisp'
+2025-12-15 15:47:23,093 - Matched thread ID 176579372820.6400.11182531887069528502@mini-crisp to visitor varun.gupta@rmc.in
+2025-12-15 15:47:23,685 - Gmail sync error: no running event loop
+2025-12-15 15:47:43,240 - Email sent \u2192 varun.gupta@rmc.in | subject=Reply from support
+2025-12-15 16:10:47,204 - Email sent \u2192 samikshajagne7@gmail.com | subject=Conversation with samikshajagne2@gmail.com
+2025-12-15 16:10:50,274 - Email sent \u2192 samikshajagne2@gmail.com | subject=Your conversation with support
+2025-12-15 16:11:06,599 - Email sent \u2192 samikshajagne2@gmail.com | subject=Reply from support
+2025-12-15 16:11:24,741 - Email sent \u2192 samikshajagne7@gmail.com | subject=Conversation with samikshajagne2@gmail.com
+2025-12-15 16:11:27,869 - Email sent \u2192 samikshajagne2@gmail.com | subject=Your conversation with support

@@ -1,0 +1,17 @@
+there should be three tables 
+1: table1 with columns:
+tb1_id - primary key (int)
+name: customer name (str)
+cust_email : customer emails (no duplicates one user should be allowed only one email)
+2: table2_email_sent with columns:
+tb1_id: foriegn key from table1 
+cust_id : primary key
+email: customer email 
+content: content that is sent
+time_stamp
+3: table3_email_recieved with columns: 
+tb1_id: foeriegn key from tabl e1
+cust_id: primary key
+email
+content recieved
+time_stamp

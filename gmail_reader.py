@@ -6,92 +6,80 @@ import re
 import logging
 import os
 
-# Logging
+from database import threads
+
 logger = logging.getLogger("gmail_reader")
 logger.setLevel(logging.INFO)
 
-# CONFIG
 IMAP_EMAIL = os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in")
-IMAP_PASSWORD = os.environ.get("IMAP_PASSWORD", "qxsmvqolhuprpkwh")  # your app password
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "samikshajagne7@gmail.com")
+IMAP_PASSWORD = os.environ.get("IMAP_PASSWORD", "qxsmvqolhuprpkwh")
 IMAP_HOST = "imap.gmail.com"
 IMAP_FOLDER = "INBOX"
 
-
-# -------------------------------------------------
-# Helpers
-# -------------------------------------------------
 
 def _decode_mime_words(s):
     if not s:
         return ""
     parts = decode_header(s)
-    out = []
-    for part, enc in parts:
-        if isinstance(part, bytes):
-            out.append(part.decode(enc or "utf-8", errors="ignore"))
+    out = ""
+    for txt, enc in parts:
+        if isinstance(txt, bytes):
+            out += txt.decode(enc or "utf-8", errors="ignore")
         else:
-            out.append(part)
-    return "".join(out)
+            out += txt
+    return out
 
 
 def _extract_plain_text(msg):
-    """Extract plain text content from email."""
     if msg.is_multipart():
+        # Iterate over parts, preferring text/plain
         for part in msg.walk():
             if part.get_content_type() == "text/plain":
                 try:
-                    return part.get_payload(decode=True).decode(
-                        part.get_content_charset() or "utf-8",
-                        errors="ignore"
-                    )
+                    return part.get_payload(decode=True).decode(errors="ignore")
                 except:
-                    return ""
+                    continue
+    # Fallback to single part
+    try:
+        return msg.get_payload(decode=True).decode(errors="ignore")
+    except:
         return ""
-    else:
-        try:
-            return msg.get_payload(decode=True).decode(
-                msg.get_content_charset() or "utf-8",
-                errors="ignore"
-            )
-        except:
-            return ""
 
 
 def _strip_quoted_text(body):
-    """Remove quoted text from replies."""
-    if not body:
-        return ""
-
-    body = body.replace("\r", "").replace("\r\n", "\n")
-
-    # Remove lines starting with '>'
-    lines = [ln for ln in body.split("\n") if not ln.strip().startswith(">")]
-    body = "\n".join(lines)
-
-    # Remove common separators
-    separators = [
-        r"On .* wrote:",
-        r"From:",
-        r"Sent:",
-        r"-----Original Message-----",
+    """Removes reply chains like 'On ... wrote:', 'From: ...', etc."""
+    patterns = [
+        r"On\s.*\s?wrote:.*",                         # Gmail reply
+        r"From:\s.*",                                 # Forwarded or nested reply
+        r"Sent:\s.*",                                 # Outlook style
+        r"Subject:\s.*",                              # Subject block
+        r"-{2,}\s?Forwarded message\s?-{2,}.*",       # ---- Forwarded message ----
+        r"^\s*>.*$",                                  # Quoted lines (standard email quote)
     ]
+    
+    cleaned = []
+    # Only skip lines *after* the first match of a reply header
+    in_reply_block = False
+    
+    for line in body.splitlines():
+        line_clean = line.strip()
+        
+        # Check if this line marks the start of a reply block
+        if not in_reply_block:
+            for p in patterns:
+                if re.match(p, line_clean, flags=re.IGNORECASE):
+                    in_reply_block = True
+                    break
+        
+        if not in_reply_block:
+            cleaned.append(line)
+    
+    return "\n".join(cleaned).strip()
 
-    for sep in separators:
-        parts = re.split(sep, body, flags=re.IGNORECASE)
-        if len(parts) > 1:
-            body = parts[0]
-            break
-
-    return body.strip()
-
-
-# -------------------------------------------------
-# MAIN FUNCTION
-# -------------------------------------------------
 
 def fetch_unread_replies():
-    """Fetch unread Gmail replies (now using ALL messages but skipping SEEN)."""
-
+    """Fetch unread Gmail replies and convert them into chat messages."""
     results = []
 
     if not IMAP_PASSWORD:
@@ -101,24 +89,26 @@ def fetch_unread_replies():
     try:
         mail = imaplib.IMAP4_SSL(IMAP_HOST)
         mail.login(IMAP_EMAIL, IMAP_PASSWORD)
-        logger.info("IMAP login successful")
-
+        
         mail.select(IMAP_FOLDER)
 
-        # ⭐ READ ALL EMAILS (Solution B)
-        typ, data = mail.search(None, 'ALL')
+        # Search for ALL messages, we filter by Seen flag manually to be safe or use UNSEEN
+        # Using ALL + manual check allows re-processing if needed, but UNSEEN is efficient.
+        # User code used ALL, let's stick to UNSEEN for efficiency unless user wants re-scan.
+        # Actually, user code had "flags" check logic, so let's respect that flow with UNSEEN for simplicity.
+        typ, data = mail.search(None, 'UNSEEN')
         if typ != "OK":
-            logger.info("No messages found")
-            mail.logout()
             return results
+
+        # Load all threads for mapping
+        thread_map = {
+            t["admin_msgid"].strip("<>"): t["visitor_email"]
+            for t in threads.find()
+            if "admin_msgid" in t
+        }
 
         for num in data[0].split():
             try:
-                # Check flags to avoid processing already-seen messages
-                typ, flags_data = mail.fetch(num, '(FLAGS)')
-                if b'\\Seen' in flags_data[0]:
-                    continue  # already processed earlier
-
                 typ, msg_data = mail.fetch(num, "(RFC822)")
                 if typ != "OK":
                     continue
@@ -127,20 +117,68 @@ def fetch_unread_replies():
                 msg = email.message_from_bytes(raw)
 
                 subject = _decode_mime_words(msg.get("Subject", ""))
-                frm = _decode_mime_words(msg.get("From", ""))
-                in_reply_to = (msg.get("In-Reply-To") or msg.get("References") or "").strip()
+                from_raw = _decode_mime_words(msg.get("From", ""))
+                in_reply_to = msg.get("In-Reply-To", "").strip("<>")
 
+                # -----------------------------
+                # Extract REAL email address
+                # -----------------------------
+                if "<" in from_raw:
+                    from_email = from_raw.split("<")[-1].split(">")[0].strip().lower()
+                else:
+                    from_email = from_raw.strip().lower()
+
+                logger.info(f"Processing email: Subject='{subject}', From='{from_email}' In-Reply-To='{in_reply_to}'")
+
+                # CLEAN BODY
                 body_raw = _extract_plain_text(msg)
                 body_clean = _strip_quoted_text(body_raw)
 
+                # -----------------------------
+                # Determine VISITOR email
+                # -----------------------------
+                visitor = None
+
+                # 1. Try Thread Map
+                if in_reply_to in thread_map:
+                    visitor = thread_map[in_reply_to]
+                    logger.info(f"Matched thread ID {in_reply_to} to visitor {visitor}")
+
+                # 4. Fallback: Sender is visitor (only if NOT admin)
+                is_admin = (from_email == IMAP_EMAIL.lower()) or (from_email == ADMIN_EMAIL.lower())
+                if not visitor and not is_admin and from_email:
+                    visitor = from_email
+
+                if not visitor:
+                    logger.warning("Could not identify visitor. Skipping.")
+                    continue
+
+                # -----------------------------
+                # Determine SENDER
+                # -----------------------------
+                # If email comes from Admin or Bot -> sender="admin"
+                # Else -> sender="visitor"
+                sender = "admin" if is_admin else "visitor"
+                # -----------------------------
+                # HARD BLOCK system / bot identities
+                # -----------------------------
+                if visitor in {
+                    "support",
+                    IMAP_EMAIL.lower(),
+                    ADMIN_EMAIL.lower()
+                }:
+                    logger.warning(f"Blocked invalid visitor identity: {visitor}")
+                    continue
+
+
                 results.append({
-                    "in_reply_to": in_reply_to,
-                    "subject": subject,
-                    "from": frm,
-                    "body": body_clean.strip()
+                    "visitor": visitor,
+                    "sender": sender,
+                    "body": body_clean.strip(),
+                    "source": "imap"
                 })
 
-                # Mark as SEEN so we don't process again
+                # Mark processed
                 mail.store(num, "+FLAGS", "\\Seen")
 
             except Exception as e_inner:

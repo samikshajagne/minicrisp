@@ -5,128 +5,284 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mini Crisp Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f3f4f6;
+            --sidebar-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --chat-bg: #ffffff;
+            --message-in-bg: #f3f4f6;
+            --message-out-bg: #2563eb;
+            --message-out-text: #ffffff;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
             height: 100vh;
-            background: #f0f2f5;
+            background: var(--bg-color);
+            color: var(--text-primary);
         }
 
+        /* Sidebar */
         .sidebar {
-            width: 300px;
-            background: white;
-            border-right: 1px solid #ddd;
+            width: 320px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
         }
 
-        .sidebar h2 {
+        .sidebar-header {
             padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header h2 {
             margin: 0;
-            border-bottom: 1px solid #ddd;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .search-box {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            box-sizing: border-box;
+            background-color: #f9fafb;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
         }
 
         .visitor-list {
-            overflow-y: auto;
             flex: 1;
+            overflow-y: auto;
         }
 
         .visitor-item {
+            display: flex;
+            align-items: center;
             padding: 15px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
             cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .visitor-item:hover,
+        .visitor-item:hover {
+            background: #f9fafb;
+        }
+
         .visitor-item.active {
-            background: #f9f9f9;
+            background: #eff6ff;
+            border-left: 4px solid var(--primary-color);
         }
 
-        .visitor-item strong {
-            display: block;
-            margin-bottom: 5px;
+        .visitor-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            color: #4338ca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 12px;
+            flex-shrink: 0;
         }
 
-        .visitor-item p {
-            margin: 0;
-            color: #666;
-            font-size: 0.9em;
+        .visitor-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .visitor-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
+        .visitor-preview {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Main Chat Area */
         .main-chat {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: white;
+            background: var(--chat-bg);
+            min-width: 0;
         }
 
         .chat-header {
-            padding: 20px;
-            border-bottom: 1px solid #ddd;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .chat-header-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .chat-header-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
         }
 
         .messages-area {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
+            background: #ffffff;
+        }
+
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
         }
 
         .message {
             max-width: 70%;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 14px;
-            line-height: 1.4;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+            word-wrap: break-word;
         }
 
         .message.visitor {
             align-self: flex-start;
-            background: #f0f0f0;
+            background: var(--message-in-bg);
+            color: var(--text-primary);
+            border-bottom-left-radius: 2px;
         }
 
         .message.admin {
             align-self: flex-end;
-            background: #1a73e8;
-            color: white;
+            background: var(--message-out-bg);
+            color: var(--message-out-text);
+            border-bottom-right-radius: 2px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            margin-top: 6px;
+            opacity: 0.7;
+            text-align: right;
         }
 
         .input-area {
-            padding: 20px;
-            border-top: 1px solid #ddd;
+            padding: 20px 25px;
+            border-top: 1px solid var(--border-color);
+            background: white;
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: flex-end;
         }
 
-        .input-area input {
+        .input-area textarea {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
             outline: none;
+            resize: none;
+            height: 46px;
+            /* Initial height */
+            min-height: 46px;
+            max-height: 120px;
+            transition: border-color 0.2s;
+        }
+
+        .input-area textarea:focus {
+            border-color: var(--primary-color);
         }
 
         .input-area button {
-            padding: 10px 20px;
-            background: #1a73e8;
+            padding: 0 24px;
+            height: 46px;
+            background: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s;
         }
 
         .input-area button:hover {
-            background: #1557b0;
+            background: var(--primary-hover);
+        }
+
+        .input-area button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -134,94 +290,227 @@
 <body>
 
     <div class="sidebar">
-        <h2>Inbox</h2>
+        <div class="sidebar-header">
+            <h2>Inbox</h2>
+        </div>
+        <div class="search-box">
+            <input type="text" placeholder="Search conversations..." id="search-input">
+        </div>
         <div class="visitor-list" id="visitor-list">
-            <!-- Visitor items will go here -->
+            <!-- Visitor items injected here -->
         </div>
     </div>
 
     <div class="main-chat">
-        <div class="chat-header" id="chat-header">Select a conversation</div>
-        <div class="messages-area" id="messages-area"></div>
-        <div class="input-area">
-            <input type="text" id="reply-input" placeholder="Type a reply...">
+        <div class="chat-header" id="chat-header" style="display:none;">
+            <div class="chat-header-info">
+                <div class="chat-header-avatar" id="header-avatar"></div>
+                <div>
+                    <div class="chat-header-name" id="header-name"></div>
+                    <div class="chat-header-status" id="header-status">User</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="messages-area" id="messages-area">
+            <div class="empty-state">Select a conversation to start chatting</div>
+        </div>
+
+        <div class="input-area" id="input-area" style="display:none;">
+            <textarea id="reply-input" placeholder="Type a reply... (Press Enter to send)" rows="1"></textarea>
             <button id="send-reply">Send</button>
         </div>
     </div>
 
     <script>
         let allMessages = [];
-        let currentVisitorId = null; // Can be email or guest_id
+        let currentConversationEmail = null;
+        let searchFilter = "";
+
+        // UI References
+        const visitorListEl = document.getElementById('visitor-list');
+        const messagesAreaEl = document.getElementById('messages-area');
+        const chatHeaderEl = document.getElementById('chat-header');
+        const inputAreaEl = document.getElementById('input-area');
+        const headerNameEl = document.getElementById('header-name');
+        const headerAvatarEl = document.getElementById('header-avatar');
+        const searchInputEl = document.getElementById('search-input');
+        const replyInputEl = document.getElementById('reply-input');
+        const sendBtnEl = document.getElementById('send-reply');
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchMessages();
+            // Poll every 2 seconds
+            setInterval(fetchMessages, 2000);
+        });
+
+        // Search Filter
+        searchInputEl.addEventListener('input', (e) => {
+            searchFilter = e.target.value.toLowerCase();
+            renderVisitorList();
+        });
+
+        // Textarea Auto-resize & Enter to Send
+        replyInputEl.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if (this.value === '') this.style.height = '46px';
+        });
+
+        replyInputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtnEl.onclick = sendMessage;
 
         async function fetchMessages() {
-            const res = await fetch('/api/admin/messages');
-            const data = await res.json();
-            allMessages = data.messages;
-            renderVisitorList();
-            if (currentVisitorId) {
-                renderChat(currentVisitorId);
+            try {
+                const res = await fetch('/api/admin/messages');
+                const data = await res.json();
+
+                // Only re-render if data actually changed significantly or simple optimization:
+                // For this demo, we'll re-render list always but chat only if new messages
+                // In a real optimized app, we'd diff the data.
+
+                const prevLen = allMessages.length;
+                allMessages = data.messages;
+
+                renderVisitorList();
+
+                if (currentConversationEmail) {
+                    // Check if we need to scroll or update chat
+                    // For simplicity in this v1, simply re-render chat facilitates updates
+                    renderChat(currentConversationEmail, false);
+                }
+            } catch (err) {
+                console.error("Failed to fetch messages:", err);
             }
+        }
+
+        function getVisitorName(id) {
+            // Helper to format name better
+            return id; // email is the identity
+
+        }
+
+        function getInitials(name) {
+            return name.substring(0, 2).toUpperCase();
+
         }
 
         function renderVisitorList() {
             const visitors = {};
+
+            // Group messages by visitor
             allMessages.forEach(msg => {
-                // Identifier: email or guest_id
-                const id = msg.email || msg.guest_id || "Anonymous";
+                const id = msg.email;
+                if (!id) return; // Safety: ignore malformed data
                 if (!visitors[id]) visitors[id] = [];
                 visitors[id].push(msg);
             });
 
-            const list = document.getElementById('visitor-list');
-            list.innerHTML = '';
+            // Sort visitors by latest message timestamp
+            const sortedVisitorIds = Object.keys(visitors).sort((a, b) => {
+                const lastA = visitors[a][visitors[a].length - 1];
+                const lastB = visitors[b][visitors[b].length - 1];
+                return new Date(lastB.timestamp) - new Date(lastA.timestamp);
+            });
 
-            Object.keys(visitors).forEach(id => {
+            visitorListEl.innerHTML = '';
+
+            sortedVisitorIds.forEach(id => {
                 const msgs = visitors[id];
                 const lastMsg = msgs[msgs.length - 1];
+                const displayName = getVisitorName(id);
+
+                // Filter check
+                if (searchFilter && !displayName.toLowerCase().includes(searchFilter) && !lastMsg.text.toLowerCase().includes(searchFilter)) {
+                    return;
+                }
 
                 const div = document.createElement('div');
-                div.className = `visitor-item ${currentVisitorId === id ? 'active' : ''}`;
+                div.className = `visitor-item ${currentConversationEmail === id ? 'active' : ''}`;
 
-                // Display: Email if available, else Guest ID
-                const displayName = (msgs[0].email) ? msgs[0].email : (msgs[0].guest_id ? `Guest: ${msgs[0].guest_id.substr(0, 8)}...` : 'Anonymous');
 
-                div.innerHTML = `<strong>${displayName}</strong><p>${lastMsg.text}</p>`;
+                const timeString = new Date(lastMsg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                div.innerHTML = `
+                    <div class="visitor-avatar">${getInitials(displayName)}</div>
+                    <div class="visitor-info">
+                        <div style="display:flex; justify-content:space-between;">
+                            <div class="visitor-name">${displayName}</div>
+                            <div style="font-size:0.75rem; color:#9ca3af;">${timeString}</div>
+                        </div>
+                        <div class="visitor-preview">${lastMsg.text}</div>
+                    </div>
+                `;
+
                 div.onclick = () => {
-                    currentVisitorId = id;
-                    renderChat(id);
+                    currentConversationEmail = id;
+                    renderChat(id, true);
                     renderVisitorList();
+                    // re-render to update active state
                 };
-                list.appendChild(div);
+                visitorListEl.appendChild(div);
             });
         }
 
-        function renderChat(id) {
-            document.getElementById('chat-header').textContent = `Chat with ${id}`;
-            const area = document.getElementById('messages-area');
-            area.innerHTML = '';
+        function renderChat(id, forceScroll = false) {
+            // Show areas
+            chatHeaderEl.style.display = 'flex';
+            inputAreaEl.style.display = 'flex';
 
-            // Filter: match email OR guest_id
-            const msgs = allMessages.filter(m => (m.email === id || m.recipient === id || m.guest_id === id));
+            const displayName = getVisitorName(id);
+            headerNameEl.textContent = displayName;
+            headerAvatarEl.textContent = getInitials(displayName);
+
+            // Filter messages for this conversation
+            const msgs = allMessages.filter(m => m.email === id);
+
+            // Store scroll position if not forcing scroll
+            const isScrolledToBottom = messagesAreaEl.scrollHeight - messagesAreaEl.scrollTop === messagesAreaEl.clientHeight;
+
+            messagesAreaEl.innerHTML = '';
+
+            if (msgs.length === 0) {
+                messagesAreaEl.innerHTML = '<div class="empty-state">No messages yet.</div>';
+                return;
+            }
+
             msgs.forEach(m => {
                 const div = document.createElement('div');
                 div.className = `message ${m.sender}`;
-                div.textContent = m.text;
-                area.appendChild(div);
+                const timeStr = new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                div.innerHTML = `
+                    ${m.text}
+                    <div class="message-time">${timeStr}</div>
+                `;
+                messagesAreaEl.appendChild(div);
             });
-            area.scrollTop = area.scrollHeight;
+
+            if (forceScroll || isScrolledToBottom) {
+                messagesAreaEl.scrollTop = messagesAreaEl.scrollHeight;
+            }
         }
 
-        document.getElementById('send-reply').onclick = async () => {
-            const text = document.getElementById('reply-input').value.trim();
-            if (!text || !currentVisitorId) return;
+        async function sendMessage() {
+            const text = replyInputEl.value.trim();
+            if (!text || !currentConversationEmail) return;
 
-            // Determine if ID is email or guest_id
+            // Optimistic UI update (optional, but good for perceived speed)
+            // waiting for server response is safer for consistency though.
+
+            replyInputEl.value = '';
+            replyInputEl.style.height = '46px'; // reset height
+
             const payload = { text };
-            if (currentVisitorId.includes('@')) {
-                payload.visitor_email = currentVisitorId;
-            } else {
-                payload.guest_id = currentVisitorId;
-            }
+            payload.visitor_email = currentConversationEmail;
+
 
             await fetch('/api/reply', {
                 method: 'POST',
@@ -229,13 +518,12 @@
                 body: JSON.stringify(payload)
             });
 
-            document.getElementById('reply-input').value = '';
-            fetchMessages();
-        };
+            await fetchMessages();
+            // Force scroll to bottom after self message
+            const area = document.getElementById('messages-area');
+            area.scrollTop = area.scrollHeight;
+        }
 
-        // Poll every 2 seconds
-        setInterval(fetchMessages, 2000);
-        fetchMessages();
     </script>
 
 </body>

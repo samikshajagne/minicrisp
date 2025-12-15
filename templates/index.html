@@ -2,12 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Mini Crisp Demo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/static/widget.css">
+    <link href="/static/widget.css" rel="stylesheet">
 </head>
 
 <body>
@@ -16,7 +14,6 @@
         <p>Click the bubble in the bottom right to start chatting.</p>
     </div>
 
-    <!-- Chat Widget Components -->
     <div class="chat-launcher" id="chat-launcher">
         <i class="fas fa-comment-alt"></i>
     </div>
@@ -32,21 +29,15 @@
         </div>
 
         <div class="chat-messages" id="chat-messages">
-            <div class="message system">
-                System: Welcome! Ask us anything.
-            </div>
+            <div class="message system">System: Welcome! Ask us anything.</div>
         </div>
 
         <div class="chat-input-area">
-            <input type="email" id="email-input" class="email-input" placeholder="Your Email (Optional)">
+            <input type="email" id="email-input" class="email-input" placeholder="Your Email (Required)">
             <div class="input-wrapper">
-                <button class="magic-btn" id="magic-btn" title="Get Ideas">
-                    <i class="fas fa-magic"></i>
-                </button>
+                <button class="magic-btn" id="magic-btn" title="Get Ideas">✨</button>
                 <textarea id="message-input" placeholder="Write a message..."></textarea>
-                <button class="send-btn" id="send-btn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+                <button class="send-btn" id="send-btn">Send</button>
             </div>
         </div>
     </div>

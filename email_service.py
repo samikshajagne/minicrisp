@@ -72,7 +72,12 @@ def send_admin_and_customer_notifications(visitor_email: str, text: str, visitor
     cust = ensure_customer(visitor_email, visitor_name)
     tb1_id = cust["tb1_id"]
 
-    admin_msgid = make_msgid(domain="mini-crisp")
+    # --- Check for existing thread to reply to ---
+    thread = threads.find_one({"visitor_email": visitor_email})
+    previous_admin_msgid = thread.get("admin_msgid") if thread else None
+
+    # Generate new ID for this specific message
+    new_admin_msgid = make_msgid(domain="mini-crisp")
 
     # --- Admin notification ---
     admin_subject = f"Conversation with {visitor_email}"
@@ -82,8 +87,10 @@ def send_admin_and_customer_notifications(visitor_email: str, text: str, visitor
         to_email=ADMIN_EMAIL,
         subject=admin_subject,
         body=admin_body,
-        msg_id=admin_msgid,
-        reply_to=SENDER_EMAIL
+        msg_id=new_admin_msgid,
+        reply_to=SENDER_EMAIL,
+        in_reply_to=previous_admin_msgid,   # THREADING MAGIC
+        references=previous_admin_msgid     # THREADING MAGIC
     )
 
     # --- Customer acknowledgement ---
@@ -95,8 +102,8 @@ def send_admin_and_customer_notifications(visitor_email: str, text: str, visitor
         subject=cust_subject,
         body=cust_body,
         reply_to=SENDER_EMAIL,
-        in_reply_to=admin_msgid,
-        references=admin_msgid
+        in_reply_to=new_admin_msgid,
+        references=new_admin_msgid
     )
 
     threads.update_one(
@@ -104,7 +111,7 @@ def send_admin_and_customer_notifications(visitor_email: str, text: str, visitor
         {"$set": {
             "visitor_email": visitor_email,
             "tb1_id": tb1_id,
-            "admin_msgid": admin_msgid,
+            "admin_msgid": new_admin_msgid,  # Update to latest for next reply
             "updated_at": datetime.utcnow()
         }},
         upsert=True

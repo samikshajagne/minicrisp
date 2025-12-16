@@ -8,19 +8,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #5b7cfa;
-            --primary-hover: #4a65d9;
-            --accent: #8b5cf6;
-            --bg-color: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 40%, #e5e7eb 100%);
-            --sidebar-bg: rgba(255, 255, 255, 0.75);
-            --border-color: #e5e7eb;
+            --primary-color: #15803d;
+            --primary-hover: #166534;
+            --accent: #b91c1c;
+            --accent-soft: #fee2e2;
+            --bg-color: radial-gradient(circle at top, #fef9c3 0%, #fefce8 40%, #f4f4f5 100%);
+            --sidebar-bg: rgba(255, 255, 255, 0.85);
+            --border-color: #e4e4e7;
             --text-primary: #0f172a;
             --text-secondary: #6b7280;
-            --chat-bg: rgba(255, 255, 255, 0.85);
-            --message-in-bg: rgba(255, 255, 255, 0.82);
-            --message-out-bg: linear-gradient(135deg, #5b7cfa, #8b5cf6);
+            --chat-bg: rgba(255, 255, 255, 0.9);
+            --message-in-bg: rgba(255, 255, 255, 0.9);
+            --message-out-bg: linear-gradient(135deg, #15803d, #16a34a);
             --message-out-text: #ffffff;
-            --glass-border: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
             --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
         }
 
@@ -33,6 +34,7 @@
             margin: 0;
             padding: 24px;
             display: flex;
+            flex-direction: column;
             height: 100vh;
             background: var(--bg-color);
             color: var(--text-primary);
@@ -53,13 +55,13 @@
         }
 
         body::before {
-            background: #c7d2fe;
+            background: #fecaca;
             top: -120px;
             left: -60px;
         }
 
         body::after {
-            background: #f5d0fe;
+            background: #bbf7d0;
             bottom: -140px;
             right: -40px;
         }
@@ -83,11 +85,12 @@
         .sidebar-header {
             padding: 18px 20px;
             border-bottom: 1px solid var(--border-color);
-            background: linear-gradient(135deg, rgba(91, 124, 250, 0.12), rgba(139, 92, 246, 0.08));
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(254, 242, 242, 0.9));
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+
         }
 
         .sidebar-title h2 {
@@ -104,9 +107,9 @@
         }
 
         .sidebar-badge {
-            background: rgba(91, 124, 250, 0.12);
-            color: #1d4ed8;
-            border: 1px solid rgba(91, 124, 250, 0.24);
+            background: var(--accent-soft);
+            color: var(--accent);
+            border: 1px solid #fecaca;
             padding: 8px 12px;
             border-radius: 12px;
             font-weight: 700;
@@ -160,10 +163,10 @@
         }
 
         .chip.active {
-            background: rgba(91, 124, 250, 0.14);
-            color: #1d4ed8;
-            border-color: rgba(91, 124, 250, 0.28);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
 
         .visitor-list {
@@ -231,7 +234,7 @@
         }
 
         .unread-badge {
-            background: #ef4444;
+            background: #b91c1c;
             color: #fff;
             min-width: 22px;
             height: 22px;
@@ -267,8 +270,8 @@
             position: absolute;
             inset: 18px;
             border-radius: 18px;
-            background: radial-gradient(circle at 20% 20%, rgba(91, 124, 250, 0.12), transparent 40%),
-                radial-gradient(circle at 80% 10%, rgba(139, 92, 246, 0.12), transparent 35%);
+            background: radial-gradient(circle at 20% 20%, rgba(248, 250, 252, 0.6), transparent 40%),
+                radial-gradient(circle at 80% 10%, rgba(254, 226, 226, 0.7), transparent 35%);
             pointer-events: none;
             z-index: 0;
         }
@@ -279,7 +282,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: linear-gradient(135deg, #4f46e5, #5b7cfa, #8b5cf6);
+            background: linear-gradient(135deg, #15803d, #16a34a);
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
             z-index: 2;
             color: #fff;
@@ -295,14 +298,14 @@
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            background: #dbeafe;
-            color: #1e40af;
+            background: #dcfce7;
+            color: #14532d;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
             margin-right: 8px;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 10px 18px rgba(30, 64, 175, 0.2);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 10px 18px rgba(22, 163, 74, 0.35);
         }
 
         .chat-header-name {
@@ -337,7 +340,8 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            background: radial-gradient(circle at 10% 20%, rgba(91, 124, 250, 0.08), transparent 26%), #ffffff;
+            background: radial-gradient(circle at 10% 20%, rgba(254, 226, 226, 0.9), transparent 26%),
+                radial-gradient(circle at 90% 10%, rgba(220, 252, 231, 0.7), transparent 32%), #ffffff;
             z-index: 1;
         }
 
@@ -446,6 +450,93 @@
             box-shadow: none;
         }
 
+        /* Chat toolbar */
+        .chat-tools {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(248, 250, 252, 0.95);
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+
+        .chat-tools .stack {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-input {
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: white;
+            min-width: 150px;
+            transition: box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(91, 124, 250, 0.18);
+        }
+
+        .pill-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 10px;
+            background: #dcfce7;
+            color: #166534;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.15s ease;
+        }
+
+        .pill-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(91, 124, 250, 0.16);
+        }
+
+        .ghost-compact {
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #fef2f2;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .ghost-compact:hover {
+            background: #f1f5f9;
+            border-color: #dfe3eb;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #fef2f2;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            color: var(--accent);
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(185, 28, 28, 0.2);
+            border-color: #fecaca;
+        }
+
         /* Scrollbars */
         .visitor-list::-webkit-scrollbar,
         .messages-area::-webkit-scrollbar {
@@ -493,53 +584,258 @@
 </head>
 
 <body>
+    <!-- TOP NAVBAR -->
+    <div id="top-navbar" style="
+    height:64px;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    background:rgba(255,255,255,0.9);
+    border:1px solid var(--glass-border);
+    border-radius:16px;
+    box-shadow:var(--shadow-soft);
+    margin-bottom:16px;
+    backdrop-filter:blur(12px);
+    z-index:2;
+">
+        <div style="font-weight:900;font-size:1.1rem;">
+            Mini Crisp Admin
+        </div>
 
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-title">
-                <h2>Inbox</h2>
-                <div class="sidebar-subtitle">Live visitors & replies</div>
-            </div>
-            <div class="sidebar-badge">Now</div>
+        <div id="account-bar" style="display:flex;gap:8px;align-items:center;">
+            <!-- account chips injected here -->
         </div>
-        <div class="search-box">
-            <input type="text" placeholder="Search conversations..." id="search-input">
-        </div>
-        <div class="sidebar-chips">
-            <span class="chip active" data-filter="unread">Unread</span>
-            <span class="chip" data-filter="read">Read</span>
-        </div>
-        <div class="visitor-list" id="visitor-list">
-            <!-- Visitor items injected here -->
-        </div>
+
+        <button id="add-account-btn" style="
+            background:var(--primary-color);
+            color:white;
+            border:none;
+            padding:8px 14px;
+            border-radius:10px;
+            font-weight:700;
+            cursor:pointer;
+        ">
+            + Add Account
+        </button>
+        <button id="resync-btn" style="
+            background:#f1f5f9;
+            color:var(--text-secondary);
+            border:none;
+            padding:8px 14px;
+            border-radius:10px;
+            font-weight:700;
+            cursor:pointer;
+            margin-left:8px;
+        " title="Fetch complete email history">
+            ↻ Resync
+        </button>
     </div>
 
-    <div class="main-chat">
-        <div class="chat-header" id="chat-header" style="display:none;">
-            <div class="chat-header-info">
-                <div class="chat-header-avatar" id="header-avatar"></div>
-                <div>
-                    <div class="chat-header-name" id="header-name"></div>
-                    <div class="chat-header-status" id="header-status">User</div>
+    <!-- MAIN LAYOUT ROW -->
+    <div style="display:flex; flex:1; overflow:hidden;">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <h2>Inbox</h2>
+                    <div class="sidebar-subtitle">Live visitors & replies</div>
                 </div>
+                <div class="sidebar-badge">Now</div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="Search conversations..." id="search-input">
+            </div>
+
+            <div class="sidebar-chips">
+                <span class="chip active" data-filter="all">All</span>
+                <span class="chip" data-filter="unread">Unread</span>
+                <span class="chip" data-filter="read">Read</span>
+            </div>
+
+            <div class="visitor-list" id="visitor-list">
+                <!-- Visitor items injected here -->
             </div>
         </div>
 
-        <div class="messages-area" id="messages-area">
-            <div class="empty-state">Select a conversation to start chatting</div>
+        <!-- MAIN CHAT -->
+        <div class="main-chat">
+            <div class="chat-header" id="chat-header" style="display:none;">
+                <div class="chat-header-info">
+                    <div class="chat-header-avatar" id="header-avatar"></div>
+                    <div>
+                        <div class="chat-header-name" id="header-name"></div>
+                        <div class="chat-header-status" id="header-status">User</div>
+                    </div>
+                </div>
+                <div class="chat-tools">
+                    <div class="stack">
+                        <input type="date" id="chat-start-date" title="Start Date" class="date-input">
+                        <span style="font-size:0.8rem; color:var(--text-secondary);">to</span>
+                        <input type="date" id="chat-end-date" title="End Date" class="date-input">
+                    </div>
+                    <button id="apply-date-filter" class="pill-btn">Apply</button>
+                    <button id="clear-date-filter" class="ghost-compact">Clear</button>
+                    <button id="export-btn" title="Export to TXT" class="icon-btn">⬇️</button>
+                </div>
+            </div>
+
+            <div class="messages-area" id="messages-area">
+                <div class="empty-state">Select a conversation to start chatting</div>
+            </div>
+
+            <div class="input-area" id="input-area" style="display:none;">
+                <textarea id="reply-input" placeholder="Type a reply... (Press Enter to send)" rows="1"></textarea>
+                <button id="send-reply">Send</button>
+            </div>
         </div>
 
-        <div class="input-area" id="input-area" style="display:none;">
-            <textarea id="reply-input" placeholder="Type a reply... (Press Enter to send)" rows="1"></textarea>
-            <button id="send-reply">Send</button>
+    </div>
+
+    <!-- ADD ACCOUNT MODAL -->
+    <div id="account-modal" style="
+        display:none; 
+        position:fixed; 
+        top:0; left:0; width:100%; height:100%; 
+        background:rgba(0,0,0,0.4); 
+        z-index:99; 
+        align-items:center; 
+        justify-content:center;
+        backdrop-filter:blur(4px);
+    ">
+        <div style="
+            background:white; 
+            padding:24px; 
+            border-radius:18px; 
+            width:400px; 
+            box-shadow:0 20px 40px rgba(0,0,0,0.2);
+        ">
+            <h3 style="margin-top:0;">Add Email Account</h3>
+            <div style="margin-bottom:12px;">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Email</label>
+                <input type="email" id="acc-email" placeholder="user@gmail.com"
+                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">App
+                    Password</label>
+                <input type="password" id="acc-pwd" placeholder="16-char app password"
+                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
+            </div>
+            <div style="margin-bottom:12px; display:flex; gap:10px;">
+                <div style="flex:1;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">IMAP
+                        Host</label>
+                    <input type="text" id="acc-host" value="imap.gmail.com"
+                        style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
+                </div>
+                <div style="width:80px;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Port</label>
+                    <input type="number" id="acc-port" value="993"
+                        style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
+                </div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+                <button onclick="closeModal()"
+                    style="padding:8px 16px; border:none; background:#f1f5f9; border-radius:8px; cursor:pointer;">Cancel</button>
+                <button onclick="saveAccount()"
+                    style="padding:8px 16px; border:none; background:var(--primary-color); color:white; border-radius:8px; cursor:pointer; font-weight:600;">Save</button>
+            </div>
         </div>
     </div>
 
     <script>
+        function formatTime(ts) {
+            if (!ts) return '';
+            const d = new Date(ts);
+            if (isNaN(d.getTime())) return '';
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        function getDayLabel(ts) {
+            const d = new Date(ts);
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+
+            if (d.toDateString() === today.toDateString()) return "Today";
+            if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+            return d.toLocaleDateString();
+        }
+        function shouldGroup(prev, curr) {
+            if (!prev) return false;
+            if (prev.sender !== curr.sender) return false;
+            return Math.abs(new Date(curr.timestamp) - new Date(prev.timestamp)) < 5 * 60 * 1000;
+        }
+        function sendSeen(email) {
+            fetch('/api/seen', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+        }
+
+        // Resync Logic
+        document.getElementById('resync-btn').onclick = async () => {
+            if (confirm("Start full email sync? This may take a while.")) {
+                await fetch('/api/admin/resync', { method: 'POST' });
+                alert("Sync started in background. Refresh in a minute.");
+            }
+        };
+
+        // Account Modal Logic
+        const modal = document.getElementById('account-modal');
+        document.getElementById('add-account-btn').onclick = () => {
+            modal.style.display = 'flex';
+        };
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+        async function saveAccount() {
+            const email = document.getElementById('acc-email').value;
+            const pwd = document.getElementById('acc-pwd').value;
+            const host = document.getElementById('acc-host').value;
+            const port = parseInt(document.getElementById('acc-port').value);
+
+            if (!email || !pwd) return alert("Email and Password required");
+
+            await fetch('/api/admin/email-accounts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email, app_password: pwd, imap_host: host, imap_port: port, username: email
+                })
+            });
+            closeModal();
+            fetchAccounts();
+        }
+        async function fetchAccounts() {
+            const res = await fetch('/api/admin/email-accounts');
+            const data = await res.json();
+            const bar = document.getElementById('account-bar');
+            bar.innerHTML = '';
+            data.accounts.forEach(acc => {
+                const tag = document.createElement('div');
+                tag.textContent = acc.email;
+                tag.style.background = '#e0e7ff';
+                tag.style.color = '#3730a3';
+                tag.style.padding = '6px 12px';
+                tag.style.borderRadius = '8px';
+                tag.style.fontSize = '0.85rem';
+                tag.style.fontWeight = '600';
+                bar.appendChild(tag);
+            });
+        }
+
+
+
+
         let allMessages = [];
         let currentConversationEmail = null;
         let searchFilter = "";
-        let statusFilter = "unread";
+        let statusFilter = "all";
 
         // UI References
         const visitorListEl = document.getElementById('visitor-list');
@@ -555,9 +851,8 @@
 
         // Initial Load
         document.addEventListener('DOMContentLoaded', () => {
+            fetchAccounts();
             fetchMessages();
-            // Poll every 2 seconds
-            setInterval(fetchMessages, 2000);
 
             filterChips.forEach(chip => {
                 chip.addEventListener('click', () => {
@@ -568,10 +863,14 @@
             });
         });
 
-        // Search Filter
+        // Search Filter (Debounced)
+        let searchTimeout;
         searchInputEl.addEventListener('input', (e) => {
-            searchFilter = e.target.value.toLowerCase();
-            renderVisitorList();
+            const val = e.target.value.trim();
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                fetchMessages(val);
+            }, 300);
         });
 
         // Textarea Auto-resize & Enter to Send
@@ -589,25 +888,38 @@
         });
 
         sendBtnEl.onclick = sendMessage;
+        let socket = null;
 
-        async function fetchMessages() {
+        function connectWS(email) {
+            if (socket) socket.close();
+
+            socket = new WebSocket(
+                `ws://${location.host}/ws?email=${encodeURIComponent(email)}`
+            );
+
+            socket.onmessage = (event) => {
+                const msg = JSON.parse(event.data);
+                if (msg.email === currentConversationEmail) {
+                    renderChat(currentConversationEmail);
+                    sendSeen(msg.email);
+                }
+                fetchMessages();
+            };
+        }
+
+
+        async function fetchMessages(query = null) {
             try {
-                const res = await fetch('/api/admin/messages');
+                let url = '/api/admin/messages';
+                if (query) {
+                    url += `?search=${encodeURIComponent(query)}`;
+                }
+                const res = await fetch(url);
                 const data = await res.json();
-
-                // Only re-render if data actually changed significantly or simple optimization:
-                // For this demo, we'll re-render list always but chat only if new messages
-                // In a real optimized app, we'd diff the data.
-
-                const prevLen = allMessages.length;
                 allMessages = data.messages;
-
                 renderVisitorList();
-
                 if (currentConversationEmail) {
-                    // Check if we need to scroll or update chat
-                    // For simplicity in this v1, simply re-render chat facilitates updates
-                    renderChat(currentConversationEmail, false);
+                    renderChat(currentConversationEmail);
                 }
             } catch (err) {
                 console.error("Failed to fetch messages:", err);
@@ -624,108 +936,136 @@
             return name.substring(0, 2).toUpperCase();
 
         }
-
         function renderVisitorList() {
+            const visitorListEl = document.getElementById('visitor-list');
             visitorListEl.innerHTML = '';
 
             allMessages.forEach(conv => {
                 const id = conv.email;
                 if (!id) return;
 
-                const displayName = getVisitorName(id);
                 const lastMsg = conv.last_message || '';
                 const unread = conv.unread || 0;
+                const timeString = formatTime(conv.timestamp);
 
-                // Status filter
+                // --- RESTORED FILTERS ---
                 if (statusFilter === 'unread' && unread === 0) return;
                 if (statusFilter === 'read' && unread > 0) return;
 
-                // Search filter
-                if (
-                    searchFilter &&
-                    !displayName.toLowerCase().includes(searchFilter) &&
-                    !lastMsg.toLowerCase().includes(searchFilter)
-                ) {
-                    return;
-                }
+                if (statusFilter === 'unread' && unread === 0) return;
+                if (statusFilter === 'read' && unread > 0) return;
+
+                // Client-side search removed in favor of backend search
+                // but we keep text highlighting logic if desired, or simple list rendering
+                // -------------------------
 
                 const div = document.createElement('div');
-                div.className = `visitor-item ${currentConversationEmail === id ? 'active' : ''}`;
+                div.className = 'visitor-item';
 
-                const timeString = new Date(conv.timestamp)
-                    .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                const unreadBadge = unread > 0
-                    ? `<div class="unread-badge">${unread}</div>`
-                    : '';
+                // Escape helper
+                const safePreview = lastMsg.replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
 
                 div.innerHTML = `
-            <div class="visitor-avatar">${getInitials(displayName)}</div>
+            <div class="visitor-avatar">${id.substring(0, 2).toUpperCase()}</div>
             <div class="visitor-info">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div class="visitor-name">${displayName}</div>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <div style="font-size:0.75rem; color:#9ca3af;">${timeString}</div>
-                        ${unreadBadge}
-                    </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <div class="visitor-name">${id}</div>
+                    <div style="font-size:12px; color:#9ca3af;">${timeString}</div>
                 </div>
-                <div class="visitor-preview">${lastMsg}</div>
+                <div class="visitor-preview">${safePreview}</div>
             </div>
+            ${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}
         `;
 
                 div.onclick = async () => {
+                    connectWS(id);
                     currentConversationEmail = id;
-
-                    // 🔵 MARK AS READ
                     await fetch('/api/admin/mark-read', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email: id })
                     });
-
-                    await renderChat(id, true);
-                    await fetchMessages(); // refresh inbox + unread count
+                    renderChat(id);
+                    fetchMessages();
                 };
-
 
                 visitorListEl.appendChild(div);
             });
         }
 
+        // Date Filtering Logic
+        document.getElementById('apply-date-filter').onclick = () => {
+            if (currentConversationEmail) renderChat(currentConversationEmail);
+        };
+        document.getElementById('clear-date-filter').onclick = () => {
+            document.getElementById('chat-start-date').value = '';
+            document.getElementById('chat-end-date').value = '';
+            if (currentConversationEmail) renderChat(currentConversationEmail);
+        };
 
-        async function renderChat(email, forceScroll = false) {
+        // Export Logic
+        document.getElementById('export-btn').onclick = () => {
+            if (!currentConversationEmail) return;
+            window.location.href = `/api/export?email=${encodeURIComponent(currentConversationEmail)}`;
+        };
+
+        async function renderChat(email) {
+            currentConversationEmail = email;
+
+            // Highlight selected conversation
+            const items = document.querySelectorAll('.visitor-item');
+            items.forEach(el => el.classList.remove('active'));
+            // Find the item matching this email (logic depends on how we stored it, usually by visitor-name text)
+            // Ideally we should add data-email attribute to visitor-item
+
             chatHeaderEl.style.display = 'flex';
             inputAreaEl.style.display = 'flex';
-
-            headerNameEl.textContent = email;
+            headerNameEl.textContent = getVisitorName(email);
             headerAvatarEl.textContent = getInitials(email);
 
-            // ✅ FETCH MESSAGE HISTORY (NOT inbox data)
-            const res = await fetch(`/api/sync?email=${encodeURIComponent(email)}`);
+            // Get Dates
+            const startDate = document.getElementById('chat-start-date').value;
+            const endDate = document.getElementById('chat-end-date').value;
+
+            let url = `/api/sync?email=${encodeURIComponent(email)}`;
+            if (startDate) url += `&start_date=${startDate}`;
+            if (endDate) url += `&end_date=${endDate}`;
+
+            const res = await fetch(url);
             const data = await res.json();
-            const msgs = data.messages;
 
             messagesAreaEl.innerHTML = '';
+            let lastDay = null;
+            let prevMsg = null;
 
-            if (!msgs || msgs.length === 0) {
-                messagesAreaEl.innerHTML = '<div class="empty-state">No messages yet</div>';
-                return;
-            }
+            data.messages.forEach(m => {
+                const day = getDayLabel(m.timestamp);
+                if (day !== lastDay) {
+                    const sep = document.createElement('div');
+                    sep.style.textAlign = 'center';
+                    sep.style.fontSize = '12px';
+                    sep.style.opacity = '0.6';
+                    sep.style.margin = '12px 0';
+                    sep.textContent = day;
+                    messagesAreaEl.appendChild(sep);
+                    lastDay = day;
+                }
 
-            msgs.forEach(m => {
                 const div = document.createElement('div');
                 div.className = `message ${m.sender}`;
-
-                const timeStr = new Date(m.timestamp)
-                    .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
                 div.innerHTML = `
-            ${m.text}
-            <div class="message-time">${timeStr}</div>
-        `;
-
+        ${m.text}
+        <div class="message-time">
+            ${formatTime(m.timestamp)} ${m.sender === 'admin' ? (m.seen_at ? ' ✓✓' : ' ✓') : ''}
+        </div>`;
                 messagesAreaEl.appendChild(div);
+                prevMsg = m;
             });
+            sendSeen(email);
 
             messagesAreaEl.scrollTop = messagesAreaEl.scrollHeight;
         }

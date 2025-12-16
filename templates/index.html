@@ -12,13 +12,15 @@
     <link href="/static/widget.css" rel="stylesheet">
     <style>
         :root {
-            --bg: linear-gradient(135deg, #f5f7fb 0%, #e8ecf7 50%, #f5f7fb 100%);
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --text: #0f172a;
+            --bg: radial-gradient(circle at top, #fef3c7 0%, #fefce8 30%, #f4f4f5 75%);
+            --primary: #16a34a;
+            --primary-dark: #15803d;
+            --accent: #dc2626;
+            --accent-soft: #fee2e2;
+            --text: #111827;
             --muted: #64748b;
             --card: #ffffff;
-            --border: #e2e8f0;
+            --border: #e4e4e7;
         }
 
         * {
@@ -65,8 +67,8 @@
             gap: 8px;
             padding: 8px 12px;
             border-radius: 999px;
-            background: #eef2ff;
-            color: #4338ca;
+            background: #fee2e2;
+            color: #b91c1c;
             font-weight: 600;
             font-size: 0.85rem;
             margin-bottom: 14px;
@@ -98,11 +100,11 @@
             display: flex;
             gap: 12px;
             align-items: flex-start;
-            background: #f8fafc;
+            background: #f9fafb;
         }
 
         .hero-tile i {
-            color: var(--primary);
+            color: var(--accent);
             margin-top: 2px;
         }
 
@@ -121,7 +123,7 @@
         }
 
         .primary-btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, #16a34a, #22c55e);
             color: white;
             border: none;
             padding: 12px 18px;
@@ -139,9 +141,9 @@
         }
 
         .ghost-btn {
-            border: 1px solid var(--border);
-            color: var(--text);
-            background: transparent;
+            border: 1px solid var(--accent-soft);
+            color: #b91c1c;
+            background: #fef2f2;
             padding: 12px 16px;
             border-radius: 12px;
             font-weight: 600;
@@ -149,7 +151,7 @@
 
         /* Chat widget polish (no behavior changes) */
         .chat-container {
-            border: 1px solid var(--border);
+            border: 1px solid var(--accent-soft);
             border-radius: 18px;
             box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
             overflow: hidden;
@@ -157,7 +159,7 @@
         }
 
         .chat-header {
-            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+            background: linear-gradient(135deg, #15803d, #16a34a);
             color: #fff;
             padding: 16px 18px;
             display: flex;
@@ -177,7 +179,7 @@
         }
 
         .chat-messages {
-            background: #f8fafc;
+            background: radial-gradient(circle at 10% 0, #fee2e2 0, transparent 40%), #fefce8;
             padding: 16px;
         }
 
@@ -230,13 +232,13 @@
         }
 
         .magic-btn {
-            background: #eef2ff;
-            color: #4338ca;
+            background: #fef2f2;
+            color: #b91c1c;
         }
 
         .chat-launcher {
-            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.32);
-            background: var(--primary);
+            box-shadow: 0 12px 28px rgba(22, 163, 74, 0.32);
+            background: linear-gradient(135deg, #16a34a, #22c55e);
             color: #fff;
         }
     </style>
@@ -275,8 +277,10 @@
             </div>
 
             <div class="hero-actions">
-                <button class="primary-btn" onclick="document.getElementById('chat-launcher').click()">Start a chat</button>
-                <button class="ghost-btn" onclick="document.getElementById('chat-container').classList.toggle('active')">
+                <button class="primary-btn" onclick="document.getElementById('chat-launcher').click()">Start a
+                    chat</button>
+                <button class="ghost-btn"
+                    onclick="document.getElementById('chat-container').classList.toggle('active')">
                     Toggle preview
                 </button>
             </div>

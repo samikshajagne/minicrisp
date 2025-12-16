@@ -4,7 +4,7 @@ import asyncio
 import threading
 import logging
 from datetime import datetime
-
+from database import mark_customer_read
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -53,15 +53,24 @@ async def broadcast(email, guest_id, payload):
 # -----------------------------
 # Insert message (SINGLE SOURCE)
 # -----------------------------
-def insert_message(sender: str, text: str, visitor_email: str, guest_id=None):
+from database import ensure_customer, get_customer_by_email
+
+def insert_message(sender, text, visitor_email, guest_id=None, origin="chat"):
     if not visitor_email:
         return
 
     visitor_email = visitor_email.lower().strip()
 
-    # ✅ ALWAYS ensure customer exists
-    customer = ensure_customer(visitor_email)
-    tb1_id = customer["tb1_id"]
+    # 🔥 ONLY chat-origin messages can create customers
+    if origin == "chat":
+        cust = ensure_customer(visitor_email)
+        tb1_id = cust["tb1_id"]
+    else:
+        # Email-origin messages must belong to an EXISTING customer
+        cust = get_customer_by_email(visitor_email)
+        if not cust:
+            return  # ❌ Ignore unwanted email users completely
+        tb1_id = cust["tb1_id"]
 
     now = datetime.utcnow()
 
@@ -70,7 +79,7 @@ def insert_message(sender: str, text: str, visitor_email: str, guest_id=None):
         "email": visitor_email,
         "content": text,
         "sender": sender,
-        "source": "chat",          # IMPORTANT
+        "source": origin,   # "chat" or "email"
         "timestamp": now
     })
 
@@ -113,17 +122,41 @@ async def admin(request: Request):
 # -----------------------------
 @app.get("/api/admin/messages")
 async def api_admin_messages():
-    msgs = []
-    for m in email_received.find({"source": "chat"}):
-        msgs.append({
-            "email": m["email"],
-            "text": m["content"],
-            "sender": m["sender"],
-            "timestamp": m["timestamp"]
-        })
+    conversations = {}
 
-    msgs.sort(key=lambda x: x["timestamp"], reverse=True)
-    return {"messages": msgs}
+    cursor = email_received.find({"source": "chat"}).sort("timestamp", -1)
+
+    for m in cursor:
+        tb1_id = m["tb1_id"]
+
+        # ONLY keep latest message per customer
+        if tb1_id not in conversations:
+            customer = ensure_customer(m["email"])
+
+            last_read = customer.get("last_read_at")
+            unread = email_received.count_documents({
+                "tb1_id": tb1_id,
+                "sender": "visitor",
+                **({"timestamp": {"$gt": last_read}} if last_read else {})
+            })
+
+            conversations[tb1_id] = {
+                "email": m["email"],
+                "last_message": m["content"],
+                "timestamp": m["timestamp"],
+                "unread": unread
+            }
+
+    return {"messages": list(conversations.values())}
+
+
+
+@app.post("/api/admin/mark-read")
+async def api_mark_read(payload: dict):
+    email = payload.get("email")
+    if email:
+        mark_customer_read(email)
+    return {"status": "ok"}
 
 
 # -----------------------------

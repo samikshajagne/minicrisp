@@ -121,7 +121,7 @@ def send_admin_and_customer_notifications(visitor_email: str, text: str, visitor
         "tb1_id": tb1_id,
         "email": visitor_email,
         "content": text,
-        "admin_msgid": admin_msgid,
+        "admin_msgid": new_admin_msgid,
         "timestamp": datetime.utcnow()
     })
 

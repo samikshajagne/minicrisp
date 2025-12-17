@@ -5,308 +5,39 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Mini Crisp Demo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="/static/widget.css" rel="stylesheet">
-    <style>
-        :root {
-            --bg: radial-gradient(circle at top, #fef2f2 0%, #ffffff 40%, #f4f4f5 80%);
-            --primary: #dc2626;
-            --primary-dark: #b91c1c;
-            --accent: #dc2626;
-            --accent-soft: #fee2e2;
-            --text: #111827;
-            --muted: #64748b;
-            --card: #ffffff;
-            --border: #e4e4e7;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 32px 18px 120px;
-            color: var(--text);
-        }
-
-        .page-shell {
-            width: min(1100px, 100%);
-            display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 28px;
-            align-items: center;
-        }
-
-        @media (max-width: 900px) {
-            .page-shell {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .hero-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 32px;
-            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
-        }
-
-        .pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            border-radius: 999px;
-            background: #fee2e2;
-            color: #b91c1c;
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 14px;
-        }
-
-        h1 {
-            margin: 0 0 10px;
-            font-size: clamp(1.8rem, 3vw, 2.4rem);
-            letter-spacing: -0.02em;
-        }
-
-        .lead {
-            margin: 0;
-            color: var(--muted);
-            line-height: 1.6;
-        }
-
-        .hero-grid {
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 14px;
-        }
-
-        .hero-tile {
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 14px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            background: #f9fafb;
-        }
-
-        .hero-tile i {
-            color: var(--accent);
-            margin-top: 2px;
-        }
-
-        .hero-tile strong {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 0.95rem;
-        }
-
-        .hero-actions {
-            margin-top: 22px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .primary-btn {
-            background: linear-gradient(135deg, #dc2626, #f97373);
-            color: white;
-            border: none;
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
-            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-        }
-
-        .primary-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.28);
-        }
-
-        .ghost-btn {
-            border: 1px solid var(--accent-soft);
-            color: #b91c1c;
-            background: #fef2f2;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-weight: 600;
-        }
-
-        /* Chat widget polish (no behavior changes) */
-        .chat-container {
-            border: 1px solid var(--accent-soft);
-            border-radius: 18px;
-            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
-            overflow: hidden;
-            background: #fff;
-        }
-
-        .chat-header {
-            background: linear-gradient(135deg, #b91c1c, #dc2626);
-            color: #fff;
-            padding: 16px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .chat-header h3 {
-            margin: 0;
-        }
-
-        .chat-header .status {
-            background: rgba(255, 255, 255, 0.16);
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 0.8rem;
-        }
-
-        .chat-messages {
-            background: radial-gradient(circle at 10% 0, #fee2e2 0, transparent 40%), #fefce8;
-            padding: 16px;
-        }
-
-        .chat-input-area {
-            background: #fff;
-            padding: 12px;
-            border-top: 1px solid var(--border);
-        }
-
-        .chat-input-area .email-input,
-        .chat-input-area textarea {
-            width: 100%;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px;
-            font-family: inherit;
-        }
-
-        .chat-input-area textarea {
-            min-height: 60px;
-            resize: vertical;
-        }
-
-        .input-wrapper {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 10px;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .send-btn,
-        .magic-btn {
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            padding: 0 16px;
-            height: 44px;
-        }
-
-        .send-btn {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
-        }
-
-        .send-btn:hover {
-            background: var(--primary-dark);
-        }
-
-        .magic-btn {
-            background: #fef2f2;
-            color: #b91c1c;
-        }
-
-        .chat-launcher {
-            box-shadow: 0 12px 28px rgba(220, 38, 38, 0.32);
-            background: linear-gradient(135deg, #b91c1c, #ef4444);
-            color: #fff;
-        }
-    </style>
 </head>
 
 <body>
-    <div class="page-shell">
-        <div class="hero-card">
-            <div class="pill"><i class="fa-solid fa-bolt"></i> Mini Crisp</div>
-            <h1>Welcome to Mini Crisp</h1>
-            <p class="lead">A lightweight live chat widget you can drop into any page. Click the bubble in the corner
-                to start a conversation or explore the controls below.</p>
+    <div style="text-align: center; color: #555;">
+        <h1>Welcome to Mini Crisp</h1>
+        <p>Click the bubble in the bottom right to start chatting.</p>
+    </div>
 
-            <div class="hero-grid">
-                <div class="hero-tile">
-                    <i class="fa-regular fa-message"></i>
-                    <div>
-                        <strong>Instant replies</strong>
-                        <span>Stay connected with your visitors in real time.</span>
-                    </div>
-                </div>
-                <div class="hero-tile">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    <div>
-                        <strong>Magic prompts</strong>
-                        <span>Use the ✨ button to quickly draft friendly responses.</span>
-                    </div>
-                </div>
-                <div class="hero-tile">
-                    <i class="fa-solid fa-shield-heart"></i>
-                    <div>
-                        <strong>Secure & tidy</strong>
-                        <span>Built to keep conversations organized and private.</span>
-                    </div>
-                </div>
-            </div>
+    <div class="chat-launcher" id="chat-launcher">
+        <i class="fas fa-comment-alt"></i>
+    </div>
 
-            <div class="hero-actions">
-                <button class="primary-btn" onclick="document.getElementById('chat-launcher').click()">Start a
-                    chat</button>
-                <button class="ghost-btn"
-                    onclick="document.getElementById('chat-container').classList.toggle('active')">
-                    Toggle preview
-                </button>
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <div>
+                <h3>Support</h3>
+                <span class="status">Online</span>
             </div>
+            <i class="fas fa-times" onclick="document.getElementById('chat-container').classList.remove('active')"
+                style="cursor: pointer;"></i>
         </div>
 
-        <div class="chat-container" id="chat-container">
-            <div class="chat-header">
-                <div>
-                    <h3>Support</h3>
-                    <span class="status">Online</span>
-                </div>
-                <i class="fas fa-times" onclick="document.getElementById('chat-container').classList.remove('active')"
-                    style="cursor: pointer;"></i>
-            </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message system">System: Welcome! Ask us anything.</div>
+        </div>
 
-            <div class="chat-messages" id="chat-messages">
-                <div class="message system">System: Welcome! Ask us anything.</div>
-            </div>
-
-            <div class="chat-input-area">
-                <input type="email" id="email-input" class="email-input" placeholder="Your Email (Required)">
-                <div class="input-wrapper">
-                    <button class="magic-btn" id="magic-btn" title="Get Ideas">✨</button>
-                    <textarea id="message-input" placeholder="Write a message..."></textarea>
-                    <button class="send-btn" id="send-btn">Send</button>
-                </div>
+        <div class="chat-input-area">
+            <input type="email" id="email-input" class="email-input" placeholder="Your Email (Required)">
+            <div class="input-wrapper">
+                <button class="magic-btn" id="magic-btn" title="Get Ideas">✨</button>
+                <textarea id="message-input" placeholder="Write a message..."></textarea>
+                <button class="send-btn" id="send-btn">Send</button>
             </div>
         </div>
     </div>

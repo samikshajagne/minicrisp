@@ -181,7 +181,22 @@ async def api_admin_messages(search: str | None = None):
 
 @app.get("/api/admin/email-accounts")
 async def get_accounts():
-    return {"accounts": get_email_accounts()}
+    accounts = get_email_accounts()
+    
+    # Legacy/Env Account Support (matches gmail_reader.py logic)
+    import os
+    env_email = os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in").lower()
+    
+    # Check if already in DB
+    if not any(a["email"] == env_email for a in accounts):
+        accounts.append({
+            "email": env_email,
+            "imap_host": "imap.gmail.com",
+            "active": True,
+            "source": "env"
+        })
+        
+    return {"accounts": accounts}
 
 @app.post("/api/admin/email-accounts")
 async def add_account(payload: dict):

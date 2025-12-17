@@ -580,6 +580,53 @@
                 margin: 0 0 12px 0;
             }
         }
+
+        /* SEARCH HIGHLIGHTING & NAV */
+        .highlight {
+            background-color: #fef08a;
+            /* Yellow-200 */
+            color: #854d0e;
+            font-weight: bold;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+
+        .highlight.active-match {
+            background-color: #facc15;
+            /* Yellow-400 */
+            box-shadow: 0 0 0 2px #ca8a04;
+        }
+
+        .search-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-right: 12px;
+            font-size: 0.9rem;
+            color: white;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .search-nav button {
+            background: #fff;
+            border: none;
+            color: var(--primary-color);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .search-nav button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 
@@ -824,6 +871,8 @@
         </div>
     </div>
 
+
+
     <script>
         function formatTime(ts) {
             if (!ts) return '';
@@ -922,6 +971,11 @@
         let searchFilter = "";
         let statusFilter = "all";
 
+        // Search Navigation State
+        let currentMatchIndex = 0;
+        let totalMatches = 0;
+        let matchElements = [];
+
         // UI References
         const visitorListEl = document.getElementById('visitor-list');
         const messagesAreaEl = document.getElementById('messages-area');
@@ -952,9 +1006,16 @@
         let searchTimeout;
         searchInputEl.addEventListener('input', (e) => {
             const val = e.target.value.trim();
+            // Store global search term
+            searchFilter = val;
+
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 fetchMessages(val);
+                // If a conversation is open, re-render it to apply highlights
+                if (currentConversationEmail) {
+                    renderChat(currentConversationEmail, val);
+                }
             }, 300);
         });
 
@@ -985,10 +1046,10 @@
             socket.onmessage = (event) => {
                 const msg = JSON.parse(event.data);
                 if (msg.email === currentConversationEmail) {
-                    renderChat(currentConversationEmail);
+                    renderChat(currentConversationEmail, searchFilter);
                     sendSeen(msg.email);
                 }
-                fetchMessages();
+                fetchMessages(searchFilter);
             };
         }
 
@@ -1003,9 +1064,7 @@
                 const data = await res.json();
                 allMessages = data.messages;
                 renderVisitorList();
-                if (currentConversationEmail) {
-                    renderChat(currentConversationEmail);
-                }
+                // We do NOT assume currentConversationEmail is set here; we just update the list
             } catch (err) {
                 console.error("Failed to fetch messages:", err);
             }
@@ -1074,8 +1133,8 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email: id })
                     });
-                    renderChat(id);
-                    fetchMessages();
+                    renderChat(id, searchFilter);
+                    fetchMessages(searchFilter); // Refresh list to clear unread
                 };
 
                 visitorListEl.appendChild(div);
@@ -1084,12 +1143,12 @@
 
         // Date Filtering Logic
         document.getElementById('apply-date-filter').onclick = () => {
-            if (currentConversationEmail) renderChat(currentConversationEmail);
+            if (currentConversationEmail) renderChat(currentConversationEmail, searchFilter);
         };
         document.getElementById('clear-date-filter').onclick = () => {
             document.getElementById('chat-start-date').value = '';
             document.getElementById('chat-end-date').value = '';
-            if (currentConversationEmail) renderChat(currentConversationEmail);
+            if (currentConversationEmail) renderChat(currentConversationEmail, searchFilter);
         };
 
         // Export Logic
@@ -1098,7 +1157,47 @@
             window.location.href = `/api/export?email=${encodeURIComponent(currentConversationEmail)}`;
         };
 
-        async function renderChat(email) {
+        function highlightText(text, searchTerm) {
+            if (!searchTerm || searchTerm.length < 2) return text;
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            const res = text.replace(regex, '<span class="highlight">$1</span>');
+            return res;
+        }
+
+        function scrollToMatch(index) {
+            if (matchElements.length === 0) return;
+
+            // Loop around
+            if (index < 0) index = matchElements.length - 1;
+            if (index >= matchElements.length) index = 0;
+
+            currentMatchIndex = index;
+
+            // Update active styling
+            matchElements.forEach(el => el.classList.remove('active-match'));
+            const activeEl = matchElements[currentMatchIndex];
+            activeEl.classList.add('active-match');
+
+            // activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Fix: Use scrollTop to scroll ONLY the chat container, preventing whole page scroll
+            const container = document.getElementById('messages-area');
+            const elRect = activeEl.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            // Calculate where the element is relative to the container viewport
+            const relativeTop = elRect.top - containerRect.top;
+
+            // Calculate target scrollTop to center the element
+            // Current Scroll + Position Relative to Viewport - Half Container Height + Half Element Height
+            const targetScrollTop = container.scrollTop + relativeTop - (container.clientHeight / 2) + (activeEl.clientHeight / 2);
+
+            container.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
+
+            // Update counter display
+            const countEl = document.getElementById('search-match-count');
+            if (countEl) countEl.textContent = `${currentMatchIndex + 1}/${totalMatches}`;
+        }
+
+        async function renderChat(email, searchTerm = "") {
             currentConversationEmail = email;
 
             // Highlight selected conversation
@@ -1127,6 +1226,11 @@
             let lastDay = null;
             let prevMsg = null;
 
+            // Reset Match State
+            matchElements = [];
+            currentMatchIndex = 0;
+            totalMatches = 0;
+
             data.messages.forEach(m => {
                 const day = getDayLabel(m.timestamp);
                 if (day !== lastDay) {
@@ -1142,8 +1246,12 @@
 
                 const div = document.createElement('div');
                 div.className = `message ${m.sender}`;
+
+                // Content with highlighting
+                const contentHtml = highlightText(m.text, searchTerm);
+
                 div.innerHTML = `
-        ${m.text}
+        ${contentHtml}
         <div class="message-time">
             ${formatTime(m.timestamp)} ${m.sender === 'admin' ? (m.seen_at ? ' ✓✓' : ' ✓') : ''}
         </div>`;
@@ -1152,7 +1260,39 @@
             });
             sendSeen(email);
 
-            messagesAreaEl.scrollTop = messagesAreaEl.scrollHeight;
+            // Collect all highlights
+            matchElements = Array.from(messagesAreaEl.querySelectorAll('.highlight'));
+            totalMatches = matchElements.length;
+
+            // Inject Search Navigation Controls if matches exist
+            const toolsContainer = document.querySelector('.chat-tools');
+            // Remove existing search nav if any
+            const existingNav = document.getElementById('search-nav-controls');
+            if (existingNav) existingNav.remove();
+
+            if (totalMatches > 0) {
+                const navDiv = document.createElement('div');
+                navDiv.id = 'search-nav-controls';
+                navDiv.className = 'search-nav';
+                navDiv.innerHTML = `
+                    <span id="search-match-count">1/${totalMatches} matches</span>
+                    <button id="prev-match">Prev</button>
+                    <button id="next-match">Next</button>
+                 `;
+
+                // Insert before the stack/date filters
+                toolsContainer.insertBefore(navDiv, toolsContainer.firstChild);
+
+                document.getElementById('prev-match').onclick = () => scrollToMatch(currentMatchIndex - 1);
+                document.getElementById('next-match').onclick = () => scrollToMatch(currentMatchIndex + 1);
+
+                // Jump to first match
+                scrollToMatch(0);
+
+            } else {
+                // Regular scroll to bottom if no search matches
+                messagesAreaEl.scrollTop = messagesAreaEl.scrollHeight;
+            }
         }
 
         async function sendMessage() {
@@ -1175,10 +1315,14 @@
                 body: JSON.stringify(payload)
             });
 
-            await fetchMessages();
+            await fetchMessages(searchFilter); // Keep search active if any
             // Force scroll to bottom after self message
-            const area = document.getElementById('messages-area');
-            area.scrollTop = area.scrollHeight;
+            // renderChat called by WS or here?
+            // Ideally wait for WS, but for now:
+            // renderChat(currentConversationEmail, searchFilter);
+            // Note: renderChat normally handles scrolling.
+            // If we just spoke, we probably want to see OUR message at the bottom, unless we are searching?
+            // If searching, we stick to search behavior.
         }
 
     </script>

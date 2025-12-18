@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.utils import make_msgid
 from datetime import datetime
-from database import ensure_customer, email_sent, threads
+from database import ensure_customer, email_sent, threads, email_accounts
 import os
 
 logging.basicConfig(
@@ -29,11 +29,16 @@ def _send_raw(
     msg_id: str | None = None,
     reply_to: str | None = None,
     in_reply_to: str | None = None,
-    references: str | None = None
+    references: str | None = None,
+    sender_email: str | None = None,
+    sender_password: str | None = None
 ) -> bool:
     try:
+        from_email = sender_email or SENDER_EMAIL
+        password = sender_password or SENDER_PASSWORD
+        
         msg = MIMEMultipart()
-        msg["From"] = SENDER_EMAIL
+        msg["From"] = from_email
         msg["To"] = to_email
         msg["Subject"] = subject
 
@@ -50,11 +55,11 @@ def _send_raw(
 
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
-        server.login(SENDER_EMAIL, SENDER_PASSWORD)
-        server.sendmail(SENDER_EMAIL, to_email, msg.as_string())
+        server.login(from_email, password)
+        server.sendmail(from_email, to_email, msg.as_string())
         server.quit()
 
-        logger.info(f"Email sent → {to_email} | subject={subject}")
+        logger.info(f"Email sent from {from_email} → {to_email} | subject={subject}")
         return True
     except Exception as e:
         logger.exception(f"Email send failed → {to_email}: {e}")
@@ -131,10 +136,27 @@ def send_admin_and_customer_notifications(visitor_email: str, text: str, visitor
 # -------------------------------------------------
 # ADMIN → CUSTOMER REPLY (SAME THREAD)
 # -------------------------------------------------
-def send_reply_from_admin_to_customer(visitor_email: str, text: str) -> bool:
+def send_reply_from_admin_to_customer(visitor_email: str, text: str, account_email: str | None = None) -> bool:
     visitor_email = (visitor_email or "").strip().lower()
     if not visitor_email:
         return False
+    
+    # Resolve Sender Credentials
+    sender_email = None
+    sender_password = None
+    
+    if account_email:
+        # Try finding in DB
+        acc = email_accounts.find_one({"email": account_email.lower()})
+        if acc:
+            sender_email = acc["email"]
+            sender_password = acc["app_password"]
+    
+    # Fallback to Env if not found or not provided
+    if not sender_email:
+        sender_email = SENDER_EMAIL
+        sender_password = SENDER_PASSWORD # Will be used by default in _send_raw if None passed, but explicit is fine here
+
 
     cust = ensure_customer(visitor_email)
     tb1_id = cust["tb1_id"]
@@ -152,9 +174,11 @@ def send_reply_from_admin_to_customer(visitor_email: str, text: str) -> bool:
         subject=subject,
         body=body,
         msg_id=cust_msgid,
-        reply_to=SENDER_EMAIL,
+        reply_to=sender_email, # Reply to the specific account
         in_reply_to=admin_msgid,
-        references=admin_msgid
+        references=admin_msgid,
+        sender_email=sender_email,
+        sender_password=sender_password
     )
 
     email_sent.insert_one({

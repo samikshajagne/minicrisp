@@ -6,12 +6,13 @@ import time
 from datetime import datetime,timezone
 from database import mark_customer_read
 from fastapi import FastAPI, WebSocket, Request, BackgroundTasks, WebSocketDisconnect, Response
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from database import ensure_customer, get_customer_by_email
-from database import get_email_accounts
+from database import get_email_accounts, add_email_account, fs
+from bson import ObjectId
 # DB
 from database import email_received, ensure_customer
 
@@ -23,7 +24,7 @@ from email_service import (
 )
 
 # Gmail reader
-from gmail_reader import fetch_emails
+from gmail_reader import fetch_emails, test_credentials
 
 logger = logging.getLogger("main")
 logger.setLevel(logging.INFO)
@@ -57,7 +58,7 @@ async def broadcast(email, guest_id, payload):
 # -----------------------------
 
 
-def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", message_id=None, timestamp=None):
+def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", message_id=None, timestamp=None, attachments=None, account_email=None, html_content=None):
     if not visitor_email:
         return
 
@@ -77,7 +78,10 @@ def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", me
         "sender": sender,
         "source": origin,   # "chat" or "email" or "imap"
         "timestamp": now,
-        "seen_at": None
+        "seen_at": None,
+        "attachments": attachments or [],
+        "account_email": account_email,
+        "html_content": html_content
     }
     if message_id:
         doc["message_id"] = message_id
@@ -91,10 +95,18 @@ def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", me
         "sender": sender,
         "text": text,
         "email": visitor_email,
-        "timestamp": now.isoformat()
+        "timestamp": now.isoformat(),
+        "timestamp": now.isoformat(),
+        "attachments": attachments or [],
+        "html_content": html_content
     }
 
-    asyncio.create_task(broadcast(visitor_email, guest_id, payload))
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(broadcast(visitor_email, guest_id, payload))
+    except RuntimeError:
+        # No running loop (e.g., script execution or background thread without loop)
+        pass # Broadcast not critical for sync scripts
 
 # -----------------------------
 # Models
@@ -108,6 +120,7 @@ class Message(BaseModel):
 class AdminReply(BaseModel):
     text: str
     visitor_email: str
+    account_email: str | None = None
 
 # -----------------------------
 # Routes
@@ -125,7 +138,7 @@ async def admin(request: Request):
 # ✅ ADMIN INBOX (CUSTOMERS ONLY)
 # -----------------------------
 @app.get("/api/admin/messages")
-async def api_admin_messages(search: str | None = None):
+async def api_admin_messages(search: str | None = None, account: str | None = None):
     conversations = {}
 
     # 1. Identify relevant customers if search is active
@@ -149,7 +162,11 @@ async def api_admin_messages(search: str | None = None):
 
     # 2. Fetch latest message for each customer (standard logic)
     # Fetch ALL sources (chat, imap, email)
-    cursor = email_received.find({}).sort("timestamp", -1)
+    query = {}
+    if account:
+        query["account_email"] = account.lower().strip()
+        
+    cursor = email_received.find(query).sort("timestamp", -1)
 
     for m in cursor:
         tb1_id = m["tb1_id"]
@@ -174,7 +191,10 @@ async def api_admin_messages(search: str | None = None):
                 "email": m["email"],
                 "last_message": m["content"],
                 "timestamp": m["timestamp"].isoformat(),
-                "unread": unread
+                "unread": unread,
+                "unread": unread,
+                "attachments": m.get("attachments", []),
+                "html_content": m.get("html_content")
             }
 
     return {"messages": list(conversations.values())}
@@ -199,7 +219,22 @@ async def get_accounts():
     return {"accounts": accounts}
 
 @app.post("/api/admin/email-accounts")
-async def add_account(payload: dict):
+async def add_account(payload: dict, response: Response):
+    # Sanitize password (remove spaces)
+    if "app_password" in payload:
+        payload["app_password"] = payload["app_password"].replace(" ", "")
+    
+    # Verify Credentials
+    email = payload.get("email")
+    pwd = payload.get("app_password")
+    host = payload.get("imap_host", "imap.gmail.com")
+    
+    is_valid, error_msg = test_credentials(email, pwd, host)
+    
+    if not is_valid:
+        response.status_code = 400
+        return {"status": "error", "message": error_msg}
+
     add_email_account(payload)
     return {"status": "ok"}
 
@@ -208,7 +243,7 @@ def run_full_sync():
         logging.info("Starting MANUAL full sync...")
         results = fetch_emails(criteria="ALL")
         for r in results:
-            insert_message(r["sender"], r["body"], r["visitor"], origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"))
+            insert_message(r["sender"], r["body"], r["visitor"], origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"))
         logging.info("Manual full sync complete.")
     except Exception as e:
         logger.error(f"Manual sync error: {e}")
@@ -262,7 +297,12 @@ async def api_sync(email: str, start_date: str | None = None, end_date: str | No
         msgs.append({
             "sender": m.get("sender", "visitor"),
             "text": m["content"],
-            "timestamp": m["timestamp"].isoformat()
+            "text": m["content"],
+            "timestamp": m["timestamp"].isoformat(),
+            "text": m["content"],
+            "timestamp": m["timestamp"].isoformat(),
+            "attachments": m.get("attachments", []),
+            "html_content": m.get("html_content")
         })
 
     msgs.sort(key=lambda x: x["timestamp"])
@@ -298,10 +338,24 @@ async def api_export(email: str):
     
     content = "\n".join(lines)
     
+    content = "\n".join(lines)
+    
     filename = f"chat_{email.replace('@','_').replace('.','_')}.txt"
     return PlainTextResponse(content, headers={
         "Content-Disposition": f"attachment; filename={filename}"
     })
+
+@app.get("/api/attachments/{file_id}")
+async def get_attachment_file(file_id: str):
+    try:
+        grid_out = fs.get(ObjectId(file_id))
+        return StreamingResponse(
+            grid_out, 
+            media_type=grid_out.content_type or "application/octet-stream",
+            headers={"Content-Disposition": f"inline; filename={grid_out.filename}"}
+        )
+    except Exception:
+        return Response(status_code=404)
 
 # -----------------------------
 # Visitor sends message
@@ -317,8 +371,8 @@ async def api_message(msg: Message):
 # -----------------------------
 @app.post("/api/reply")
 async def api_reply(reply: AdminReply):
-    insert_message("admin", reply.text, reply.visitor_email)
-    send_reply_from_admin_to_customer(reply.visitor_email, reply.text)
+    insert_message("admin", reply.text, reply.visitor_email, account_email=reply.account_email)
+    send_reply_from_admin_to_customer(reply.visitor_email, reply.text, account_email=reply.account_email)
     return {"status": "ok"}
 
 @app.post("/api/seen")
@@ -371,7 +425,7 @@ def gmail_sync_loop():
         logging.info("Starting initial email backfill...")
         initial_emails = fetch_emails(criteria="ALL")
         for r in initial_emails:
-            insert_message(r["sender"], r["body"], r["visitor"], origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"))
+            insert_message(r["sender"], r["body"], r["visitor"], origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"))
         logging.info("Initial backfill complete.")
     except Exception as e:
         logger.error(f"Backfill error: {e}")
@@ -387,7 +441,7 @@ def gmail_sync_loop():
                 email = r["visitor"]
 
                 # Gmail replies ALSO mapped to customer
-                insert_message(sender, body, email, origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"))
+                insert_message(sender, body, email, origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"))
 
                 if sender == "visitor":
                     forward_visitor_message_to_admin(email, body)

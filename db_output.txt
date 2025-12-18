@@ -1,0 +1,4 @@
+
+Email: test_att@example.com
+Time: 2025-12-17 11:38:06.122000
+Attachments: [{'filename': 'test_image.jpg', 'url': '/static/attachments/test_image.jpg', 'content_type': 'image/jpeg'}, {'filename': 'document.pdf', 'url': '/static/attachments/document.pdf', 'content_type': 'application/pdf'}]

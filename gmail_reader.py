@@ -6,7 +6,7 @@ from email.utils import parsedate_to_datetime
 import re
 import logging
 import os
-from database import threads, email_received, get_email_accounts_with_secrets
+from database import threads, email_received, get_email_accounts_with_secrets, fs
 
 logger = logging.getLogger("gmail_reader")
 logger.setLevel(logging.INFO)
@@ -31,20 +31,25 @@ def _decode_mime_words(s):
     return out
 
 
-def _extract_plain_text(msg):
+def _extract_body(msg, content_type="text/plain"):
+    """
+    Extracts content of a specific type from the message.
+    """
     if msg.is_multipart():
-        # Iterate over parts, preferring text/plain
+        # Iterate over parts
         for part in msg.walk():
-            if part.get_content_type() == "text/plain":
+            if part.get_content_type() == content_type:
                 try:
                     return part.get_payload(decode=True).decode(errors="ignore")
                 except:
                     continue
-    # Fallback to single part
+    # Fallback to single part if matches
     try:
-        return msg.get_payload(decode=True).decode(errors="ignore")
+        if msg.get_content_type() == content_type:
+            return msg.get_payload(decode=True).decode(errors="ignore")
     except:
         return ""
+    return ""
 
 
 def _strip_quoted_text(body):
@@ -78,6 +83,40 @@ def _strip_quoted_text(body):
     return "\n".join(cleaned).strip()
 
 
+
+def _save_attachment(part, msg_id):
+    """
+    Saves an attachment part to GridFS and returns metadata.
+    """
+    filename = part.get_filename()
+    if not filename:
+        return None
+
+    filename = _decode_mime_words(filename)
+    
+    try:
+        content = part.get_payload(decode=True)
+        if not content:
+            return None
+
+        # Store in GridFS
+        file_id = fs.put(
+            content,
+            filename=filename,
+            content_type=part.get_content_type(),
+            metadata={"message_id": msg_id}
+        )
+            
+        return {
+            "filename": filename,
+            "url": f"/api/attachments/{file_id}",
+            "content_type": part.get_content_type(),
+            "file_id": str(file_id)
+        }
+    except Exception as e:
+        logger.error(f"Failed to save attachment {filename}: {e}")
+        return None
+
 def fetch_account_emails(account_config, criteria="UNSEEN"):
     """Fetch emails for a SINGLE account config."""
     results = []
@@ -94,8 +133,6 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
         mail.login(email_addr, password)
         
         # Determine folders to scan
-        # 1. INBOX
-        # 2. Sent Items (try common names)
         folders_to_scan = ["INBOX"]
         
         # Try to identify Sent folder
@@ -103,26 +140,19 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
         list_typ, list_data = mail.list()
         if list_typ == "OK":
             for f in list_data:
-                # Parse: (\Flags) "/" "FolderName"
-                # Regex to extract name (last quoted or unquoted part)
                 decoded = f.decode()
-                # Match: (flags) "delim" "name" OR (flags) "delim" name
                 match = re.search(r'\((?P<flags>.*?)\) "(?P<delim>.*?)" (?P<name>.*)', decoded)
                 if match:
                     name_raw = match.group("name")
-                    # Remove surrounding quotes if present
                     name = name_raw.strip('"')
                     
                     if "Sent" in name and "Trash" not in name:
-                         # Prefer [Gmail]/Sent Mail or Sent
                          if "Gmail" in name or name == "Sent":
                              sent_folder = name
         
         if sent_folder:
             folders_to_scan.append(sent_folder)
         else:
-             # Just add [Gmail]/Sent Mail if we couldn't find it dynamically, 
-             # but check if it already exists to avoid duplication
              if "[Gmail]/Sent Mail" not in folders_to_scan:
                  folders_to_scan.append("[Gmail]/Sent Mail")
 
@@ -136,7 +166,6 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
 
         for folder in folders_to_scan:
             try:
-                # Quote folder if it contains spaces and isn't already quoted
                 if " " in folder and not folder.startswith('"'):
                     folder_quoted = f'"{folder}"'
                 else:
@@ -163,10 +192,8 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
                         raw = msg_data[0][1]
                         msg = email.message_from_bytes(raw)
 
-                        # Extract Message-ID
                         msg_id = msg.get("Message-ID", "").strip()
 
-                        # Extract Date
                         email_date = None
                         try:
                             date_header = msg.get("Date")
@@ -175,26 +202,112 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
                         except Exception:
                             pass
 
-                        # 🛑 DEDUPLICATION CHECK
-                        if email_received.find_one({"message_id": msg_id}):
-                            continue
-
+                        # 🛑 DEDUPLICATION / UPDATE CHECK
+                        existing_doc = email_received.find_one({"message_id": msg_id})
+                        
+                        # Parse body & attachments FIRST to see if we have new info
                         subject = _decode_mime_words(msg.get("Subject", ""))
                         from_raw = _decode_mime_words(msg.get("From", ""))
                         to_raw = _decode_mime_words(msg.get("To", ""))
                         in_reply_to = msg.get("In-Reply-To", "").strip("<>")
 
-                        # Extract REAL email address
                         if "<" in from_raw:
                             from_email = from_raw.split("<")[-1].split(">")[0].strip().lower()
                         else:
                             from_email = from_raw.strip().lower()
 
+                        # BODY & ATTACHMENTS extraction
+                        body_parts = []
+                        html_parts = []
+                        attachments = []
+                        
+                        if msg.is_multipart():
+                            for part in msg.walk():
+                                content_type = part.get_content_type()
+                                content_disposition = str(part.get("Content-Disposition"))
+                                filename = part.get_filename()
+
+                                if filename:
+                                     filename = _decode_mime_words(filename) # Decode filename here too
+                                     is_attachment = "attachment" in content_disposition or "inline" in content_disposition
+                                     if not is_attachment and filename:
+                                         if content_type not in ["text/plain", "text/html"]:
+                                             is_attachment = True
+                                     
+                                     if is_attachment:
+                                        att = _save_attachment(part, msg_id)
+                                        if att:
+                                            # Capture Content-ID for inline images
+                                            cid = part.get("Content-ID")
+                                            if cid:
+                                                att["content_id"] = cid.strip()
+                                            attachments.append(att)
+                                
+                                if content_type == "text/plain" and "attachment" not in content_disposition:
+                                    try:
+                                        body_parts.append(part.get_payload(decode=True).decode(errors="ignore"))
+                                    except:
+                                        pass
+                                
+                                # Capture HTML if available
+                                if content_type == "text/html" and "attachment" not in content_disposition:
+                                     try:
+                                        html = part.get_payload(decode=True).decode(errors="ignore")
+                                        # Basic check to avoid empty html parts overriding
+                                        if html and len(html) > 10: 
+                                            html_parts.append(html)
+                                     except:
+                                         pass
+
+                        else:
+                            try:
+                                payload = msg.get_payload(decode=True).decode(errors="ignore")
+                                body_parts.append(payload)
+                                if msg.get_content_type() == "text/html":
+                                    html_parts.append(payload)
+                            except:
+                                pass
+                        
+                        full_body = "\n".join(body_parts)
+                        full_html = "".join(html_parts) if html_parts else None
+
+                        # Rewrite CID images in HTML
+                        if full_html and attachments:
+                            for att in attachments:
+                                cid = att.get("content_id")
+                                if cid and cid.startswith('<') and cid.endswith('>'):
+                                    cid = cid[1:-1] # strip angle brackets
+                                
+                                if cid:
+                                    # Replace cid:header_value with /api/attachments/file_id
+                                    # Regex to catch src="cid:..." ignoring quotes/spaces variations slightly
+                                    # Simple replacement for now
+                                    full_html = full_html.replace(f'cid:{cid}', att["url"])
+
+
+                        body_clean = _strip_quoted_text(full_body)
+
+                        # Logic: If existing doc, UPDATE it with attachments if missing
+                        if existing_doc:
+                            # Update DB if attachments found OR account_email missing OR html missing
+                            update_fields = {}
+                            if attachments:
+                                update_fields["attachments"] = attachments
+                            if "account_email" not in existing_doc:
+                                update_fields["account_email"] = email_addr
+                            if full_html and "html_content" not in existing_doc:
+                                update_fields["html_content"] = full_html
+                            
+                            if update_fields:
+                                email_received.update_one(
+                                    {"_id": existing_doc["_id"]},
+                                    {"$set": update_fields}
+                                )
+                                logger.info(f"Updated existing msg {msg_id} with {update_fields.keys()}")
+                            continue # Move to next email (don't re-insert)
+
                         logger.info(f"[{email_addr}/{folder}] Subj='{subject}', From='{from_email}'")
 
-                        # CLEAN BODY
-                        body_raw = _extract_plain_text(msg)
-                        body_clean = _strip_quoted_text(body_raw)
 
                         # Determine SENDER
                         is_admin = (from_email == email_addr.lower())
@@ -202,23 +315,15 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
 
                         # Determine VISITOR email
                         visitor = None
-
-                        # 1. Thread Map
                         if in_reply_to in thread_map:
                             visitor = thread_map[in_reply_to]
                         
-                        # 2. Subject Fallback (Re: Conversation with ...)
                         if not visitor:
-                            # Regex for "Conversation with <email>"
-                            # Matches "Re: Conversation with user@example.com"
                             match = re.search(r"Conversation with\s+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})", subject, re.IGNORECASE)
                             if match:
                                 visitor = match.group(1).lower()
 
-                        # 3. 'To' Header Fallback (If Admin sent it)
                         if not visitor and is_admin:
-                             # Admin sent it -> To field might be the visitor
-                             # But check if To is NOT the bot/self
                              if "<" in to_raw:
                                  to_email = to_raw.split("<")[-1].split(">")[0].strip().lower()
                              else:
@@ -227,7 +332,6 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
                              if to_email != email_addr.lower() and "support" not in to_email:
                                  visitor = to_email
 
-                        # 4. Fallback: Sender is visitor (only if NOT admin)
                         if not visitor and not is_admin and from_email:
                             visitor = from_email
 
@@ -240,7 +344,11 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
                             "body": body_clean.strip(),
                             "source": "imap",
                             "message_id": msg_id,
-                            "timestamp": email_date
+                            "timestamp": email_date,
+                            "timestamp": email_date,
+                            "attachments": attachments,
+                            "account_email": email_addr,
+                            "html_content": full_html
                         })
 
                         mail.store(num, "+FLAGS", "\\Seen")
@@ -280,3 +388,19 @@ def fetch_emails(criteria="UNSEEN"):
              all_results.extend(fetch_account_emails(env_acc, criteria))
 
     return all_results
+
+
+def test_credentials(email_addr, password, host="imap.gmail.com"):
+    """
+    Verifies if the provided credentials are valid for IMAP access.
+    Returns: (bool, str) -> (Success, Error Message)
+    """
+    try:
+        mail = imaplib.IMAP4_SSL(host)
+        mail.login(email_addr, password)
+        mail.logout()
+        return True, None
+    except imaplib.IMAP4.error as e:
+        return False, f"IMAP authentication failed: {e}"
+    except Exception as e:
+        return False, f"Connection failed: {str(e)}"

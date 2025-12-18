@@ -1,5 +1,6 @@
 # database.py
 from pymongo import MongoClient, ReturnDocument
+from gridfs import GridFS
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime
 import os
@@ -9,6 +10,7 @@ DB_NAME = os.environ.get("MONGO_DB", "mini_crisp_db")
 
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
+fs = GridFS(db)
 
 # -----------------------------
 # Collections

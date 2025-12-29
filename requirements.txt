@@ -3,3 +3,9 @@ uvicorn[standard]
 jinja2
 python-multipart
 pydantic
+passlib
+bcrypt==3.2.0
+python-jose
+
+pymongo
+requests

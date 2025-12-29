@@ -18,8 +18,10 @@
             --text-primary: #0f172a;
             --text-secondary: #6b7280;
             --chat-bg: rgba(255, 255, 255, 0.96);
-            --message-in-bg: rgba(255, 255, 255, 0.96);
-            --message-out-bg: linear-gradient(135deg, #10b981, #0ea5e9);
+            --message-in-bg: #f1f5f9;
+            /* Slightly darker than white for visibility */
+            --message-out-bg: linear-gradient(135deg, #0d9488, #0284c7);
+            /* Darker teal-to-blue for white text contrast */
             --message-out-text: #ffffff;
             --glass-border: rgba(255, 255, 255, 0.9);
             --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
@@ -41,6 +43,8 @@
             overflow: hidden;
             position: relative;
         }
+
+
 
         body::before,
         body::after {
@@ -68,7 +72,7 @@
 
         /* Sidebar */
         .sidebar {
-            width: 320px;
+            width: 380px;
             background: var(--sidebar-bg);
             border: 1px solid var(--glass-border);
             border-radius: 18px;
@@ -82,45 +86,73 @@
             z-index: 1;
         }
 
-        .sidebar-header {
-            padding: 18px 20px;
-            border-bottom: 1px solid var(--border-color);
-            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(224, 242, 254, 0.5));
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
 
-        }
-
-        .sidebar-title h2 {
-            margin: 0 0 4px 0;
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -0.02em;
-        }
-
-        .sidebar-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.86rem;
-        }
-
-        .sidebar-badge {
-            background: var(--accent-soft);
-            color: var(--accent);
-            border: 1px solid #bae6fd;
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        }
 
         .search-box {
             padding: 14px 16px 10px 16px;
             border-bottom: 1px solid var(--border-color);
             background: #fff;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            position: relative;
+        }
+
+        .search-options-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .search-options-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-primary);
+        }
+
+        .advanced-search-panel {
+            display: none;
+            position: absolute;
+            top: 55px;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .advanced-search-panel.open {
+            display: flex;
+        }
+
+        .panel-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .panel-row input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .panel-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 4px;
         }
 
         .search-box input {
@@ -384,6 +416,12 @@
             /* Slightly darker border for white-on-white/gradient contrast */
         }
 
+        .message.visitor a {
+            color: #0369a1;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
         .message.admin {
             align-self: flex-end;
             background: var(--message-out-bg);
@@ -393,8 +431,9 @@
 
         /* Fix link visibility in admin bubbles (White text on Blue bg) */
         .message.admin a {
-            color: #ffffff !important;
+            color: #bae6fd !important;
             text-decoration: underline;
+            font-weight: 600;
         }
 
         .message-time {
@@ -867,6 +906,24 @@
             " title="Fetch complete email history">
                 <span>❄️</span><span>Resync</span>
             </button>
+            <a href="/logout" style="text-decoration:none;">
+                <button style="
+                    background:rgba(255,255,255,0.95);
+                    color:#374151;
+                    border:none;
+                    padding:8px 14px;
+                    border-radius:999px;
+                    font-weight:700;
+                    cursor:pointer;
+                    box-shadow:0 10px 24px rgba(15,23,42,0.25);
+                    display:flex;
+                    align-items:center;
+                    gap:6px;
+                    transition: transform 0.1s;
+                ">
+                    <span>🚪</span><span>Logout</span>
+                </button>
+            </a>
         </div>
 
         <!-- decorative corner baubles -->
@@ -893,16 +950,55 @@
 
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-title">
-                    <h2>Inbox</h2>
-                    <div class="sidebar-subtitle">Live visitors & replies</div>
-                </div>
-                <div class="sidebar-badge">Now</div>
-            </div>
+
 
             <div class="search-box">
                 <input type="text" placeholder="Search conversations..." id="search-input">
+                <button class="search-options-btn" id="adv-search-toggle" title="Advanced Filters">
+                    ⋮
+                </button>
+
+                <!-- Advanced Panel -->
+                <div class="advanced-search-panel" id="adv-search-panel">
+                    <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary);">Date Filter</div>
+                    <div class="panel-row">
+                        <div>
+                            <label style="font-size:0.75rem; color:var(--text-secondary);">Start</label>
+                            <input type="date" id="filter-start-date">
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem; color:var(--text-secondary);">End</label>
+                            <input type="date" id="filter-end-date">
+                        </div>
+                    </div>
+
+                    <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary); margin-top:4px;">Filter By
+                    </div>
+                    <div class="panel-row" style="align-items:center;">
+                        <select id="filter-source"
+                            style="flex:1; padding:8px; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; background:white;">
+                            <option value="all">All Sources</option>
+                            <option value="chat">Website Chat</option>
+                            <option value="email">Email</option>
+                            <option value="imap">IMAP</option>
+                        </select>
+                    </div>
+                    <div class="panel-row" style="align-items:center;">
+                        <label
+                            style="display:flex; align-items:center; gap:8px; font-size:0.9rem; cursor:pointer; width:100%;">
+                            <input type="checkbox" id="filter-has-attachments"
+                                style="width:16px; height:16px; accent-color:var(--primary-color);">
+                            <span>Has Attachments</span>
+                        </label>
+                    </div>
+
+                    <div class="panel-actions">
+                        <button id="adv-clear-btn"
+                            style="padding:6px 12px; border:none; background:transparent; color:#64748b; font-size:0.85rem; cursor:pointer;">Clear</button>
+                        <button id="adv-apply-btn"
+                            style="padding:6px 12px; border:none; background:var(--primary-color); color:white; border-radius:6px; font-size:0.85rem; cursor:pointer;">Apply</button>
+                    </div>
+                </div>
             </div>
 
             <div class="sidebar-chips">
@@ -1196,6 +1292,10 @@
         let currentConversationEmail = null;
         let searchFilter = "";
         let statusFilter = "all";
+        let filterStartDate = null;
+        let filterEndDate = null;
+        let filterHasAttachments = false;
+        let filterSource = "all";
 
         // Search Navigation State
         let currentMatchIndex = 0;
@@ -1245,6 +1345,60 @@
             }, 300);
         });
 
+        // Advanced Search Logic
+        const advToggle = document.getElementById('adv-search-toggle');
+        const advPanel = document.getElementById('adv-search-panel');
+        const advApply = document.getElementById('adv-apply-btn');
+        const advClear = document.getElementById('adv-clear-btn');
+        const startDateInput = document.getElementById('filter-start-date');
+        const endDateInput = document.getElementById('filter-end-date');
+        const sourceInput = document.getElementById('filter-source');
+        const attachmentsInput = document.getElementById('filter-has-attachments');
+
+        advToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            advPanel.classList.toggle('open');
+        });
+
+        // Close panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!advPanel.contains(e.target) && !advToggle.contains(e.target)) {
+                advPanel.classList.remove('open');
+            }
+        });
+
+        advPanel.addEventListener('click', (e) => e.stopPropagation());
+
+        advApply.addEventListener('click', () => {
+            filterStartDate = startDateInput.value;
+            filterEndDate = endDateInput.value;
+            filterSource = sourceInput.value;
+            filterHasAttachments = attachmentsInput.checked;
+
+            fetchMessages(searchFilter);
+            advPanel.classList.remove('open');
+            const isActive = filterStartDate || filterEndDate || filterSource !== 'all' || filterHasAttachments;
+            advToggle.style.color = isActive ? 'var(--primary-color)' : '';
+            advToggle.style.background = isActive ? '#ecfdf5' : '';
+        });
+
+        advClear.addEventListener('click', () => {
+            startDateInput.value = '';
+            endDateInput.value = '';
+            sourceInput.value = 'all';
+            attachmentsInput.checked = false;
+
+            filterStartDate = null;
+            filterEndDate = null;
+            filterSource = 'all';
+            filterHasAttachments = false;
+
+            fetchMessages(searchFilter);
+            advPanel.classList.remove('open');
+            advToggle.style.color = '';
+            advToggle.style.background = '';
+        });
+
         // Textarea Auto-resize & Enter to Send
         replyInputEl.addEventListener('input', function () {
             this.style.height = 'auto';
@@ -1283,8 +1437,16 @@
         async function fetchMessages(query = null) {
             try {
                 let url = '/api/admin/messages';
-                if (query) {
-                    url += `?search=${encodeURIComponent(query)}`;
+
+                const params = new URLSearchParams();
+                if (query) params.append('search', query);
+                if (filterStartDate) params.append('start_date', filterStartDate);
+                if (filterEndDate) params.append('end_date', filterEndDate);
+                if (filterHasAttachments) params.append('has_attachments', 'true');
+                if (filterSource && filterSource !== 'all') params.append('source', filterSource);
+
+                if ([...params].length > 0) {
+                    url += `?${params.toString()}`;
                 }
 
                 // Add Account Filter

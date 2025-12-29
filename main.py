@@ -3,8 +3,12 @@ import threading
 import logging
 from pymongo.errors import DuplicateKeyError
 import time
-from datetime import datetime,timezone
-from database import mark_customer_read
+from datetime import datetime, timezone, timedelta # Added timedelta
+from database import mark_customer_read, create_user, get_user_by_email # Added auth helpers
+from passlib.context import CryptContext # Added
+from jose import jwt, JWTError # Added
+from fastapi.security import OAuth2PasswordBearer # Added
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException, BackgroundTasks, Response, Depends, status, Form # Added Form, Depends, status
 from fastapi import FastAPI, WebSocket, Request, BackgroundTasks, WebSocketDisconnect, Response
 from fastapi.responses import PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -32,6 +36,51 @@ logger.setLevel(logging.INFO)
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+# -----------------------------
+# Security / Auth Config
+# -----------------------------
+SECRET_KEY = "supersecretkey" # Change this in production!
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login") # Not strictly used with cookies but good for docs
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+def get_current_user(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        return None
+    try:
+        # Remove "Bearer " if present (though we set cookie directly)
+        if token.startswith("Bearer "):
+            token = token[7:]
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            return None
+    except JWTError:
+        return None
+    return email
+
+def login_required(request: Request):
+    user = get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_307_TEMPORARY_REDIRECT, headers={"Location": "/login"})
+    return user
 
 # -----------------------------
 # WebSocket connections
@@ -125,20 +174,93 @@ class AdminReply(BaseModel):
 # -----------------------------
 # Routes
 # -----------------------------
+# -----------------------------
+# Routes
+# -----------------------------
+
+# --- Auth Routes ---
+
+@app.get("/signup")
+async def get_signup(request: Request):
+    return templates.TemplateResponse("signup.html", {"request": request})
+
+@app.post("/signup")
+async def post_signup(request: Request, email: str = Form(...), password: str = Form(...), confirm_password: str = Form(...)):
+    if password != confirm_password:
+        return templates.TemplateResponse("signup.html", {"request": request, "error": "Passwords do not match"})
+    
+    existing_user = get_user_by_email(email)
+    if existing_user:
+        return templates.TemplateResponse("signup.html", {"request": request, "error": "Email already registered"})
+    
+    hashed_pw = get_password_hash(password)
+    create_user(email, hashed_pw)
+    
+    # Auto login or redirect
+    return Response(status_code=302, headers={"Location": "/login"})
+
+@app.get("/login")
+async def get_login(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.post("/login")
+async def post_login(request: Request, email: str = Form(...), password: str = Form(...)):
+    with open("debug_login.txt", "a") as f:
+        f.write(f"Login attempt for {email}\n")
+    
+    user = get_user_by_email(email)
+    
+    if user:
+        is_valid = verify_password(password, user["password_hash"])
+        with open("debug_login.txt", "a") as f:
+            f.write(f"User found: Yes, Password valid: {is_valid}\n")
+    else:
+        is_valid = False
+        with open("debug_login.txt", "a") as f:
+            f.write("User found: No\n")
+
+    if not user or not is_valid:
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
+    
+    access_token = create_access_token(data={"sub": user["email"]})
+    
+    with open("debug_login.txt", "a") as f:
+        f.write("Token created, redirecting...\n")
+        
+    response = Response(status_code=302, headers={"Location": "/admin"})
+    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
+    return response
+
+@app.get("/logout")
+async def logout(request: Request):
+    response = Response(status_code=302, headers={"Location": "/login"})
+    response.delete_cookie("access_token")
+    return response
+
+# --- App Routes ---
+
 @app.get("/")
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/admin")
-async def admin(request: Request):
-    return templates.TemplateResponse("admin.html", {"request": request})
+async def admin(request: Request, user: str = Depends(login_required)):
+    return templates.TemplateResponse("admin.html", {"request": request, "user": user})
 
 # -----------------------------
 # ✅ ADMIN INBOX (CUSTOMERS ONLY)
 # -----------------------------
 @app.get("/api/admin/messages")
-async def api_admin_messages(search: str | None = None, account: str | None = None):
+async def api_admin_messages(
+    user: str = Depends(login_required),
+    search: str | None = None, 
+    account: str | None = None, 
+    start_date: str | None = None, 
+    end_date: str | None = None, 
+    has_attachments: bool = False, 
+    source: str | None = None
+):
     conversations = {}
 
     # 1. Identify relevant customers if search is active
@@ -165,6 +287,34 @@ async def api_admin_messages(search: str | None = None, account: str | None = No
     query = {}
     if account:
         query["account_email"] = account.lower().strip()
+    
+    # Date Filtering
+    date_filter = {}
+    if start_date:
+        try:
+            # Assume YYYY-MM-DD from frontend
+            sd = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+            date_filter["$gte"] = sd
+        except ValueError:
+            pass
+    
+    if end_date:
+        try:
+            # End of the selected day
+            ed = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)
+            date_filter["$lte"] = ed
+        except ValueError:
+            pass
+
+    if date_filter:
+        query["timestamp"] = date_filter
+    
+    # New Filters
+    if has_attachments:
+        query["attachments"] = {"$exists": True, "$ne": []}
+    
+    if source and source != "all":
+        query["source"] = source.lower()
         
     cursor = email_received.find(query).sort("timestamp", -1)
 
@@ -191,7 +341,6 @@ async def api_admin_messages(search: str | None = None, account: str | None = No
                 "email": m["email"],
                 "last_message": m["content"],
                 "timestamp": m["timestamp"].isoformat(),
-                "unread": unread,
                 "unread": unread,
                 "attachments": m.get("attachments", []),
                 "html_content": m.get("html_content")

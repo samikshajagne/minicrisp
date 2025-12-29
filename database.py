@@ -154,3 +154,23 @@ def get_unread_count(tb1_id: int) -> int:
         query["timestamp"] = {"$gt": last_read}
 
     return email_received.count_documents(query)
+
+# -----------------------------
+# User/Auth Model (NEW)
+# -----------------------------
+users = db["users"]
+users.create_index("email", unique=True)
+
+def create_user(email: str, password_hash: str):
+    """Create a new admin user."""
+    users.insert_one({
+        "email": email.strip().lower(),
+        "password_hash": password_hash,
+        "created_at": datetime.utcnow()
+    })
+
+def get_user_by_email(email: str):
+    """Fetch user by email."""
+    if not email:
+        return None
+    return users.find_one({"email": email.strip().lower()})

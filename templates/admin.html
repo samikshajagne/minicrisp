@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mini Crisp Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Quill.js Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #10b981;
@@ -390,14 +392,19 @@
         }
 
         .message {
-            max-width: 72%;
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 0.95rem;
-            line-height: 1.55;
+            max-width: 80%;
+            /* Prevent full width */
+            width: fit-content;
+            /* Hug text */
+            padding: 3px 6px;
+            /* Absolute minimum */
+            border-radius: 6px;
+            font-size: 0.9rem;
+            line-height: 1.2;
+            /* READABLE */
             position: relative;
             word-wrap: break-word;
-            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
             white-space: pre-wrap;
         }
 
@@ -424,23 +431,41 @@
 
         .message.admin {
             align-self: flex-end;
-            background: var(--message-out-bg);
-            color: var(--message-out-text);
-            border-bottom-right-radius: 4px;
+            background: #ffffff;
+            color: var(--text-primary);
+            border-bottom-right-radius: 0px;
+
+            /* Gradient Border */
+            border: 2px solid transparent;
+            background-clip: padding-box, border-box;
+            background-origin: padding-box, border-box;
+            background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #0ea5e9, #10b981);
         }
 
-        /* Fix link visibility in admin bubbles (White text on Blue bg) */
+        /* Fix link visibility in admin bubbles (Blue text on White bg) */
+        /* Fix link visibility in admin bubbles (Blue text on White bg) */
         .message.admin a {
-            color: #bae6fd !important;
+            color: #0ea5e9 !important;
             text-decoration: underline;
             font-weight: 600;
         }
 
+        /* Reset margins for HTML content in admin bubbles */
+        .message.admin p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .message.admin div {
+            margin: 0;
+        }
+
         .message-time {
-            font-size: 0.72rem;
-            margin-top: 6px;
-            opacity: 0.82;
+            font-size: 0.7rem;
+            margin-top: 1px;
+            opacity: 0.7;
             text-align: right;
+            line-height: 1.2;
         }
 
         .input-area {
@@ -486,15 +511,62 @@
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            font-weight: 800;
+            font-weight: 600;
             font-size: 0.95rem;
-            transition: background 0.2s, transform 0.1s ease, box-shadow 0.2s;
-            box-shadow: 0 14px 28px rgba(16, 185, 129, 0.25);
+            box-shadow: 0 4px 12px rgba(91, 124, 250, 0.25);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
         }
 
         .input-area button:hover {
             background: var(--primary-hover);
             transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(91, 124, 250, 0.35);
+        }
+
+        .input-area button:active {
+            transform: translateY(0);
+        }
+
+        .composer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        /* Attachments UI */
+        .file-previews {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 16px 8px 16px;
+        }
+
+        .file-chip {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-primary);
+        }
+
+        .file-chip .remove-file {
+            cursor: pointer;
+            color: #94a3b8;
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .file-chip .remove-file:hover {
+            color: #ef4444;
         }
 
         .input-area button:disabled {
@@ -588,6 +660,82 @@
             transform: translateY(-1px);
             box-shadow: 0 8px 16px rgba(14, 165, 233, 0.2);
             border-color: #bae6fd;
+        }
+
+        /* Email Composer Layout Fixes */
+        .email-composer {
+            background: #fff;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .email-field {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            flex-shrink: 0;
+        }
+
+        .email-field-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-right: 8px;
+            width: 60px;
+        }
+
+        .email-field input {
+            border: none;
+            flex: 1;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .email-field-toggle {
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .cc-bcc-fields {
+            display: none;
+            background: #f8fafc;
+            flex-shrink: 0;
+        }
+
+        .cc-bcc-fields.visible {
+            display: block;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 120px;
+            /* Ensure it doesn't push buttons out */
+            max-height: 35vh;
+        }
+
+        #email-editor {
+            border: none;
+            font-size: 0.95rem;
+            font-family: inherit;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Quill Limit */
+        .ql-editor {
+            height: 100%;
+            max-height: 250px;
+            overflow-y: auto;
         }
 
         /* Scrollbars */
@@ -784,6 +932,157 @@
         .lightbox-close:hover {
             opacity: 1;
         }
+
+        /* Email Composer Styles */
+        .email-composer {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.85);
+            border-top: 1px solid var(--border-color);
+            padding: 0;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.04);
+        }
+
+        .email-field {
+            display: flex;
+            align-items: center;
+            padding: 10px 18px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 10px;
+        }
+
+        .email-field-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            min-width: 60px;
+        }
+
+        .email-field input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            background: #f9fafb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .email-field input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+            background: #fff;
+        }
+
+        .email-field-toggle {
+            font-size: 0.8rem;
+            color: var(--accent);
+            cursor: pointer;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .email-field-toggle:hover {
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        .cc-bcc-fields {
+            display: none;
+        }
+
+        .cc-bcc-fields.visible {
+            display: block;
+        }
+
+        .editor-container {
+            padding: 0;
+            min-height: 200px;
+        }
+
+        #email-editor {
+            min-height: 150px;
+            background: white;
+        }
+
+        .ql-toolbar.ql-snow {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            background: #f9fafb;
+            padding: 10px 18px;
+        }
+
+        .ql-container.ql-snow {
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .ql-editor {
+            min-height: 150px;
+            padding: 18px;
+        }
+
+        .ql-editor.ql-blank::before {
+            color: var(--text-secondary);
+            font-style: normal;
+        }
+
+        .composer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            background: rgba(248, 250, 252, 0.95);
+        }
+
+        .composer-actions button {
+            padding: 10px 24px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.95rem;
+            transition: background 0.2s, transform 0.1s ease, box-shadow 0.2s;
+            box-shadow: 0 14px 28px rgba(16, 185, 129, 0.25);
+        }
+
+        .composer-actions button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .composer-actions button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .message-subject {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            padding: 4px 8px;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .message-recipients {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-style: italic;
+        }
     </style>
 </head>
 
@@ -953,7 +1252,10 @@
 
 
             <div class="search-box">
-                <input type="text" placeholder="Search conversations..." id="search-input">
+                <!-- Trap for browser autofill -->
+                <input type="password" style="display:none;" tabindex="-1">
+                <input type="text" placeholder="Search conversations..." id="search-input" autocomplete="new-password"
+                    name="search_conversation_input_random">
                 <button class="search-options-btn" id="adv-search-toggle" title="Advanced Filters">
                     ⋮
                 </button>
@@ -1038,9 +1340,56 @@
                 <div class="empty-state">Select a conversation to start chatting</div>
             </div>
 
-            <div class="input-area" id="input-area" style="display:none;">
-                <textarea id="reply-input" placeholder="Type a reply... (Press Enter to send)" rows="1"></textarea>
-                <button id="send-reply">Send</button>
+            <!-- Compose Trigger Bar -->
+            <div id="reply-bar" class="input-area" style="display:none; justify-content: center; align-items:center;">
+                <button id="compose-btn"
+                    style="width: 100%; max-width: 300px; height: 42px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <span>💬</span> Compose Reply
+                </button>
+            </div>
+
+            <!-- EMAIL COMPOSER -->
+            <div class="email-composer" id="email-composer" style="display:none;">
+                <!-- Subject Line -->
+                <div class="email-field">
+                    <span class="email-field-label">Subject:</span>
+                    <input type="text" id="email-subject" placeholder="Email subject...">
+                    <span class="email-field-toggle" id="toggle-cc-bcc">+ CC/BCC</span>
+                </div>
+
+                <!-- CC/BCC Fields (Hidden by default) -->
+                <div class="cc-bcc-fields" id="cc-bcc-fields">
+                    <div class="email-field">
+                        <span class="email-field-label">CC:</span>
+                        <input type="text" id="email-cc" placeholder="Separate multiple emails with commas">
+                    </div>
+                    <div class="email-field">
+                        <span class="email-field-label">BCC:</span>
+                        <input type="text" id="email-bcc" placeholder="Separate multiple emails with commas">
+                    </div>
+                </div>
+
+                <!-- Rich Text Editor -->
+                <div class="editor-container">
+                    <div id="email-editor"></div>
+                </div>
+
+                <!-- File Previews -->
+                <div id="file-previews" class="file-previews"></div>
+                <input type="file" id="email-attachments" multiple style="display:none">
+
+                <!-- Actions -->
+                <div class="composer-actions">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <button id="attach-btn" class="icon-btn" title="Attach Files">📎</button>
+                        <button id="ai-btn" class="icon-btn" title="Generate with AI" onclick="handleAiGenerate()"
+                            style="background:#eff6ff; border-color:#bfdbfe; color:#2563eb;">✨</button>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                            <span id="char-count">0 characters</span>
+                        </div>
+                    </div>
+                    <button id="send-email-btn">📧 Send Email</button>
+                </div>
             </div>
         </div>
 
@@ -1306,12 +1655,18 @@
         const visitorListEl = document.getElementById('visitor-list');
         const messagesAreaEl = document.getElementById('messages-area');
         const chatHeaderEl = document.getElementById('chat-header');
-        const inputAreaEl = document.getElementById('input-area');
+        // REPLACED input-area with email-composer
+        const inputAreaEl = document.getElementById('email-composer');
         const headerNameEl = document.getElementById('header-name');
         const headerAvatarEl = document.getElementById('header-avatar');
         const searchInputEl = document.getElementById('search-input');
-        const replyInputEl = document.getElementById('reply-input');
-        const sendBtnEl = document.getElementById('send-reply');
+        // Aggressive autofill clearing
+        if (searchInputEl) {
+            searchInputEl.value = '';
+            setTimeout(() => { searchInputEl.value = ''; }, 100);
+            setTimeout(() => { searchInputEl.value = ''; }, 500);
+        }
+
         const filterChips = Array.from(document.querySelectorAll('[data-filter]'));
 
         // Initial Load
@@ -1399,21 +1754,7 @@
             advToggle.style.background = '';
         });
 
-        // Textarea Auto-resize & Enter to Send
-        replyInputEl.addEventListener('input', function () {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-            if (this.value === '') this.style.height = '46px';
-        });
 
-        replyInputEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        sendBtnEl.onclick = sendMessage;
         let socket = null;
 
         function connectWS(email) {
@@ -1601,7 +1942,14 @@
             // Ideally we should add data-email attribute to visitor-item
 
             chatHeaderEl.style.display = 'flex';
-            inputAreaEl.style.display = 'flex';
+
+            // Show Reply Bar, Hide Composer
+            document.getElementById('email-composer').style.display = 'none';
+            document.getElementById('reply-bar').style.display = 'flex';
+
+            // Initialize Editor if needed
+            initializeQuillEditor();
+
             headerNameEl.textContent = getVisitorName(email);
             headerAvatarEl.textContent = getInitials(email);
 
@@ -1646,22 +1994,27 @@
                 let contentHtml = '';
                 let isHtmlEmail = false;
 
-                if (m.html_content && m.sender === 'visitor') {
-                    // Render HTML for visitor emails
+                if (m.sender === 'visitor' && m.html_content) {
+                    // Render HTML for visitor emails in IFRAME (Security + Layout)
                     isHtmlEmail = true;
                     const uniqueId = `frame-${m.timestamp}`;
                     contentHtml = `
-                        <div class="iframe-wrapper" style="max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <div class="iframe-wrapper" style="max-height: 400px; overflow-y: auto; display:block;">
                              <iframe 
                                 id="${uniqueId}" 
                                 sandbox="allow-same-origin"
                                 scrolling="no" 
                                 style="width:100%; border:none; display: block; overflow: hidden;"
-                                srcdoc="${m.html_content.replace(/"/g, '&quot;')}"
-                                onload="this.style.height = (this.contentWindow.document.body.scrollHeight + 20) + 'px'; this.contentWindow.document.body.style.margin='0';"
+                                srcdoc="<style>body{margin:0;padding:2px;font-family:system-ui,-apple-system,sans-serif;font-size:13.5px;color:#0f172a;line-height:1.2;overflow:hidden}p{margin:0;padding:0}div{margin:0}</style>${m.html_content.replace(/"/g, '&quot;')}"
+                                onload="this.style.height = (this.contentWindow.document.body.scrollHeight) + 'px'; this.contentWindow.document.body.style.margin='0';"
                              ></iframe>
                         </div>
                      `;
+                } else if (m.sender === 'admin' && m.html_content) {
+                    // Render HTML for admin emails DIRECTLY (Auto-size bubble)
+                    // We trust our own sanitized/generated HTML
+                    isHtmlEmail = false;
+                    contentHtml = `<div class="email-content">${m.html_content}</div>`;
                 } else {
                     // LINKIFY + HIGHLIGHT Logic
                     // 1. Split text by URLs so we don't break <a> tags with highlighting or vice versa
@@ -1706,9 +2059,24 @@
                     attachmentsHtml += '</div>';
                 }
 
+                // Add email metadata if present (subject, CC, BCC)
+                let metadataHtml = '';
+                if (m.subject) {
+                    metadataHtml = `<div class="message-subject">📧 ${m.subject}</div>`;
+                }
+                let recipientsHtml = '';
+                if (m.cc && m.cc.length > 0) {
+                    recipientsHtml += `<div class="message-recipients">CC: ${m.cc.join(', ')}</div>`;
+                }
+                if (m.bcc && m.bcc.length > 0) {
+                    recipientsHtml += `<div class="message-recipients">BCC: ${m.bcc.join(', ')}</div>`;
+                }
+
                 div.innerHTML = `
+        ${metadataHtml}
         ${contentHtml}
         ${attachmentsHtml}
+        ${recipientsHtml}
         <div class="message-time">
             ${formatTime(m.timestamp)} ${m.sender === 'admin' ? (m.seen_at ? ' ✓✓' : ' ✓') : ''}
         </div>`;
@@ -1752,38 +2120,7 @@
             }
         }
 
-        async function sendMessage() {
-            const text = replyInputEl.value.trim();
-            if (!text || !currentConversationEmail) return;
 
-            // Optimistic UI update (optional, but good for perceived speed)
-            // waiting for server response is safer for consistency though.
-
-            replyInputEl.value = '';
-            replyInputEl.style.height = '46px'; // reset height
-
-            const payload = { text };
-            payload.visitor_email = currentConversationEmail;
-
-            if (currentSelectedAccount) {
-                payload.account_email = currentSelectedAccount;
-            }
-
-            await fetch('/api/reply', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            await fetchMessages(searchFilter); // Keep search active if any
-            // Force scroll to bottom after self message
-            // renderChat called by WS or here?
-            // Ideally wait for WS, but for now:
-            // renderChat(currentConversationEmail, searchFilter);
-            // Note: renderChat normally handles scrolling.
-            // If we just spoke, we probably want to see OUR message at the bottom, unless we are searching?
-            // If searching, we stick to search behavior.
-        }
 
     </script>
 
@@ -1815,6 +2152,265 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
         });
+    </script>
+
+    <!-- Quill.js Library -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <!-- Email Composer JavaScript -->
+    <script>
+        let quillEditor = null;
+        let selectedFiles = [];
+
+        // Initialize Quill Editor
+        function initializeQuillEditor() {
+            if (quillEditor) return; // Already initialized
+
+            quillEditor = new Quill('#email-editor', {
+                theme: 'snow',
+                placeholder: 'Type your message here...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // Character count
+            quillEditor.on('text-change', function () {
+                const text = quillEditor.getText();
+                const charCount = text.trim().length;
+                document.getElementById('char-count').textContent = `${charCount} characters`;
+            });
+        }
+
+        // CC/BCC Toggle
+        document.getElementById('toggle-cc-bcc').addEventListener('click', function () {
+            const ccBccFields = document.getElementById('cc-bcc-fields');
+            ccBccFields.classList.toggle('visible');
+            this.textContent = ccBccFields.classList.contains('visible') ? '- Hide CC/BCC' : '+ CC/BCC';
+        });
+
+        // Compose Trigger Logic
+        document.getElementById('compose-btn').addEventListener('click', () => {
+            document.getElementById('reply-bar').style.display = 'none';
+            document.getElementById('email-composer').style.display = 'flex';
+            if (quillEditor) quillEditor.focus();
+        });
+
+        // Attachment Logic
+        document.getElementById('attach-btn').addEventListener('click', () => {
+            document.getElementById('email-attachments').click();
+        });
+
+        document.getElementById('email-attachments').addEventListener('change', function (e) {
+            const newFiles = Array.from(e.target.files);
+            selectedFiles = [...selectedFiles, ...newFiles];
+            renderFilePreviews();
+            this.value = '';
+        });
+
+        // AI Generation Logic
+        async function handleAiGenerate() {
+            console.log("handleAiGenerate triggered");
+            const userInput = window.prompt("Describe the email you want to write (e.g. 'Enquiry about pricing'):");
+            console.log("User Input:", userInput);
+            if (!userInput) return;
+
+            const btn = document.getElementById('ai-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳';
+            btn.disabled = true;
+
+            try {
+                console.log("Fetching AI generation...");
+                const res = await fetch('/api/generate-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: userInput })
+                });
+                const data = await res.json();
+                console.log("AI Response Data:", data);
+
+                if (data.status === 'ok') {
+                    if (!quillEditor) {
+                        console.error("Quill Editor not initialized!");
+                        alert("Error: Editor not ready. Please try refreshing.");
+                        return;
+                    }
+                    quillEditor.root.innerHTML = data.content;
+                    console.log("Content inserted into Quill");
+                } else {
+                    alert("AI Error: " + data.message);
+                }
+            } catch (err) {
+                console.error("AI Fetch Error:", err);
+                alert("Network error: " + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        window.handleAiGenerate = handleAiGenerate;
+
+        function renderFilePreviews() {
+            const container = document.getElementById('file-previews');
+            container.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'file-chip';
+                chip.innerHTML = `
+            <span>${file.name}</span>
+            <span class="remove-file" onclick="removeFile(${index})">×</span>
+            `;
+                container.appendChild(chip);
+            });
+        }
+
+        window.removeFile = function (index) {
+            selectedFiles.splice(index, 1);
+            renderFilePreviews();
+        };
+
+        function processQuillHtml(html) {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+
+            // Handle Indents
+            for (let i = 1; i <= 8; i++) {
+                const indented = wrapper.querySelectorAll(`.ql-indent-${i}`);
+                indented.forEach(el => {
+                    el.style.paddingLeft = `${i * 3}em`;
+                    el.classList.remove(`ql-indent-${i}`);
+                });
+            }
+
+            // Handle Alignment
+            const alignments = ['center', 'right', 'justify'];
+            alignments.forEach(align => {
+                const aligned = wrapper.querySelectorAll(`.ql-align-${align}`);
+                aligned.forEach(el => {
+                    el.style.textAlign = align;
+                    el.classList.remove(`ql-align-${align}`);
+                });
+            });
+
+            // Handle Font Sizes
+            const sizes = ['small', 'large', 'huge'];
+            const sizeMap = { 'small': '0.75em', 'large': '1.5em', 'huge': '2.5em' };
+            sizes.forEach(size => {
+                const sized = wrapper.querySelectorAll(`.ql-size-${size}`);
+                sized.forEach(el => {
+                    el.style.fontSize = sizeMap[size];
+                    el.classList.remove(`ql-size-${size}`);
+                });
+            });
+
+            return wrapper.innerHTML;
+        }
+
+        // Send Email Function
+        document.getElementById('send-email-btn').addEventListener('click', async function () {
+            if (!currentConversationEmail) {
+                alert('No conversation selected');
+                return;
+            }
+
+            // Get editor content
+            // Get editor content
+            let rawHtml = quillEditor.root.innerHTML;
+
+            // Process HTML to inline styles for email clients
+            const htmlContent = `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">${processQuillHtml(rawHtml)}</div>`;
+            const plainText = quillEditor.getText().trim();
+
+            if (!plainText) {
+                alert('Please enter a message');
+                return;
+            }
+
+            // Get email metadata
+            const subject = document.getElementById('email-subject').value.trim();
+            const ccInput = document.getElementById('email-cc').value.trim();
+            const bccInput = document.getElementById('email-bcc').value.trim();
+
+            // Parse CC/BCC (comma-separated)
+            const cc = ccInput ? ccInput.split(',').map(e => e.trim()).filter(e => e) : null;
+            const bcc = bccInput ? bccInput.split(',').map(e => e.trim()).filter(e => e) : null;
+
+            // Prepare payload
+            // Prepare payload (FormData for file support)
+            const formData = new FormData();
+            formData.append('visitor_email', currentConversationEmail);
+            formData.append('text', plainText);
+            formData.append('html_content', htmlContent);
+            formData.append('subject', subject || `Re: Conversation with ${currentConversationEmail}`);
+
+            if (cc) formData.append('cc', JSON.stringify(cc));
+            if (bcc) formData.append('bcc', JSON.stringify(bcc));
+
+            if (currentSelectedAccount) {
+                formData.append('account_email', currentSelectedAccount);
+            }
+
+            // Append Files
+            selectedFiles.forEach(file => {
+                formData.append('files', file);
+            });
+
+            // Disable button during send
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = '📤 Sending...';
+
+            try {
+                const response = await fetch('/api/reply', {
+                    method: 'POST',
+                    body: formData // No Content-Type header when using FormData, browser sets it
+                });
+
+                if (response.ok) {
+                    // Clear editor
+                    quillEditor.setText('');
+                    document.getElementById('email-subject').value = '';
+                    document.getElementById('email-cc').value = '';
+                    document.getElementById('email-bcc').value = '';
+
+                    // Clear files
+                    selectedFiles = [];
+                    renderFilePreviews();
+
+                    // Hide CC/BCC if visible
+                    const ccBccFields = document.getElementById('cc-bcc-fields');
+                    if (ccBccFields.classList.contains('visible')) {
+                        ccBccFields.classList.remove('visible');
+                        document.getElementById('toggle-cc-bcc').textContent = '+ CC/BCC';
+                    }
+
+                    // Reset View -> Hide Composer, Show Bar
+                    document.getElementById('email-composer').style.display = 'none';
+                    document.getElementById('reply-bar').style.display = 'flex';
+
+                    // Refresh messages
+                    await fetchMessages(searchFilter);
+                } else {
+                    alert('Failed to send email. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error sending email:', error);
+                alert('Error sending email. Please check your connection.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📧 Send Email';
+            }
+        });
+
+
     </script>
 </body>
 

@@ -9,3 +9,6 @@ python-jose
 
 pymongo
 requests
+google-generativeai
+python-dotenv
+groq

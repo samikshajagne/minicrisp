@@ -1,0 +1,8 @@
+Sending request to /api/reply...
+Status Code: 200
+Response: {'status': 'ok'}
+Verifying email service call...
+SUCCESS: Attachments received in service!
+ - Filename: test.txt
+ - Content Type: text/plain
+ - Content Length: 19

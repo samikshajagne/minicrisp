@@ -2,6 +2,8 @@ import logging
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 from email.utils import make_msgid
 from datetime import datetime
 from database import ensure_customer, email_sent, threads, email_accounts
@@ -31,16 +33,38 @@ def _send_raw(
     in_reply_to: str | None = None,
     references: str | None = None,
     sender_email: str | None = None,
-    sender_password: str | None = None
+    sender_password: str | None = None,
+    html_body: str | None = None,
+    cc: list[str] | None = None,
+    bcc: list[str] | None = None,
+    attachments: list[dict] | None = None
 ) -> bool:
     try:
         from_email = sender_email or SENDER_EMAIL
         password = sender_password or SENDER_PASSWORD
         
-        msg = MIMEMultipart()
+        # Determine correct MIME type
+        if attachments:
+            msg = MIMEMultipart("mixed")
+            # If we have HTML, we need an alternative part for the body
+            body_part = MIMEMultipart("alternative")
+            msg.attach(body_part)
+        elif html_body:
+            msg = MIMEMultipart("alternative")
+            body_part = msg # The root IS the alternative part
+        else:
+            msg = MIMEMultipart()
+            body_part = msg
+
         msg["From"] = from_email
         msg["To"] = to_email
         msg["Subject"] = subject
+
+        # Add CC and BCC headers
+        if cc:
+            msg["Cc"] = ", ".join(cc)
+        if bcc:
+            msg["Bcc"] = ", ".join(bcc)
 
         if reply_to:
             msg["Reply-To"] = reply_to
@@ -51,15 +75,45 @@ def _send_raw(
         if references:
             msg["References"] = references
 
-        msg.attach(MIMEText(body, "plain"))
+        # Attach plain text version
+        body_part.attach(MIMEText(body, "plain"))
+        
+        # Attach HTML version if provided
+        if html_body:
+            body_part.attach(MIMEText(html_body, "html"))
+
+        # Process Attachments
+        if attachments:
+            for attachment in attachments:
+                try:
+                    filename = attachment.get("filename", "unknown")
+                    content = attachment.get("content") # bytes
+                    
+                    part = MIMEBase('application', 'octet-stream')
+                    part.set_payload(content)
+                    encoders.encode_base64(part)
+                    part.add_header(
+                        'Content-Disposition',
+                        f'attachment; filename="{filename}"'
+                    )
+                    msg.attach(part)
+                except Exception as e:
+                    logger.error(f"Failed to attach file {filename}: {e}")
+
+        # Prepare recipient list (to + cc + bcc)
+        recipients = [to_email]
+        if cc:
+            recipients.extend(cc)
+        if bcc:
+            recipients.extend(bcc)
 
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(from_email, password)
-        server.sendmail(from_email, to_email, msg.as_string())
+        server.sendmail(from_email, recipients, msg.as_string())
         server.quit()
 
-        logger.info(f"Email sent from {from_email} → {to_email} | subject={subject}")
+        logger.info(f"Email sent from {from_email} → {to_email} | subject={subject} | cc={cc} | bcc={bcc}")
         return True
     except Exception as e:
         logger.exception(f"Email send failed → {to_email}: {e}")
@@ -136,7 +190,16 @@ def send_admin_and_customer_notifications(visitor_email: str, text: str, visitor
 # -------------------------------------------------
 # ADMIN → CUSTOMER REPLY (SAME THREAD)
 # -------------------------------------------------
-def send_reply_from_admin_to_customer(visitor_email: str, text: str, account_email: str | None = None) -> bool:
+def send_reply_from_admin_to_customer(
+    visitor_email: str, 
+    text: str, 
+    account_email: str | None = None,
+    html_content: str | None = None,
+    subject: str | None = None,
+    cc: list[str] | None = None,
+    bcc: list[str] | None = None,
+    attachments: list[dict] | None = None
+) -> bool:
     visitor_email = (visitor_email or "").strip().lower()
     if not visitor_email:
         return False
@@ -155,8 +218,7 @@ def send_reply_from_admin_to_customer(visitor_email: str, text: str, account_ema
     # Fallback to Env if not found or not provided
     if not sender_email:
         sender_email = SENDER_EMAIL
-        sender_password = SENDER_PASSWORD # Will be used by default in _send_raw if None passed, but explicit is fine here
-
+        sender_password = SENDER_PASSWORD
 
     cust = ensure_customer(visitor_email)
     tb1_id = cust["tb1_id"]
@@ -166,19 +228,24 @@ def send_reply_from_admin_to_customer(visitor_email: str, text: str, account_ema
 
     cust_msgid = make_msgid(domain="mini-crisp")
 
-    subject = "Reply from support"
-    body = f"Support:\n\n{text}"
+    # Use custom subject or default
+    email_subject = subject or f"Re: Conversation with {visitor_email}"
+    body = text
 
     sent = _send_raw(
         to_email=visitor_email,
-        subject=subject,
+        subject=email_subject,
         body=body,
         msg_id=cust_msgid,
-        reply_to=sender_email, # Reply to the specific account
+        reply_to=sender_email,
         in_reply_to=admin_msgid,
         references=admin_msgid,
         sender_email=sender_email,
-        sender_password=sender_password
+        sender_password=sender_password,
+        html_body=html_content,
+        cc=cc,
+        bcc=bcc,
+        attachments=attachments
     )
 
     email_sent.insert_one({
@@ -186,7 +253,14 @@ def send_reply_from_admin_to_customer(visitor_email: str, text: str, account_ema
         "email": visitor_email,
         "content": text,
         "customer_msgid": cust_msgid,
-        "timestamp": datetime.utcnow()
+        "timestamp": datetime.utcnow(),
+        "subject": email_subject,
+        "html_content": html_content,
+        "cc": cc or [],
+        "bcc": bcc or [],
+        # For DB storage, we only store metadata here, effectively handled by main.py logic before calling this
+        # But we can store a trace if needed. The actual file storage logic is usually upstream.
+        "has_attachments": bool(attachments)
     })
 
     return sent

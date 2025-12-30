@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 import asyncio
 import threading
 import logging
@@ -8,7 +12,17 @@ from database import mark_customer_read, create_user, get_user_by_email # Added 
 from passlib.context import CryptContext # Added
 from jose import jwt, JWTError # Added
 from fastapi.security import OAuth2PasswordBearer # Added
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException, BackgroundTasks, Response, Depends, status, Form # Added Form, Depends, status
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException, BackgroundTasks, Response, Depends, status, Form, UploadFile, File
+import json # Added Form, Depends, status
+import os
+try:
+    from groq import Groq
+except ImportError:
+    Groq = None
+try:
+    import google.generativeai as genai
+except ImportError:
+    genai = None
 from fastapi import FastAPI, WebSocket, Request, BackgroundTasks, WebSocketDisconnect, Response
 from fastapi.responses import PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -40,7 +54,7 @@ templates = Jinja2Templates(directory="templates")
 # -----------------------------
 # Security / Auth Config
 # -----------------------------
-SECRET_KEY = "supersecretkey" # Change this in production!
+SECRET_KEY = os.environ.get("SECRET_KEY", "supersecretkey") # Change this in production!
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
 
@@ -107,7 +121,7 @@ async def broadcast(email, guest_id, payload):
 # -----------------------------
 
 
-def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", message_id=None, timestamp=None, attachments=None, account_email=None, html_content=None):
+def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", message_id=None, timestamp=None, attachments=None, account_email=None, html_content=None, subject=None, cc=None, bcc=None):
     if not visitor_email:
         return
 
@@ -130,7 +144,10 @@ def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", me
         "seen_at": None,
         "attachments": attachments or [],
         "account_email": account_email,
-        "html_content": html_content
+        "html_content": html_content,
+        "subject": subject,
+        "cc": cc or [],
+        "bcc": bcc or []
     }
     if message_id:
         doc["message_id"] = message_id
@@ -170,6 +187,10 @@ class AdminReply(BaseModel):
     text: str
     visitor_email: str
     account_email: str | None = None
+    subject: str | None = None
+    html_content: str | None = None
+    cc: list[str] | None = None
+    bcc: list[str] | None = None
 
 # -----------------------------
 # Routes
@@ -519,10 +540,93 @@ async def api_message(msg: Message):
 # Admin replies
 # -----------------------------
 @app.post("/api/reply")
-async def api_reply(reply: AdminReply):
-    insert_message("admin", reply.text, reply.visitor_email, account_email=reply.account_email)
-    send_reply_from_admin_to_customer(reply.visitor_email, reply.text, account_email=reply.account_email)
-    return {"status": "ok"}
+async def api_reply(
+    visitor_email: str = Form(...),
+    text: str = Form(...),
+    account_email: str | None = Form(None),
+    subject: str | None = Form(None),
+    html_content: str | None = Form(None),
+    cc: str | None = Form(None),
+    bcc: str | None = Form(None),
+    files: list[UploadFile] = File(None)
+):
+    try:
+        # Parse CC/BCC if they come as JSON strings or plain text
+        cc_list = []
+        if cc:
+            try:
+                parsed = json.loads(cc)
+                if isinstance(parsed, list):
+                    cc_list = parsed
+                else:
+                    cc_list = [str(parsed)]
+            except json.JSONDecodeError:
+                cc_list = [e.strip() for e in cc.split(",") if e.strip()]
+
+        bcc_list = []
+        if bcc:
+            try:
+                parsed = json.loads(bcc)
+                if isinstance(parsed, list):
+                    bcc_list = parsed
+                else:
+                    bcc_list = [str(parsed)]
+            except json.JSONDecodeError:
+                bcc_list = [e.strip() for e in bcc.split(",") if e.strip()]
+
+        # Process Attachments
+        attachments_for_email = []
+        attachments_metadata = []
+
+        if files:
+            for file in files:
+                content = await file.read()
+                # 1. Save to GridFS
+                file_id = fs.put(content, filename=file.filename, content_type=file.content_type)
+                
+                # 2. Metadata for DB
+                attachments_metadata.append({
+                    "id": str(file_id),
+                    "url": f"/api/attachments/{file_id}",
+                    "filename": file.filename,
+                    "content_type": file.content_type,
+                    "size": len(content)
+                })
+
+                # 3. Data for Email Service
+                attachments_for_email.append({
+                    "filename": file.filename,
+                    "content": content,
+                    "content_type": file.content_type
+                })
+
+        insert_message(
+            "admin", 
+            text, 
+            visitor_email, 
+            account_email=account_email,
+            html_content=html_content,
+            subject=subject,
+            cc=cc_list,
+            bcc=bcc_list,
+            attachments=attachments_metadata
+        )
+        
+        send_reply_from_admin_to_customer(
+            visitor_email, 
+            text, 
+            account_email=account_email,
+            html_content=html_content,
+            subject=subject,
+            cc=cc_list,
+            bcc=bcc_list,
+            attachments=attachments_for_email
+        )
+        return {"status": "ok"}
+    except Exception as e:
+        logger.exception(f"API Reply Error: {e}")
+        # Return 500 with detail so frontend can see it (optional, but good for us)
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/seen")
 async def mark_seen(payload: dict):
@@ -561,6 +665,43 @@ async def websocket_handler(
         pass
     finally:
         CONNECTIONS[key].discard(ws)
+
+# -----------------------------
+# AI Email Generation
+# -----------------------------
+@app.post("/api/generate-email")
+async def generate_email(request: Request):
+    try:
+        data = await request.json()
+        prompt_text = data.get("prompt")
+        if not prompt_text:
+            raise HTTPException(status_code=400, detail="Prompt required")
+
+        api_key = os.environ.get("GROQ_API_KEY")
+        if not api_key:
+             return {"status": "error", "message": "GROQ_API_KEY missing. Please set it in .env"}
+        
+        if not Groq:
+             return {"status": "error", "message": "groq library not installed."}
+
+        client = Groq(api_key=api_key)
+        
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": "You are a professional email assistant. Return ONLY the HTML body of the email (using p, br, ul tags). No <html> or <body> tags. No subject line. Just the body."},
+                {"role": "user", "content": prompt_text}
+            ],
+            temperature=0.7,
+            max_tokens=1024,
+            stream=False,
+        )
+        
+        content = completion.choices[0].message.content
+        return {"status": "ok", "content": content}
+    except Exception as e:
+        logger.error(f"Groq Generation Error: {e}")
+        return {"status": "error", "message": str(e)}
 
 # -----------------------------
 # Gmail sync (SAFE)

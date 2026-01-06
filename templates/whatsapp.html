@@ -1,0 +1,2929 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Crisp Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Quill.js Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #10b981;
+            --primary-hover: #059669;
+            --accent: #0ea5e9;
+            --accent-soft: #e0f2fe;
+            --bg-color: radial-gradient(circle at top, #ecfdf5 0%, #ffffff 40%, #f0f9ff 100%);
+            --sidebar-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #e4e4e7;
+            --text-primary: #0f172a;
+            --text-secondary: #6b7280;
+            --chat-bg: rgba(255, 255, 255, 0.96);
+            --message-in-bg: #f1f5f9;
+            /* Slightly darker than white for visibility */
+            --message-out-bg: linear-gradient(135deg, #0d9488, #0284c7);
+            /* Darker teal-to-blue for white text contrast */
+            --message-out-text: #ffffff;
+            --glass-border: rgba(255, 255, 255, 0.9);
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+        }
+
+
+
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.55;
+        }
+
+        body::before {
+            background: #a7f3d0;
+            top: -120px;
+            left: -60px;
+        }
+
+        body::after {
+            background: #bae6fd;
+            bottom: -140px;
+            right: -40px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 380px;
+            background: var(--sidebar-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            position: relative;
+            z-index: 1;
+        }
+
+
+
+        .search-box {
+            padding: 14px 16px 10px 16px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fff;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            position: relative;
+        }
+
+        .search-options-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .search-options-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-primary);
+        }
+
+        .advanced-search-panel {
+            display: none;
+            position: absolute;
+            top: 55px;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .advanced-search-panel.open {
+            display: flex;
+        }
+
+        .panel-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .panel-row input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .panel-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            outline: none;
+            box-sizing: border-box;
+            background-color: #f9fafb;
+            transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(91, 124, 250, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .sidebar-chips {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fff;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            padding: 7px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            background: #f8fafc;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .chip.active {
+            background: #e0f2fe;
+            color: #0369a1;
+            border-color: #bae6fd;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .visitor-list {
+            flex: 1;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .visitor-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.08s ease, border-left 0.2s;
+        }
+
+        .visitor-item:hover {
+            background: #f9fafb;
+            transform: translateX(3px);
+        }
+
+        .visitor-item.active {
+            background: #eef2ff;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .visitor-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0f2fe, #ccfbf1);
+            color: #1d347f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 10px 18px rgba(14, 165, 233, 0.2);
+        }
+
+        .visitor-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .visitor-name {
+            font-weight: 800;
+            font-size: 0.96rem;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: -0.01em;
+        }
+
+        .visitor-preview {
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .unread-badge {
+            background: #a10f0f;
+            color: #fff;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Main Chat Area */
+        .main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--chat-bg);
+            min-width: 0;
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            margin-left: 18px;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-chat::before {
+            content: '';
+            position: absolute;
+            inset: 18px;
+            border-radius: 18px;
+            background: radial-gradient(circle at 20% 20%, rgba(224, 242, 254, 0.9), transparent 40%),
+                radial-gradient(circle at 80% 10%, rgba(209, 250, 229, 0.6), transparent 35%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .chat-header {
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #103815b2, #12380d83);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            z-index: 2;
+            color: #fff;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-header-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #e0f2fe;
+            color: #093f1b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-right: 8px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 10px 18px rgba(14, 165, 233, 0.2);
+        }
+
+        .chat-header-name {
+            font-weight: 900;
+            font-size: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .chat-header-status {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 2px;
+        }
+
+        .chat-header-status::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            margin-right: 6px;
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.2);
+            vertical-align: middle;
+        }
+
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: radial-gradient(circle at 10% 20%, rgba(224, 242, 254, 0.8), transparent 26%),
+                radial-gradient(circle at 90% 10%, rgba(209, 250, 229, 0.8), transparent 32%), #ffffff;
+            z-index: 1;
+        }
+
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            background: #f8fafc;
+            border: 1px dashed var(--border-color);
+            border-radius: 16px;
+        }
+
+        .message {
+            max-width: 80%;
+            /* Prevent full width */
+            width: fit-content;
+            /* Hug text */
+            padding: 3px 6px;
+            /* Absolute minimum */
+            border-radius: 6px;
+            font-size: 0.9rem;
+            line-height: 1.2;
+            /* READABLE */
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+            white-space: pre-wrap;
+        }
+
+        /* Wider messages for HTML emails */
+        .message.has-iframe {
+            max-width: 60%;
+            width: 60%;
+        }
+
+        .message.visitor {
+            align-self: flex-start;
+            background: var(--message-in-bg);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+            border: 1px solid #cbd5e1;
+            /* Slightly darker border for white-on-white/gradient contrast */
+        }
+
+        .message.visitor a {
+            color: #0369a1;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .message.admin {
+            align-self: flex-end;
+            background: #ffffff;
+            color: var(--text-primary);
+            border-bottom-right-radius: 0px;
+
+            /* Gradient Border */
+            border: 2px solid transparent;
+            background-clip: padding-box, border-box;
+            background-origin: padding-box, border-box;
+            background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #0ea5e9, #10b981);
+        }
+
+        /* WhatsApp specific styles */
+        .message.whatsapp.visitor {
+            border-left: 4px solid #25d366;
+        }
+
+        .message.whatsapp.admin {
+            background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #25d366, #128c7e);
+        }
+
+        /* Fix link visibility in admin bubbles (Blue text on White bg) */
+        /* Fix link visibility in admin bubbles (Blue text on White bg) */
+        .message.admin a {
+            color: #0ea5e9 !important;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        /* Reset margins for HTML content in admin bubbles */
+        .message.admin p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .message.admin div {
+            margin: 0;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            margin-top: 1px;
+            opacity: 0.7;
+            text-align: right;
+            line-height: 1.2;
+        }
+
+        .input-area {
+            padding: 18px 22px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.04);
+            backdrop-filter: blur(12px);
+        }
+
+        .input-area textarea {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            resize: none;
+            height: 46px;
+            /* Initial height */
+            min-height: 46px;
+            max-height: 120px;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s ease;
+            background: #f9fafb;
+        }
+
+        .input-area textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(91, 124, 250, 0.18);
+            background: #fff;
+            transform: translateY(-1px);
+        }
+
+        .input-area button {
+            padding: 0 24px;
+            height: 46px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(91, 124, 250, 0.25);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .input-area button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(91, 124, 250, 0.35);
+        }
+
+        .input-area button:active {
+            transform: translateY(0);
+        }
+
+        .composer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        /* Attachments UI */
+        .file-previews {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 16px 8px 16px;
+        }
+
+        .file-chip {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-primary);
+        }
+
+        .file-chip .remove-file {
+            cursor: pointer;
+            color: #94a3b8;
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .file-chip .remove-file:hover {
+            color: #ef4444;
+        }
+
+        .input-area button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Chat toolbar */
+        .chat-tools {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(248, 250, 252, 0.95);
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+
+        .chat-tools .stack {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-input {
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: white;
+            min-width: 150px;
+            transition: box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(91, 124, 250, 0.18);
+        }
+
+        .pill-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 10px;
+            background: #dcfce7;
+            color: #166534;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.15s ease;
+        }
+
+        .pill-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(91, 124, 250, 0.16);
+        }
+
+        .ghost-compact {
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #f0f9ff;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .ghost-compact:hover {
+            background: #f1f5f9;
+            border-color: #dfe3eb;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #f0f9ff;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            color: var(--accent);
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(14, 165, 233, 0.2);
+            border-color: #bae6fd;
+        }
+
+        /* Email Composer Layout Fixes */
+        .email-composer {
+            background: #fff;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .email-field {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            flex-shrink: 0;
+        }
+
+        .email-field-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-right: 8px;
+            width: 60px;
+        }
+
+        .email-field input {
+            border: none;
+            flex: 1;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .email-field-toggle {
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .cc-bcc-fields {
+            display: none;
+            background: #f8fafc;
+            flex-shrink: 0;
+        }
+
+        .cc-bcc-fields.visible {
+            display: block;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 120px;
+            /* Ensure it doesn't push buttons out */
+            max-height: 35vh;
+        }
+
+        #email-editor {
+            border: none;
+            font-size: 0.95rem;
+            font-family: inherit;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Quill Limit */
+        .ql-editor {
+            height: 100%;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        /* Scrollbars */
+        .visitor-list::-webkit-scrollbar,
+        .messages-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .visitor-list::-webkit-scrollbar-thumb,
+        .messages-area::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+
+        .visitor-list::-webkit-scrollbar-thumb:hover,
+        .messages-area::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        @media (max-width: 960px) {
+            body {
+                padding: 14px;
+            }
+
+            .sidebar {
+                width: 260px;
+            }
+
+            .main-chat {
+                margin-left: 12px;
+            }
+        }
+
+        @media (max-width: 780px) {
+            body {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sidebar,
+            .main-chat {
+                width: 100%;
+                margin: 0 0 12px 0;
+            }
+        }
+
+        /* SEARCH HIGHLIGHTING & NAV */
+        .highlight {
+            background-color: #fef08a;
+            /* Yellow-200 */
+            color: #854d0e;
+            font-weight: bold;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+
+        .highlight.active-match {
+            background-color: #facc15;
+            /* Yellow-400 */
+            box-shadow: 0 0 0 2px #ca8a04;
+        }
+
+        .search-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-right: 12px;
+            font-size: 0.9rem;
+            color: white;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .search-nav button {
+            background: #fff;
+            border: none;
+            color: var(--primary-color);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .search-nav button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Attachments */
+        .attachments-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .attachment-card {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            max-width: 140px;
+        }
+
+        .attachment-card:hover {
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .att-preview-img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #e2e8f0;
+        }
+
+        .att-file-icon {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border-radius: 6px;
+            font-size: 2rem;
+            color: #64748b;
+        }
+
+        .att-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .lightbox.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .lightbox.open .lightbox-content {
+            transform: scale(1);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 3rem;
+            cursor: pointer;
+            line-height: 1;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .lightbox-close:hover {
+            opacity: 1;
+        }
+
+        /* Email Composer Styles */
+        .email-composer {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.85);
+            border-top: 1px solid var(--border-color);
+            padding: 0;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.04);
+        }
+
+        .email-field {
+            display: flex;
+            align-items: center;
+            padding: 10px 18px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 10px;
+        }
+
+        .email-field-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            min-width: 60px;
+        }
+
+        .email-field input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            background: #f9fafb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .email-field input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+            background: #fff;
+        }
+
+        .email-field-toggle {
+            font-size: 0.8rem;
+            color: var(--accent);
+            cursor: pointer;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .email-field-toggle:hover {
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        .cc-bcc-fields {
+            display: none;
+        }
+
+        .cc-bcc-fields.visible {
+            display: block;
+        }
+
+        .editor-container {
+            padding: 0;
+            min-height: 200px;
+        }
+
+        #email-editor {
+            min-height: 150px;
+            background: white;
+        }
+
+        .ql-toolbar.ql-snow {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            background: #f9fafb;
+            padding: 10px 18px;
+        }
+
+        .ql-container.ql-snow {
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .ql-editor {
+            min-height: 150px;
+            padding: 18px;
+        }
+
+        .ql-editor.ql-blank::before {
+            color: var(--text-secondary);
+            font-style: normal;
+        }
+
+        .composer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            background: rgba(248, 250, 252, 0.95);
+        }
+
+        .composer-actions button {
+            padding: 10px 24px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.95rem;
+            transition: background 0.2s, transform 0.1s ease, box-shadow 0.2s;
+            box-shadow: 0 14px 28px rgba(16, 185, 129, 0.25);
+        }
+
+        .composer-actions button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .composer-actions button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .message-subject {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            padding: 4px 8px;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .message-recipients {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* AI Assistant Box */
+        #ai-assistant-box {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 380px;
+            height: 500px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        #ai-assistant-box.open {
+            display: flex;
+        }
+
+        .ai-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #0ea5e9, #10b981);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        .ai-message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .ai-message.user {
+            align-self: flex-end;
+            background: var(--primary-color);
+            color: #fff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .ai-message.bot {
+            align-self: flex-start;
+            background: #fff;
+            color: var(--text-primary);
+            border-bottom-left-radius: 2px;
+            border: 1px solid var(--border-color);
+        }
+
+        .ai-input-area {
+            padding: 12px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .voice-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: #f8fafc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .voice-btn.recording {
+            color: #ef4444;
+            background: #fef2f2;
+            border-color: #fca5a5;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- TOP NAVBAR -->
+    <div id="top-navbar" style="
+    position:relative;
+    height:72px;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    background:linear-gradient(135deg, #10b981, #0ea5e9);
+    border-radius:18px;
+    box-shadow:0 18px 40px rgba(16, 185, 129, 0.25);
+    margin-bottom:18px;
+    overflow:hidden;
+    color:#fff;
+    ">
+        <!-- subtle snow overlay -->
+        <div style="
+            position:absolute;
+            inset:0;
+            pointer-events:none;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(255,255,255,0.4) 0, transparent 45%),
+                radial-gradient(circle at 80% 10%, rgba(255,255,255,0.5) 0, transparent 50%),
+                radial-gradient(circle at 30% 80%, rgba(255,255,255,0.25) 0, transparent 45%);
+            opacity:0.85;
+        "></div>
+
+        <!-- left: logo + title -->
+        <div style="display:flex;align-items:center;gap:10px;position:relative;z-index:1;">
+
+            <div style="
+        width:38px;
+        height:38px;
+        border-radius:12px;
+        background:rgba(248,250,252,0.95);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        box-shadow:0 10px 24px rgba(15,23,42,0.25);
+        overflow:hidden;
+    ">
+                <img src="static/img/logo.png" alt="Logo" style="
+                width:40px;
+                height:40px;
+                object-fit:contain;
+                display:block;
+            ">
+            </div>
+
+            <div>
+                <div style="font-weight:900;font-size:1.1rem;letter-spacing:-0.02em;">
+                    SCPL
+                </div>
+                <div style="font-size:0.8rem;opacity:0.9;">
+                    WhatsApp Inbox
+                </div>
+            </div>
+
+        </div>
+
+        <!-- center: accounts -->
+        <div id="account-bar" style="display:flex;gap:8px;align-items:center;position:relative;z-index:1;">
+            <select id="account-selector" style="
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                padding: 8px 16px;
+                border-radius: 999px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.9rem;
+                appearance: none;
+                -webkit-appearance: none; /* Remove default arrow */
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: background 0.2s;
+                text-align: center;
+            ">
+                <option value="" disabled selected>Select Account</option>
+            </select>
+            <!-- Custom Arrow for style -->
+            <span
+                style="position: absolute; right: 14px; top: 12px; pointer-events: none; opacity: 0.8; font-size: 0.8rem;">▼</span>
+        </div>
+        <button id="delete-account-btn" title="Delete current WhatsApp account" style="
+            background: rgba(220, 38, 38, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        " onmouseover="this.style.background='rgba(220, 38, 38, 0.3)'"
+            onmouseout="this.style.background='rgba(220, 38, 38, 0.2)'">
+            🗑️
+        </button>
+
+        <!-- right: actions -->
+        <div style="display:flex;align-items:center;gap:8px;position:relative;z-index:1;">
+            <button id="add-account-btn" style="
+                background:#fef2f2;
+                color:#b91c1c;
+                border:none;
+                padding:8px 14px;
+                border-radius:999px;
+                font-weight:700;
+                cursor:pointer;
+                box-shadow:0 10px 24px rgba(15,23,42,0.25);
+                display:flex;
+                align-items:center;
+                gap:6px;
+            ">
+                <span>➕</span><span>Add Account</span>
+            </button>
+            <button id="ai-assistant-btn" style="
+                background:#eff6ff;
+                color:#1d4ed8;
+                border:none;
+                padding:8px 14px;
+                border-radius:999px;
+                font-weight:700;
+                cursor:pointer;
+                box-shadow:0 10px 24px rgba(15,23,42,0.25);
+                display:flex;
+                align-items:center;
+                gap:6px;
+            ">
+                <span>🤖</span><span>AI Assistant</span>
+            </button>
+            <a href="/admin" style="text-decoration:none;">
+                <button style="
+                    background:rgba(59, 130, 246, 0.15);
+                    color:#1e40af;
+                    border:1px solid rgba(59, 130, 246, 0.4);
+                    padding:8px 14px;
+                    border-radius:999px;
+                    font-weight:700;
+                    cursor:pointer;
+                    box-shadow:0 10px 24px rgba(15,23,42,0.15);
+                    display:flex;
+                    align-items:center;
+                    gap:6px;
+                ">
+                    <span>📧</span><span>Email Inbox</span>
+                </button>
+            </a>
+            <a href="/logout" style="text-decoration:none;">
+                <button style="
+                    background:rgba(255,255,255,0.95);
+                    color:#374151;
+                    border:none;
+                    padding:8px 14px;
+                    border-radius:999px;
+                    font-weight:700;
+                    cursor:pointer;
+                    box-shadow:0 10px 24px rgba(15,23,42,0.25);
+                    display:flex;
+                    align-items:center;
+                    gap:6px;
+                    transition: transform 0.1s;
+                ">
+                    <span>🚪</span><span>Logout</span>
+                </button>
+            </a>
+        </div>
+
+        <!-- decorative corner baubles -->
+        <div style="
+            position:absolute;
+            right:-40px;
+            top:-30px;
+            font-size:3rem;
+            opacity:0.3;
+            pointer-events:none;
+        ">✨</div>
+        <div style="
+            position:absolute;
+            left:-24px;
+            bottom:-20px;
+            font-size:2.4rem;
+            opacity:0.35;
+            pointer-events:none;
+        ">🎁</div>
+    </div>
+
+    <!-- MAIN LAYOUT ROW -->
+    <div id="main-interface" style="display:flex; flex:1; overflow:hidden;">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); background: #fff;">
+                <button id="new-chat-btn" style="
+                    width:100%; 
+                    padding:10px; 
+                    border:none; 
+                    background:var(--primary-color); 
+                    color:white; 
+                    border-radius:10px; 
+                    font-weight:700; 
+                    cursor:pointer; 
+                    display:flex; 
+                    align-items:center; 
+                    justify-content:center; 
+                    gap:8px;
+                    transition: all 0.2s;
+                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+                " onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(16, 185, 129, 0.3)';"
+                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.2)';">
+                    <span>💬</span> New WhatsApp Chat
+                </button>
+            </div>
+
+
+            <div class="search-box">
+                <!-- Trap for browser autofill -->
+                <input type="password" style="display:none;" tabindex="-1">
+                <input type="text" placeholder="Search conversations..." id="search-input" autocomplete="new-password"
+                    name="search_conversation_input_random">
+                <button class="search-options-btn" id="adv-search-toggle" title="Advanced Filters">
+                    ⋮
+                </button>
+
+                <!-- Advanced Panel -->
+                <div class="advanced-search-panel" id="adv-search-panel">
+                    <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary);">Date Filter</div>
+                    <div class="panel-row">
+                        <div>
+                            <label style="font-size:0.75rem; color:var(--text-secondary);">Start</label>
+                            <input type="date" id="filter-start-date">
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem; color:var(--text-secondary);">End</label>
+                            <input type="date" id="filter-end-date">
+                        </div>
+                    </div>
+
+                    <div class="panel-row" style="display:none; align-items:center;">
+                        <select id="filter-source"
+                            style="flex:1; padding:8px; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; background:white;">
+                            <option value="whatsapp" selected>WhatsApp</option>
+                        </select>
+                    </div>
+                    <div class="panel-row" style="align-items:center;">
+                        <label
+                            style="display:flex; align-items:center; gap:8px; font-size:0.9rem; cursor:pointer; width:100%;">
+                            <input type="checkbox" id="filter-has-attachments"
+                                style="width:16px; height:16px; accent-color:var(--primary-color);">
+                            <span>Has Attachments</span>
+                        </label>
+                    </div>
+
+                    <div class="panel-actions">
+                        <button id="adv-clear-btn"
+                            style="padding:6px 12px; border:none; background:transparent; color:#64748b; font-size:0.85rem; cursor:pointer;">Clear</button>
+                        <button id="adv-apply-btn"
+                            style="padding:6px 12px; border:none; background:var(--primary-color); color:white; border-radius:6px; font-size:0.85rem; cursor:pointer;">Apply</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-chips">
+                <span class="chip active" data-filter="all">All</span>
+                <span class="chip" data-filter="unread">Unread</span>
+                <span class="chip" data-filter="read">Read</span>
+            </div>
+
+            <div class="visitor-list" id="visitor-list">
+                <!-- Visitor items injected here -->
+            </div>
+        </div>
+
+        <!-- MAIN CHAT -->
+        <div class="main-chat">
+            <div class="chat-header" id="chat-header" style="display:none;">
+                <div class="chat-header-info">
+                    <div class="chat-header-avatar" id="header-avatar"></div>
+                    <div>
+                        <div class="chat-header-name" id="header-name"></div>
+                        <div class="chat-header-status" id="header-status">User</div>
+                    </div>
+                </div>
+                <div class="chat-tools">
+                    <div class="stack">
+                        <input type="date" id="chat-start-date" title="Start Date" class="date-input">
+                        <span style="font-size:0.8rem; color:var(--text-secondary);">to</span>
+                        <input type="date" id="chat-end-date" title="End Date" class="date-input">
+                    </div>
+                    <button id="apply-date-filter" class="pill-btn">Apply</button>
+                    <button id="clear-date-filter" class="ghost-compact">Clear</button>
+                    <button id="export-btn" title="Export to TXT" class="icon-btn">⬇️</button>
+                </div>
+            </div>
+
+            <div class="messages-area" id="messages-area">
+                <div class="empty-state">Select a conversation to start chatting</div>
+            </div>
+
+            <!-- Compose Trigger Bar -->
+            <div id="reply-bar" class="input-area" style="display:none; justify-content: center; align-items:center;">
+                <button id="compose-btn"
+                    style="width: 100%; max-width: 300px; height: 42px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <span>💬</span> Compose Reply
+                </button>
+            </div>
+
+            <!-- EMAIL COMPOSER -->
+            <div class="email-composer" id="email-composer" style="display:none;">
+                <!-- Subject Line -->
+                <div class="email-field">
+                    <span class="email-field-label">Subject:</span>
+                    <input type="text" id="email-subject" placeholder="Email subject...">
+                    <span class="email-field-toggle" id="toggle-cc-bcc">+ CC/BCC</span>
+                </div>
+
+                <!-- CC/BCC Fields (Hidden by default) -->
+                <div class="cc-bcc-fields" id="cc-bcc-fields">
+                    <div class="email-field">
+                        <span class="email-field-label">CC:</span>
+                        <input type="text" id="email-cc" placeholder="Separate multiple emails with commas">
+                    </div>
+                    <div class="email-field">
+                        <span class="email-field-label">BCC:</span>
+                        <input type="text" id="email-bcc" placeholder="Separate multiple emails with commas">
+                    </div>
+                </div>
+
+                <!-- Rich Text Editor -->
+                <div class="editor-container">
+                    <div id="email-editor"></div>
+                </div>
+
+                <!-- File Previews -->
+                <div id="file-previews" class="file-previews"></div>
+                <input type="file" id="email-attachments" multiple style="display:none">
+
+                <!-- Actions -->
+                <div class="composer-actions">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <button id="attach-btn" class="icon-btn" title="Attach Files">📎</button>
+                        <button id="ai-btn" class="icon-btn" title="Generate with AI" onclick="handleAiGenerate()"
+                            style="background:#eff6ff; border-color:#bfdbfe; color:#2563eb;">✨</button>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                            <span id="char-count">0 characters</span>
+                        </div>
+                    </div>
+                    <button id="send-email-btn">📧 Send Email</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ADD ACCOUNT MODAL -->
+    <div id="account-modal" style="
+        display:none; 
+        position:fixed; 
+        top:0; left:0; width:100%; height:100%; 
+        background:rgba(0,0,0,0.4); 
+        z-index:99; 
+        align-items:center; 
+        justify-content:center;
+        backdrop-filter:blur(4px);
+    ">
+        <div style="
+            background:white; 
+            padding:24px; 
+            border-radius:18px; 
+            width:400px; 
+            box-shadow:0 20px 40px rgba(0,0,0,0.2);
+        ">
+            <h3 style="margin-top:0;">Add WhatsApp Account</h3>
+            <div style="margin-bottom:12px;">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Phone Number
+                    ID</label>
+                <input type="text" id="acc-phone-id" placeholder="e.g. 123456789012345"
+                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
+            </div>
+            <div style="margin-bottom:12px; position: relative;">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Access
+                    Token</label>
+                <input type="password" id="acc-token" placeholder="Meta Graph API Access Token"
+                    style="width:100%; padding:8px 36px 8px 8px; border:1px solid #ccc; border-radius:8px;">
+                <span id="toggle-pwd" style="
+                    position: absolute;
+                    right: 10px;
+                    top: 29px;
+                    cursor: pointer;
+                    font-size: 1.1rem;
+                    color: #64748b;
+                    user-select: none;
+                ">👁️</span>
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Display Phone
+                    Number</label>
+                <input type="text" id="acc-display-phone" placeholder="+1 234 567 890"
+                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+                <button onclick="closeModal()"
+                    style="padding:8px 16px; border:none; background:#f1f5f9; border-radius:8px; cursor:pointer;">Cancel</button>
+                <button onclick="saveAccount()"
+                    style="padding:8px 16px; border:none; background:var(--primary-color); color:white; border-radius:8px; cursor:pointer; font-weight:600;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL -->
+    <div id="success-modal" style="
+        display:none; 
+        position:fixed; 
+        top:0; left:0; width:100%; height:100%; 
+        background:rgba(0,0,0,0.4); 
+        z-index:100; 
+        align-items:center; 
+        justify-content:center;
+        backdrop-filter:blur(4px);
+    ">
+        <div style="
+            background:white; 
+            padding:30px; 
+            border-radius:18px; 
+            width:360px; 
+            box-shadow:0 20px 40px rgba(0,0,0,0.2);
+            text-align:center;
+        ">
+            <div style="font-size:3rem; margin-bottom:10px;">✅</div>
+            <h3 style="margin:0 0 10px 0; color:#10b981;">Success!</h3>
+            <p style="color:#64748b; margin-bottom:20px;">New account successfully added.</p>
+            <button onclick="closeSuccessModal()"
+                style="padding:10px 24px; border:none; background:var(--primary-color); color:white; border-radius:999px; cursor:pointer; font-weight:700; font-size:1rem;">Okay</button>
+        </div>
+    </div>
+
+    <!-- NEW CHAT MODAL -->
+    <div id="new-chat-modal" style="
+        display:none; 
+        position:fixed; 
+        top:0; left:0; width:100%; height:100%; 
+        background:rgba(0,0,0,0.4); 
+        z-index:99; 
+        align-items:center; 
+        justify-content:center;
+        backdrop-filter:blur(4px);
+    ">
+        <div style="
+            background:white; 
+            padding:24px; 
+            border-radius:18px; 
+            width:400px; 
+            box-shadow:0 20px 40px rgba(0,0,0,0.2);
+        ">
+            <h3 style="margin-top:0;">Start New WhatsApp Chat</h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:16px;">
+                Enter the recipient's phone number with country code (e.g., 919876543210).
+            </p>
+            <div style="margin-bottom:12px;">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Phone
+                    Number</label>
+                <input type="text" id="new-chat-phone" placeholder="919876543210"
+                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+                <button onclick="closeNewChatModal()"
+                    style="padding:8px 16px; border:none; background:#f1f5f9; border-radius:8px; cursor:pointer;">Cancel</button>
+                <button id="start-new-chat-btn"
+                    style="padding:8px 16px; border:none; background:var(--primary-color); color:white; border-radius:8px; cursor:pointer; font-weight:600;">Start
+                    Chat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI ASSISTANT BOX -->
+    <div id="ai-assistant-box">
+        <div class="ai-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1.2rem;">🤖</span>
+                <span style="font-weight:700;">AI Assistant</span>
+            </div>
+            <button onclick="toggleAiBox()"
+                style="background:none; border:none; color:white; cursor:pointer; font-size:1.2rem;">×</button>
+        </div>
+        <div class="ai-messages" id="ai-messages">
+            <div class="ai-message bot">
+                Hello! I'm your AI assistant. You can give me voice commands or type here. Try "Show me emails from
+                today" or "Switch to account [email]".
+            </div>
+        </div>
+        <div id="ai-status"
+            style="padding: 4px 16px; font-size: 0.75rem; color: #ef4444; display: none; font-weight: 600;">
+            ● Listening...
+        </div>
+        <div class="ai-input-area">
+            <button id="voice-btn" class="voice-btn" title="Voice Command">🎤</button>
+            <input type="text" id="ai-input" class="ai-input" placeholder="Type a command...">
+            <button id="ai-send-btn" class="icon-btn"
+                style="width:36px; height:36px; border-radius:50%; background:var(--primary-color); color:white; border:none;">↗️</button>
+        </div>
+    </div>
+
+
+
+    <script>
+        function formatTime(ts) {
+            if (!ts) return '';
+            const d = new Date(ts);
+            if (isNaN(d.getTime())) return '';
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        function getDayLabel(ts) {
+            const d = new Date(ts);
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+
+            if (d.toDateString() === today.toDateString()) return "Today";
+            if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+            return d.toLocaleDateString();
+        }
+        function shouldGroup(prev, curr) {
+            if (!prev) return false;
+            if (prev.sender !== curr.sender) return false;
+            return Math.abs(new Date(curr.timestamp) - new Date(prev.timestamp)) < 5 * 60 * 1000;
+        }
+        function sendSeen(email) {
+            fetch('/api/seen', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+        }
+
+        // Account Modal Logic
+        const modal = document.getElementById('account-modal');
+        document.getElementById('add-account-btn').onclick = () => {
+            modal.style.display = 'flex';
+        };
+
+        // New Chat Logic
+        const newChatModal = document.getElementById('new-chat-modal');
+        const newChatBtn = document.getElementById('new-chat-btn');
+        const newChatPhoneInput = document.getElementById('new-chat-phone');
+        const startNewChatBtn = document.getElementById('start-new-chat-btn');
+
+        if (newChatBtn) {
+            newChatBtn.onclick = () => {
+                newChatModal.style.display = 'flex';
+                newChatPhoneInput.focus();
+            };
+        }
+
+        function closeNewChatModal() {
+            newChatModal.style.display = 'none';
+            newChatPhoneInput.value = '';
+        }
+        window.closeNewChatModal = closeNewChatModal;
+
+        startNewChatBtn.onclick = () => {
+            const phone = newChatPhoneInput.value.trim().replace(/[^0-9]/g, '');
+            if (!phone || phone.length < 10) {
+                alert("Please enter a valid phone number with country code (at least 10 digits).");
+                return;
+            }
+
+            // Initiate chat
+            closeNewChatModal();
+            renderChat(phone); // This will open the chat area for this number
+            // We might need to ensure the number is treated as a WhatsApp conversation
+            // But renderChat already handles !email.includes('@')
+        };
+
+        // Delete Account Logic
+        document.getElementById('delete-account-btn').onclick = async () => {
+            const val = document.getElementById('account-selector').value;
+            if (!val || val === "No Accounts") return;
+
+            if (!confirm("Are you sure you want to delete this WhatsApp account? This will stop future messages from this number from appearing here.")) return;
+
+            try {
+                const res = await fetch(`/api/admin/whatsapp-accounts/${val}`, { method: 'DELETE' });
+                if (res.ok) {
+                    alert("Account deleted.");
+                    location.reload();
+                } else {
+                    alert("Error deleting account.");
+                }
+            } catch (err) {
+                alert("Network error: " + err.message);
+            }
+        };
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+        const pwdInput = document.getElementById('acc-token');
+        const togglePwd = document.getElementById('toggle-pwd');
+
+        togglePwd.addEventListener('click', () => {
+            const type = pwdInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            pwdInput.setAttribute('type', type);
+            togglePwd.textContent = type === 'password' ? '👁️' : '🚫';
+        });
+
+        async function saveAccount() {
+            const phone_number_id = document.getElementById('acc-phone-id').value.trim();
+            const access_token = document.getElementById('acc-token').value.trim();
+            const display_phone_number = document.getElementById('acc-display-phone').value.trim();
+
+            if (!phone_number_id || !access_token) return alert("Phone Number ID and Access Token required");
+
+            // Simple validation to prevent swapping ID and Token
+            if (phone_number_id.startsWith('EA')) {
+                return alert("Wait! It looks like you've put the Access Token into the 'Phone Number ID' field. Please swap them.");
+            }
+            if (!access_token.startsWith('EA')) {
+                return alert("The Access Token usually starts with 'EA'. Please check if you've entered it correctly.");
+            }
+            if (!/^\d+$/.test(phone_number_id)) {
+                if (!confirm("The Phone Number ID usually consists only of digits. Are you sure '" + phone_number_id + "' is correct?")) {
+                    return;
+                }
+            }
+
+            const saveBtn = document.querySelector('#account-modal button:last-child');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = "Verifying...";
+            saveBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/whatsapp-accounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone_number_id, access_token, display_phone_number
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.status === 'ok') {
+                    closeModal();
+                    // Show Success Modal
+                    const successModal = document.getElementById('success-modal');
+                    successModal.style.display = 'flex';
+                } else {
+                    alert("Error adding account: " + (data.message || "Verification failed"));
+                }
+            } catch (err) {
+                alert("Network error: " + err.message);
+            } finally {
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').style.display = 'none';
+            // Only refresh list after user clicks Okay
+            fetchAccounts();
+        }
+
+        async function fetchAccounts() {
+            const res = await fetch('/api/admin/whatsapp-accounts');
+            const data = await res.json();
+
+            const selector = document.getElementById('account-selector');
+            const currentVal = selector.value;
+            selector.innerHTML = '';
+
+            if (data.accounts && data.accounts.length > 0) {
+                data.accounts.forEach(acc => {
+                    const opt = document.createElement('option');
+                    opt.value = acc.phone_number_id;
+                    opt.textContent = acc.display_phone_number || acc.phone_number_id;
+                    opt.style.color = '#333';
+                    selector.appendChild(opt);
+                });
+
+                if (currentVal && data.accounts.some(a => a.phone_number_id === currentVal)) {
+                    selector.value = currentVal;
+                } else {
+                    selector.value = data.accounts[0].phone_number_id;
+                    if (!currentSelectedAccount) handleAccountChange(data.accounts[0].phone_number_id);
+                }
+            } else {
+                const opt = document.createElement('option');
+                opt.textContent = "No Accounts";
+                selector.appendChild(opt);
+            }
+        }
+
+        let currentSelectedAccount = null;
+
+        const accountSelector = document.getElementById('account-selector');
+        accountSelector.addEventListener('change', (e) => {
+            handleAccountChange(e.target.value);
+        });
+
+        function handleAccountChange(email) {
+            currentSelectedAccount = email;
+            console.log("Switched to account:", email);
+            fetchMessages(searchFilter); // Reload messages for this account
+        }
+
+
+
+
+        let allMessages = [];
+        let currentConversationEmail = null;
+        let searchFilter = "";
+        let statusFilter = "all";
+        let filterStartDate = null;
+        let filterEndDate = null;
+        let filterHasAttachments = false;
+        let filterSource = "all";
+
+        // Search Navigation State
+        let currentMatchIndex = 0;
+        let totalMatches = 0;
+        let matchElements = [];
+
+        // UI References
+        const visitorListEl = document.getElementById('visitor-list');
+        const messagesAreaEl = document.getElementById('messages-area');
+        const chatHeaderEl = document.getElementById('chat-header');
+        // REPLACED input-area with email-composer
+        const inputAreaEl = document.getElementById('email-composer');
+        const headerNameEl = document.getElementById('header-name');
+        const headerAvatarEl = document.getElementById('header-avatar');
+        const searchInputEl = document.getElementById('search-input');
+        // Aggressive autofill clearing
+        if (searchInputEl) {
+            searchInputEl.value = '';
+            setTimeout(() => { searchInputEl.value = ''; }, 100);
+            setTimeout(() => { searchInputEl.value = ''; }, 500);
+        }
+
+        const filterChips = Array.from(document.querySelectorAll('[data-filter]'));
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAccounts();
+            fetchMessages();
+
+            filterChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    statusFilter = chip.dataset.filter;
+                    filterChips.forEach(c => c.classList.toggle('active', c === chip));
+                    renderVisitorList();
+                });
+            });
+        });
+
+        // Search Filter (Debounced)
+        let searchTimeout;
+        searchInputEl.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            // Store global search term
+            searchFilter = val;
+
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                fetchMessages(val);
+                // If a conversation is open, re-render it to apply highlights
+                if (currentConversationEmail) {
+                    renderChat(currentConversationEmail, val);
+                }
+            }, 300);
+        });
+
+        // Advanced Search Logic
+        const advToggle = document.getElementById('adv-search-toggle');
+        const advPanel = document.getElementById('adv-search-panel');
+        const advApply = document.getElementById('adv-apply-btn');
+        const advClear = document.getElementById('adv-clear-btn');
+        const startDateInput = document.getElementById('filter-start-date');
+        const endDateInput = document.getElementById('filter-end-date');
+        const sourceInput = document.getElementById('filter-source');
+        const attachmentsInput = document.getElementById('filter-has-attachments');
+
+        advToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            advPanel.classList.toggle('open');
+        });
+
+        // Close panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!advPanel.contains(e.target) && !advToggle.contains(e.target)) {
+                advPanel.classList.remove('open');
+            }
+        });
+
+        advPanel.addEventListener('click', (e) => e.stopPropagation());
+
+        advApply.addEventListener('click', () => {
+            filterStartDate = startDateInput.value;
+            filterEndDate = endDateInput.value;
+            filterSource = sourceInput.value;
+            filterHasAttachments = attachmentsInput.checked;
+
+            fetchMessages(searchFilter);
+            advPanel.classList.remove('open');
+            const isActive = filterStartDate || filterEndDate || filterSource !== 'all' || filterHasAttachments;
+            advToggle.style.color = isActive ? 'var(--primary-color)' : '';
+            advToggle.style.background = isActive ? '#ecfdf5' : '';
+        });
+
+        advClear.addEventListener('click', () => {
+            startDateInput.value = '';
+            endDateInput.value = '';
+            sourceInput.value = 'all';
+            attachmentsInput.checked = false;
+
+            filterStartDate = null;
+            filterEndDate = null;
+            filterSource = 'all';
+            filterHasAttachments = false;
+
+            fetchMessages(searchFilter);
+            advPanel.classList.remove('open');
+            advToggle.style.color = '';
+            advToggle.style.background = '';
+        });
+
+
+        let socket = null;
+
+        function connectWS(email) {
+            if (socket) socket.close();
+
+            socket = new WebSocket(
+                `ws://${location.host}/ws?email=${encodeURIComponent(email)}`
+            );
+
+            socket.onmessage = (event) => {
+                const msg = JSON.parse(event.data);
+                if (msg.email === currentConversationEmail) {
+                    renderChat(currentConversationEmail, searchFilter);
+                    sendSeen(msg.email);
+                }
+                fetchMessages(searchFilter);
+            };
+        }
+
+
+        async function fetchMessages(query = null) {
+            try {
+                let url = '/api/admin/messages';
+
+                const params = new URLSearchParams();
+                if (query) params.append('search', query);
+                if (filterStartDate) params.append('start_date', filterStartDate);
+                if (filterEndDate) params.append('end_date', filterEndDate);
+                if (filterHasAttachments) params.append('has_attachments', 'true');
+                params.append('source', 'whatsapp');
+
+                if ([...params].length > 0) {
+                    url += `?${params.toString()}`;
+                }
+
+                // Add Account Filter
+                if (currentSelectedAccount) {
+                    const sep = url.includes('?') ? '&' : '?';
+                    url += `${sep}account=${encodeURIComponent(currentSelectedAccount)}`;
+                }
+                const res = await fetch(url);
+                const data = await res.json();
+                allMessages = data.messages;
+                renderVisitorList();
+                // We do NOT assume currentConversationEmail is set here; we just update the list
+            } catch (err) {
+                console.error("Failed to fetch messages:", err);
+            }
+        }
+
+        function getVisitorName(id) {
+            // Helper to format name better
+            return id; // email is the identity
+
+        }
+
+        function getInitials(name) {
+            return name.substring(0, 2).toUpperCase();
+
+        }
+        function renderVisitorList() {
+            const visitorListEl = document.getElementById('visitor-list');
+            visitorListEl.innerHTML = '';
+
+            allMessages.forEach(conv => {
+                const id = conv.email;
+                if (!id) return;
+
+                const lastMsg = conv.last_message || '';
+                const unread = conv.unread || 0;
+                const timeString = formatTime(conv.timestamp);
+                const source = conv.source || 'chat';
+                const sourceIcon = source === 'whatsapp' ? '🟢' : (source === 'email' || source === 'imap' ? '📧' : '💬');
+
+                // --- RESTORED FILTERS ---
+                if (statusFilter === 'unread' && unread === 0) return;
+                if (statusFilter === 'read' && unread > 0) return;
+
+                if (statusFilter === 'unread' && unread === 0) return;
+                if (statusFilter === 'read' && unread > 0) return;
+
+                // Client-side search removed in favor of backend search
+                // but we keep text highlighting logic if desired, or simple list rendering
+                // -------------------------
+
+                const div = document.createElement('div');
+                div.className = 'visitor-item';
+
+                // Escape helper
+                const safePreview = lastMsg.replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+
+                div.innerHTML = `
+            <div class="visitor-avatar">${source === 'whatsapp' ? '☏' : id.substring(0, 2).toUpperCase()}</div>
+            <div class="visitor-info">
+                <div style="display:flex; justify-content:space-between;">
+                    <div class="visitor-name">${sourceIcon} ${id}</div>
+                    <div style="font-size:12px; color:#9ca3af;">${timeString}</div>
+                </div>
+                <div class="visitor-preview">${lastMsg.substring(0, 60)}...</div>
+            </div>
+            ${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}
+        `;
+
+                div.onclick = async () => {
+                    connectWS(id);
+                    currentConversationEmail = id;
+                    await fetch('/api/admin/mark-read', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: id })
+                    });
+                    renderChat(id, searchFilter);
+                    fetchMessages(searchFilter); // Refresh list to clear unread
+                };
+
+                visitorListEl.appendChild(div);
+            });
+        }
+
+        // Date Filtering Logic
+        document.getElementById('apply-date-filter').onclick = () => {
+            if (currentConversationEmail) renderChat(currentConversationEmail, searchFilter);
+        };
+        document.getElementById('clear-date-filter').onclick = () => {
+            document.getElementById('chat-start-date').value = '';
+            document.getElementById('chat-end-date').value = '';
+            if (currentConversationEmail) renderChat(currentConversationEmail, searchFilter);
+        };
+
+        // Export Logic
+        document.getElementById('export-btn').onclick = () => {
+            if (!currentConversationEmail) return;
+            window.location.href = `/api/export?email=${encodeURIComponent(currentConversationEmail)}`;
+        };
+
+        function highlightText(text, searchTerm) {
+            if (!searchTerm || searchTerm.length < 2) return text;
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            const res = text.replace(regex, '<span class="highlight">$1</span>');
+            return res;
+        }
+
+        function scrollToMatch(index) {
+            if (matchElements.length === 0) return;
+
+            // Loop around
+            if (index < 0) index = matchElements.length - 1;
+            if (index >= matchElements.length) index = 0;
+
+            currentMatchIndex = index;
+
+            // Update active styling
+            matchElements.forEach(el => el.classList.remove('active-match'));
+            const activeEl = matchElements[currentMatchIndex];
+            activeEl.classList.add('active-match');
+
+            // activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Fix: Use scrollTop to scroll ONLY the chat container, preventing whole page scroll
+            const container = document.getElementById('messages-area');
+            const elRect = activeEl.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            // Calculate where the element is relative to the container viewport
+            const relativeTop = elRect.top - containerRect.top;
+
+            // Calculate target scrollTop to center the element
+            // Current Scroll + Position Relative to Viewport - Half Container Height + Half Element Height
+            const targetScrollTop = container.scrollTop + relativeTop - (container.clientHeight / 2) + (activeEl.clientHeight / 2);
+
+            container.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
+
+            // Update counter display
+            const countEl = document.getElementById('search-match-count');
+            if (countEl) countEl.textContent = `${currentMatchIndex + 1}/${totalMatches}`;
+        }
+
+        async function renderChat(email, searchTerm = "") {
+            currentConversationEmail = email;
+
+            // Highlight selected conversation
+            const items = document.querySelectorAll('.visitor-item');
+            items.forEach(el => el.classList.remove('active'));
+            // Find the item matching this email (logic depends on how we stored it, usually by visitor-name text)
+            // Ideally we should add data-email attribute to visitor-item
+
+            chatHeaderEl.style.display = 'flex';
+
+            // Show Reply Bar, Hide Composer
+            document.getElementById('email-composer').style.display = 'none';
+            document.getElementById('reply-bar').style.display = 'flex';
+
+            const isWhatsapp = !email.includes('@');
+            const composeBtn = document.getElementById('compose-btn');
+            composeBtn.innerHTML = isWhatsapp ? '<span>🟢</span> Send WhatsApp' : '<span>💬</span> Compose Reply';
+
+            // Initialize Editor if needed
+            initializeQuillEditor();
+
+            headerNameEl.textContent = getVisitorName(email);
+            headerAvatarEl.textContent = getInitials(email);
+
+            // Get Dates
+            const startDate = document.getElementById('chat-start-date').value;
+            const endDate = document.getElementById('chat-end-date').value;
+
+            let url = `/api/sync?email=${encodeURIComponent(email)}`;
+            if (startDate) url += `&start_date=${startDate}`;
+            if (endDate) url += `&end_date=${endDate}`;
+
+            const res = await fetch(url);
+            const data = await res.json();
+
+            messagesAreaEl.innerHTML = '';
+            let lastDay = null;
+            let prevMsg = null;
+
+            // Reset Match State
+            matchElements = [];
+            currentMatchIndex = 0;
+            totalMatches = 0;
+
+            data.messages.forEach(m => {
+                const day = getDayLabel(m.timestamp);
+                if (day !== lastDay) {
+                    const sep = document.createElement('div');
+                    sep.style.textAlign = 'center';
+                    sep.style.fontSize = '12px';
+                    sep.style.opacity = '0.6';
+                    sep.style.margin = '12px 0';
+                    sep.textContent = day;
+                    messagesAreaEl.appendChild(sep);
+                    lastDay = day;
+                }
+
+                const div = document.createElement('div');
+                div.className = `message ${m.sender}`;
+                if (m.source === 'whatsapp') div.classList.add('whatsapp');
+
+                // Content with highlighting
+                // Content rendering logic
+                let contentHtml = '';
+                let isHtmlEmail = false;
+
+                if (m.sender === 'visitor' && m.html_content) {
+                    // Render HTML for visitor emails in IFRAME (Security + Layout)
+                    isHtmlEmail = true;
+                    const uniqueId = `frame-${m.timestamp}`;
+                    contentHtml = `
+                        <div class="iframe-wrapper" style="max-height: 400px; overflow-y: auto; display:block;">
+                             <iframe 
+                                id="${uniqueId}" 
+                                sandbox="allow-same-origin"
+                                scrolling="no" 
+                                style="width:100%; border:none; display: block; overflow: hidden;"
+                                srcdoc="<style>body{margin:0;padding:2px;font-family:system-ui,-apple-system,sans-serif;font-size:13.5px;color:#0f172a;line-height:1.2;overflow:hidden}p{margin:0;padding:0}div{margin:0}</style>${m.html_content.replace(/"/g, '&quot;')}"
+                                onload="this.style.height = (this.contentWindow.document.body.scrollHeight) + 'px'; this.contentWindow.document.body.style.margin='0';"
+                             ></iframe>
+                        </div>
+                     `;
+                } else if (m.sender === 'admin' && m.html_content) {
+                    // Render HTML for admin emails DIRECTLY (Auto-size bubble)
+                    // We trust our own sanitized/generated HTML
+                    isHtmlEmail = false;
+                    contentHtml = `<div class="email-content">${m.html_content}</div>`;
+                } else {
+                    // LINKIFY + HIGHLIGHT Logic
+                    // 1. Split text by URLs so we don't break <a> tags with highlighting or vice versa
+                    const urlRegex = /(https?:\/\/[^\s]+)/g;
+                    // Split keeps the separators (URLs) because of the capturing group in regex
+                    const parts = m.text.split(urlRegex);
+
+                    contentHtml = parts.map(part => {
+                        // Check if this part is a URL
+                        if (part.match(/^https?:\/\//)) {
+                            return `<a href="${part}" target="_blank" style="color:#0ea5e9; text-decoration:underline; word-break:break-all;">${part}</a>`;
+                        } else {
+                            // It's text: Escape HTML special chars then Highlight
+                            let safePart = part.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                            return highlightText(safePart, searchTerm);
+                        }
+                    }).join('');
+                }
+
+                if (isHtmlEmail) div.classList.add('has-iframe');
+
+                // Attachments
+                let attachmentsHtml = '';
+                if (m.attachments && m.attachments.length > 0) {
+                    attachmentsHtml += '<div class="attachments-grid">';
+                    m.attachments.forEach(att => {
+                        const isImg = att.content_type.startsWith('image/');
+                        if (isImg) {
+                            attachmentsHtml += `
+                                <div class="attachment-card" onclick="openLightbox('${att.url}')">
+                                    <img src="${att.url}" class="att-preview-img" loading="lazy">
+                                    <div class="att-name">${att.filename}</div>
+                                </div>`;
+                        } else {
+                            attachmentsHtml += `
+                                <div class="attachment-card" onclick="window.open('${att.url}', '_blank')">
+                                    <div class="att-file-icon">📄</div>
+                                    <div class="att-name">${att.filename}</div>
+                                </div>`;
+                        }
+                    });
+                    attachmentsHtml += '</div>';
+                }
+
+                // Add email metadata if present (subject, CC, BCC)
+                let metadataHtml = '';
+                if (m.subject) {
+                    metadataHtml = `<div class="message-subject">📧 ${m.subject}</div>`;
+                }
+                let recipientsHtml = '';
+                if (m.cc && m.cc.length > 0) {
+                    recipientsHtml += `<div class="message-recipients">CC: ${m.cc.join(', ')}</div>`;
+                }
+                if (m.bcc && m.bcc.length > 0) {
+                    recipientsHtml += `<div class="message-recipients">BCC: ${m.bcc.join(', ')}</div>`;
+                }
+
+                div.innerHTML = `
+        ${metadataHtml}
+        ${contentHtml}
+        ${attachmentsHtml}
+        ${recipientsHtml}
+        <div class="message-time">
+            ${formatTime(m.timestamp)} ${m.sender === 'admin' ? (m.seen_at ? ' ✓✓' : ' ✓') : ''}
+        </div>`;
+                messagesAreaEl.appendChild(div);
+                prevMsg = m;
+            });
+            sendSeen(email);
+
+            // Collect all highlights
+            matchElements = Array.from(messagesAreaEl.querySelectorAll('.highlight'));
+            totalMatches = matchElements.length;
+
+            // Inject Search Navigation Controls if matches exist
+            const toolsContainer = document.querySelector('.chat-tools');
+            // Remove existing search nav if any
+            const existingNav = document.getElementById('search-nav-controls');
+            if (existingNav) existingNav.remove();
+
+            if (totalMatches > 0) {
+                const navDiv = document.createElement('div');
+                navDiv.id = 'search-nav-controls';
+                navDiv.className = 'search-nav';
+                navDiv.innerHTML = `
+                    <span id="search-match-count">1/${totalMatches} matches</span>
+                    <button id="prev-match">Prev</button>
+                    <button id="next-match">Next</button>
+                 `;
+
+                // Insert before the stack/date filters
+                toolsContainer.insertBefore(navDiv, toolsContainer.firstChild);
+
+                document.getElementById('prev-match').onclick = () => scrollToMatch(currentMatchIndex - 1);
+                document.getElementById('next-match').onclick = () => scrollToMatch(currentMatchIndex + 1);
+
+                // Jump to first match
+                scrollToMatch(0);
+
+            } else {
+                // Regular scroll to bottom if no search matches
+                messagesAreaEl.scrollTop = messagesAreaEl.scrollHeight;
+            }
+        }
+
+
+
+    </script>
+
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img id="lightbox-img" class="lightbox-content" src="" alt="Full Preview">
+    </div>
+
+    <script>
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        function openLightbox(url) {
+            lightboxImg.src = url;
+            lightbox.classList.add('open');
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('open');
+            setTimeout(() => { lightboxImg.src = ''; }, 300);
+        }
+
+        // Close on background click
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+        });
+
+        // --- AI Assistant Logic ---
+        const aiBox = document.getElementById('ai-assistant-box');
+        const aiMessages = document.getElementById('ai-messages');
+        const aiInput = document.getElementById('ai-input');
+        const voiceBtn = document.getElementById('voice-btn');
+        const assistantBtn = document.getElementById('ai-assistant-btn');
+
+        if (assistantBtn) assistantBtn.addEventListener('click', toggleAiBox);
+
+        function toggleAiBox() {
+            aiBox.classList.toggle('open');
+            if (aiBox.classList.contains('open')) {
+                aiInput.focus();
+            }
+        }
+        window.toggleAiBox = toggleAiBox;
+
+        async function sendAiCommand() {
+            const prompt = aiInput.value.trim();
+            if (!prompt) return;
+
+            appendAiMessage('user', prompt);
+            aiInput.value = '';
+
+            // Loading state
+            const botMsgId = 'bot-' + Date.now();
+            appendAiMessage('bot', '...', botMsgId);
+
+            try {
+                const res = await fetch('/api/ai/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: prompt })
+                });
+                const data = await res.json();
+
+                // Remove loading
+                const loadingMsg = document.getElementById(botMsgId);
+                if (loadingMsg) loadingMsg.remove();
+
+                if (data.status === 'ok') {
+                    appendAiMessage('bot', data.response);
+                    handleAiActions(data.actions);
+                } else {
+                    appendAiMessage('bot', "Error: " + data.message);
+                }
+            } catch (err) {
+                const loadingMsg = document.getElementById(botMsgId);
+                if (loadingMsg) loadingMsg.remove();
+                appendAiMessage('bot', "Network error: " + err.message);
+            }
+        }
+
+        function appendAiMessage(sender, text, id = null) {
+            const div = document.createElement('div');
+            div.className = `ai-message ${sender}`;
+            div.textContent = text;
+            if (id) div.id = id;
+            aiMessages.appendChild(div);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+        }
+
+        function handleAiActions(actions) {
+            if (!actions) return;
+            actions.forEach(act => {
+                if (act.action === 'switch_account') {
+                    const selector = document.getElementById('account-selector');
+                    if (selector) {
+                        selector.value = act.account;
+                        // Manually trigger change
+                        handleAccountChange(act.account);
+                        appendAiMessage('bot', `📍 Switched view to account: ${act.account}`);
+                    }
+                } else if (act.action === 'fetch_emails') {
+                    // Update search filter and trigger fetch
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput && act.filter) {
+                        if (act.filter.query) {
+                            searchInput.value = act.filter.query;
+                            searchFilter = act.filter.query;
+                        }
+                        if (act.filter.start) {
+                            document.getElementById('filter-start-date').value = act.filter.start;
+                            filterStartDate = act.filter.start;
+                        }
+                        if (act.filter.end) {
+                            document.getElementById('filter-end-date').value = act.filter.end;
+                            filterEndDate = act.filter.end;
+                        }
+                        // Refresh with new filters
+                        fetchMessages(searchFilter);
+                        appendAiMessage('bot', `🔍 Filtered messages based on your request.`);
+                    }
+                }
+                // Add more actions here
+            });
+        }
+
+        // Voice Recognition
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            let recordingTimer = null;
+            let countdownInterval = null;
+            let originalPlaceholder = aiInput.placeholder;
+            let finalTranscript = '';
+
+            const statusEl = document.getElementById('ai-status');
+
+            recognition.onstart = () => {
+                finalTranscript = '';
+                voiceBtn.classList.add('recording');
+                if (statusEl) statusEl.style.display = 'block';
+                aiInput.placeholder = "Listening... Speak now.";
+                let secondsLeft = 10;
+                voiceBtn.title = `Listening... (${secondsLeft}s)`;
+
+                if (countdownInterval) clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    secondsLeft--;
+                    voiceBtn.title = `Listening... (${secondsLeft}s)`;
+                    if (secondsLeft <= 0) clearInterval(countdownInterval);
+                }, 1000);
+
+                if (recordingTimer) clearTimeout(recordingTimer);
+                recordingTimer = setTimeout(() => {
+                    recognition.stop();
+                }, 10000);
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                const full = finalTranscript + interimTranscript;
+                aiInput.value = full;
+                console.log("Voice captured:", full);
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Speech Recognition Error:", event.error);
+                if (event.error !== 'no-speech') {
+                    stopRecording();
+                }
+            };
+
+            recognition.onend = () => {
+                stopRecording();
+                const text = aiInput.value.trim();
+                if (text) {
+                    sendAiCommand();
+                }
+            };
+
+            function stopRecording() {
+                voiceBtn.classList.remove('recording');
+                if (statusEl) statusEl.style.display = 'none';
+                voiceBtn.title = "Start Voice Command";
+                aiInput.placeholder = originalPlaceholder;
+                if (recordingTimer) clearTimeout(recordingTimer);
+                if (countdownInterval) clearInterval(countdownInterval);
+            }
+
+            voiceBtn.addEventListener('click', () => {
+                if (voiceBtn.classList.contains('recording')) {
+                    recognition.stop();
+                } else {
+                    try {
+                        aiInput.value = '';
+                        recognition.start();
+                    } catch (e) {
+                        console.error("Failed to start voice:", e);
+                    }
+                }
+            });
+        } else {
+            voiceBtn.style.display = 'none';
+        }
+
+        document.getElementById('ai-send-btn').addEventListener('click', sendAiCommand);
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendAiCommand();
+        });
+    </script>
+
+    <!-- Quill.js Library -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <!-- Email Composer JavaScript -->
+    <script>
+        let quillEditor = null;
+        let selectedFiles = [];
+
+        // Initialize Quill Editor
+        function initializeQuillEditor() {
+            if (quillEditor) return; // Already initialized
+
+            quillEditor = new Quill('#email-editor', {
+                theme: 'snow',
+                placeholder: 'Type your message here...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // Character count
+            quillEditor.on('text-change', function () {
+                const text = quillEditor.getText();
+                const charCount = text.trim().length;
+                document.getElementById('char-count').textContent = `${charCount} characters`;
+            });
+        }
+
+        // CC/BCC Toggle
+        document.getElementById('toggle-cc-bcc').addEventListener('click', function () {
+            const ccBccFields = document.getElementById('cc-bcc-fields');
+            ccBccFields.classList.toggle('visible');
+            this.textContent = ccBccFields.classList.contains('visible') ? '- Hide CC/BCC' : '+ CC/BCC';
+        });
+
+        // Compose Trigger Logic
+        document.getElementById('compose-btn').addEventListener('click', () => {
+            const isWhatsapp = !currentConversationEmail.includes('@');
+
+            document.getElementById('reply-bar').style.display = 'none';
+            document.getElementById('email-composer').style.display = 'flex';
+
+            // Customize for WhatsApp
+            const subjectField = document.getElementById('email-subject').parentElement;
+            const toggleCC = document.getElementById('toggle-cc-bcc');
+            const sendBtn = document.getElementById('send-email-btn');
+
+            if (isWhatsapp) {
+                subjectField.style.display = 'none';
+                toggleCC.style.display = 'none';
+                sendBtn.innerHTML = '🟢 Send via WhatsApp';
+                // WhatsApp usually doesn't need rich text, but we can keep it for convenience 
+                // and the backend will strip it.
+            } else {
+                subjectField.style.display = 'flex';
+                toggleCC.style.display = 'inline';
+                sendBtn.innerHTML = '📧 Send Email';
+            }
+
+            if (quillEditor) quillEditor.focus();
+        });
+
+        // Attachment Logic
+        document.getElementById('attach-btn').addEventListener('click', () => {
+            document.getElementById('email-attachments').click();
+        });
+
+        document.getElementById('email-attachments').addEventListener('change', function (e) {
+            const newFiles = Array.from(e.target.files);
+            selectedFiles = [...selectedFiles, ...newFiles];
+            renderFilePreviews();
+            this.value = '';
+        });
+
+        // AI Generation Logic
+        async function handleAiGenerate() {
+            console.log("handleAiGenerate triggered");
+            const userInput = window.prompt("Describe the email you want to write (e.g. 'Enquiry about pricing'):");
+            console.log("User Input:", userInput);
+            if (!userInput) return;
+
+            const btn = document.getElementById('ai-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳';
+            btn.disabled = true;
+
+            try {
+                console.log("Fetching AI generation...");
+                const res = await fetch('/api/generate-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: userInput })
+                });
+                const data = await res.json();
+                console.log("AI Response Data:", data);
+
+                if (data.status === 'ok') {
+                    if (!quillEditor) {
+                        console.error("Quill Editor not initialized!");
+                        alert("Error: Editor not ready. Please try refreshing.");
+                        return;
+                    }
+                    quillEditor.root.innerHTML = data.content;
+                    console.log("Content inserted into Quill");
+                } else {
+                    alert("AI Error: " + data.message);
+                }
+            } catch (err) {
+                console.error("AI Fetch Error:", err);
+                alert("Network error: " + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        window.handleAiGenerate = handleAiGenerate;
+
+        function renderFilePreviews() {
+            const container = document.getElementById('file-previews');
+            container.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'file-chip';
+                chip.innerHTML = `
+            <span>${file.name}</span>
+            <span class="remove-file" onclick="removeFile(${index})">×</span>
+            `;
+                container.appendChild(chip);
+            });
+        }
+
+        window.removeFile = function (index) {
+            selectedFiles.splice(index, 1);
+            renderFilePreviews();
+        };
+
+        function processQuillHtml(html) {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+
+            // Handle Indents
+            for (let i = 1; i <= 8; i++) {
+                const indented = wrapper.querySelectorAll(`.ql-indent-${i}`);
+                indented.forEach(el => {
+                    el.style.paddingLeft = `${i * 3}em`;
+                    el.classList.remove(`ql-indent-${i}`);
+                });
+            }
+
+            // Handle Alignment
+            const alignments = ['center', 'right', 'justify'];
+            alignments.forEach(align => {
+                const aligned = wrapper.querySelectorAll(`.ql-align-${align}`);
+                aligned.forEach(el => {
+                    el.style.textAlign = align;
+                    el.classList.remove(`ql-align-${align}`);
+                });
+            });
+
+            // Handle Font Sizes
+            const sizes = ['small', 'large', 'huge'];
+            const sizeMap = { 'small': '0.75em', 'large': '1.5em', 'huge': '2.5em' };
+            sizes.forEach(size => {
+                const sized = wrapper.querySelectorAll(`.ql-size-${size}`);
+                sized.forEach(el => {
+                    el.style.fontSize = sizeMap[size];
+                    el.classList.remove(`ql-size-${size}`);
+                });
+            });
+
+            return wrapper.innerHTML;
+        }
+
+        // Send Email Function
+        document.getElementById('send-email-btn').addEventListener('click', async function () {
+            if (!currentConversationEmail) {
+                alert('No conversation selected');
+                return;
+            }
+
+            // Get editor content
+            // Get editor content
+            let rawHtml = quillEditor.root.innerHTML;
+
+            // Process HTML to inline styles for email clients
+            const htmlContent = `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">${processQuillHtml(rawHtml)}</div>`;
+            const plainText = quillEditor.getText().trim();
+
+            if (!plainText) {
+                alert('Please enter a message');
+                return;
+            }
+
+            // Get email metadata
+            const subject = document.getElementById('email-subject').value.trim();
+            const ccInput = document.getElementById('email-cc').value.trim();
+            const bccInput = document.getElementById('email-bcc').value.trim();
+
+            // Parse CC/BCC (comma-separated)
+            const cc = ccInput ? ccInput.split(',').map(e => e.trim()).filter(e => e) : null;
+            const bcc = bccInput ? bccInput.split(',').map(e => e.trim()).filter(e => e) : null;
+
+            // Prepare payload
+            // Prepare payload (FormData for file support)
+            const formData = new FormData();
+            formData.append('visitor_email', currentConversationEmail);
+            formData.append('text', plainText);
+            formData.append('html_content', htmlContent);
+            formData.append('subject', subject || `Re: Conversation with ${currentConversationEmail}`);
+
+            if (cc) formData.append('cc', JSON.stringify(cc));
+            if (bcc) formData.append('bcc', JSON.stringify(bcc));
+
+            if (currentSelectedAccount) {
+                formData.append('account_email', currentSelectedAccount);
+            }
+
+            // Append Files
+            selectedFiles.forEach(file => {
+                formData.append('files', file);
+            });
+
+            // Disable button during send
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<span>📤</span> Sending...';
+
+            try {
+                const response = await fetch('/api/reply', {
+                    method: 'POST',
+                    body: formData // No Content-Type header when using FormData, browser sets it
+                });
+
+                if (response.ok) {
+                    // Clear editor
+                    quillEditor.setText('');
+                    document.getElementById('email-subject').value = '';
+                    document.getElementById('email-cc').value = '';
+                    document.getElementById('email-bcc').value = '';
+
+                    // Clear files
+                    selectedFiles = [];
+                    renderFilePreviews();
+
+                    // Hide CC/BCC if visible
+                    const ccBccFields = document.getElementById('cc-bcc-fields');
+                    if (ccBccFields.classList.contains('visible')) {
+                        ccBccFields.classList.remove('visible');
+                        document.getElementById('toggle-cc-bcc').textContent = '+ CC/BCC';
+                    }
+
+                    // Reset View -> Hide Composer, Show Bar
+                    document.getElementById('email-composer').style.display = 'none';
+                    document.getElementById('reply-bar').style.display = 'flex';
+
+                    // Refresh messages
+                    await fetchMessages(searchFilter);
+                } else {
+                    alert('Failed to send email. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error sending email:', error);
+                alert('Error sending email. Please check your connection.');
+            } finally {
+                btn.disabled = false;
+                const isWhatsapp = !currentConversationEmail.includes('@');
+                btn.innerHTML = isWhatsapp ? '<span>🟢</span> Send via WhatsApp' : '<span>📧</span> Send Email';
+            }
+        });
+
+
+    </script>
+</body>
+
+</html>

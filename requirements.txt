@@ -12,3 +12,4 @@ requests
 google-generativeai
 python-dotenv
 groq
+openai

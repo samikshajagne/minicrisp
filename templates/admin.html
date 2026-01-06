@@ -442,6 +442,15 @@
             background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #0ea5e9, #10b981);
         }
 
+        /* WhatsApp specific styles */
+        .message.whatsapp.visitor {
+            border-left: 4px solid #25d366;
+        }
+
+        .message.whatsapp.admin {
+            background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #25d366, #128c7e);
+        }
+
         /* Fix link visibility in admin bubbles (Blue text on White bg) */
         /* Fix link visibility in admin bubbles (Blue text on White bg) */
         .message.admin a {
@@ -1083,6 +1092,123 @@
             margin-top: 4px;
             font-style: italic;
         }
+
+        /* AI Assistant Box */
+        #ai-assistant-box {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 380px;
+            height: 500px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        #ai-assistant-box.open {
+            display: flex;
+        }
+
+        .ai-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #0ea5e9, #10b981);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        .ai-message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .ai-message.user {
+            align-self: flex-end;
+            background: var(--primary-color);
+            color: #fff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .ai-message.bot {
+            align-self: flex-start;
+            background: #fff;
+            color: var(--text-primary);
+            border-bottom-left-radius: 2px;
+            border: 1px solid var(--border-color);
+        }
+
+        .ai-input-area {
+            padding: 12px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .voice-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: #f8fafc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .voice-btn.recording {
+            color: #ef4444;
+            background: #fef2f2;
+            border-color: #fca5a5;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
     </style>
 </head>
 
@@ -1191,6 +1317,21 @@
             ">
                 <span>➕</span><span>Add Account</span>
             </button>
+            <button id="ai-assistant-btn" style="
+                background:#eff6ff;
+                color:#1d4ed8;
+                border:none;
+                padding:8px 14px;
+                border-radius:999px;
+                font-weight:700;
+                cursor:pointer;
+                box-shadow:0 10px 24px rgba(15,23,42,0.25);
+                display:flex;
+                align-items:center;
+                gap:6px;
+            ">
+                <span>🤖</span><span>AI Assistant</span>
+            </button>
             <button id="resync-btn" style="
                 background:rgba(248,250,252,0.95);
                 color:#991b1b;
@@ -1205,6 +1346,23 @@
             " title="Fetch complete email history">
                 <span>❄️</span><span>Resync</span>
             </button>
+            <a href="/whatsapp" style="text-decoration:none;">
+                <button style="
+                    background:rgba(37, 211, 102, 0.15);
+                    color:#166534;
+                    border:1px solid rgba(37, 211, 102, 0.4);
+                    padding:8px 14px;
+                    border-radius:999px;
+                    font-weight:700;
+                    cursor:pointer;
+                    box-shadow:0 10px 24px rgba(15,23,42,0.15);
+                    display:flex;
+                    align-items:center;
+                    gap:6px;
+                ">
+                    <span>🟢</span><span>WhatsApp Inbox</span>
+                </button>
+            </a>
             <a href="/logout" style="text-decoration:none;">
                 <button style="
                     background:rgba(255,255,255,0.95);
@@ -1325,6 +1483,8 @@
                     </div>
                 </div>
                 <div class="chat-tools">
+                    <input type="text" id="chat-keyword-search" placeholder="Search in chat..." class="date-input"
+                        style="min-width: 150px;">
                     <div class="stack">
                         <input type="date" id="chat-start-date" title="Start Date" class="date-input">
                         <span style="font-size:0.8rem; color:var(--text-secondary);">to</span>
@@ -1480,6 +1640,34 @@
             <p style="color:#64748b; margin-bottom:20px;">New account successfully added.</p>
             <button onclick="closeSuccessModal()"
                 style="padding:10px 24px; border:none; background:var(--primary-color); color:white; border-radius:999px; cursor:pointer; font-weight:700; font-size:1rem;">Okay</button>
+        </div>
+    </div>
+
+    <!-- AI ASSISTANT BOX -->
+    <div id="ai-assistant-box">
+        <div class="ai-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1.2rem;">🤖</span>
+                <span style="font-weight:700;">AI Assistant</span>
+            </div>
+            <button onclick="toggleAiBox()"
+                style="background:none; border:none; color:white; cursor:pointer; font-size:1.2rem;">×</button>
+        </div>
+        <div class="ai-messages" id="ai-messages">
+            <div class="ai-message bot">
+                Hello! I'm your AI assistant. You can give me voice commands or type here. Try "Show me emails from
+                today" or "Switch to account [email]".
+            </div>
+        </div>
+        <div id="ai-status"
+            style="padding: 4px 16px; font-size: 0.75rem; color: #ef4444; display: none; font-weight: 600;">
+            ● Listening...
+        </div>
+        <div class="ai-input-area">
+            <button id="voice-btn" class="voice-btn" title="Voice Command">🎤</button>
+            <input type="text" id="ai-input" class="ai-input" placeholder="Type a command...">
+            <button id="ai-send-btn" class="icon-btn"
+                style="width:36px; height:36px; border-radius:50%; background:var(--primary-color); color:white; border:none;">↗️</button>
         </div>
     </div>
 
@@ -1645,6 +1833,7 @@
         let filterEndDate = null;
         let filterHasAttachments = false;
         let filterSource = "all";
+        let localSearchTerm = "";
 
         // Search Navigation State
         let currentMatchIndex = 0;
@@ -1680,6 +1869,15 @@
                     filterChips.forEach(c => c.classList.toggle('active', c === chip));
                     renderVisitorList();
                 });
+            });
+
+            // Keyword Search (Local)
+            const chatKeywordSearch = document.getElementById('chat-keyword-search');
+            chatKeywordSearch.addEventListener('input', (e) => {
+                localSearchTerm = e.target.value.trim();
+                if (currentConversationEmail) {
+                    renderChat(currentConversationEmail, searchFilter);
+                }
             });
         });
 
@@ -1826,6 +2024,8 @@
                 const lastMsg = conv.last_message || '';
                 const unread = conv.unread || 0;
                 const timeString = formatTime(conv.timestamp);
+                const source = conv.source || 'chat';
+                const sourceIcon = source === 'whatsapp' ? '🟢' : (source === 'email' || source === 'imap' ? '📧' : '💬');
 
                 // --- RESTORED FILTERS ---
                 if (statusFilter === 'unread' && unread === 0) return;
@@ -1849,13 +2049,13 @@
                     .replace(/'/g, "&#039;");
 
                 div.innerHTML = `
-            <div class="visitor-avatar">${id.substring(0, 2).toUpperCase()}</div>
+            <div class="visitor-avatar">${source === 'whatsapp' ? '☏' : id.substring(0, 2).toUpperCase()}</div>
             <div class="visitor-info">
                 <div style="display:flex; justify-content:space-between;">
-                    <div class="visitor-name">${id}</div>
+                    <div class="visitor-name">${sourceIcon} ${id}</div>
                     <div style="font-size:12px; color:#9ca3af;">${timeString}</div>
                 </div>
-                <div class="visitor-preview">${safePreview}</div>
+                <div class="visitor-preview">${lastMsg.substring(0, 60)}...</div>
             </div>
             ${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}
         `;
@@ -1947,6 +2147,10 @@
             document.getElementById('email-composer').style.display = 'none';
             document.getElementById('reply-bar').style.display = 'flex';
 
+            const isWhatsapp = !email.includes('@');
+            const composeBtn = document.getElementById('compose-btn');
+            composeBtn.innerHTML = isWhatsapp ? '<span>🟢</span> Send WhatsApp' : '<span>💬</span> Compose Reply';
+
             // Initialize Editor if needed
             initializeQuillEditor();
 
@@ -1973,6 +2177,8 @@
             currentMatchIndex = 0;
             totalMatches = 0;
 
+            const finalSearch = localSearchTerm || searchTerm;
+
             data.messages.forEach(m => {
                 const day = getDayLabel(m.timestamp);
                 if (day !== lastDay) {
@@ -1988,6 +2194,7 @@
 
                 const div = document.createElement('div');
                 div.className = `message ${m.sender}`;
+                if (m.source === 'whatsapp') div.classList.add('whatsapp');
 
                 // Content with highlighting
                 // Content rendering logic
@@ -2029,7 +2236,7 @@
                         } else {
                             // It's text: Escape HTML special chars then Highlight
                             let safePart = part.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                            return highlightText(safePart, searchTerm);
+                            return highlightText(safePart, finalSearch);
                         }
                     }).join('');
                 }
@@ -2152,6 +2359,200 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
         });
+
+        // --- AI Assistant Logic ---
+        const aiBox = document.getElementById('ai-assistant-box');
+        const aiMessages = document.getElementById('ai-messages');
+        const aiInput = document.getElementById('ai-input');
+        const voiceBtn = document.getElementById('voice-btn');
+        const assistantBtn = document.getElementById('ai-assistant-btn');
+
+        if (assistantBtn) assistantBtn.addEventListener('click', toggleAiBox);
+
+        function toggleAiBox() {
+            aiBox.classList.toggle('open');
+            if (aiBox.classList.contains('open')) {
+                aiInput.focus();
+            }
+        }
+        window.toggleAiBox = toggleAiBox;
+
+        async function sendAiCommand() {
+            const prompt = aiInput.value.trim();
+            if (!prompt) return;
+
+            appendAiMessage('user', prompt);
+            aiInput.value = '';
+
+            // Loading state
+            const botMsgId = 'bot-' + Date.now();
+            appendAiMessage('bot', '...', botMsgId);
+
+            try {
+                const res = await fetch('/api/ai/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: prompt })
+                });
+                const data = await res.json();
+
+                // Remove loading
+                const loadingMsg = document.getElementById(botMsgId);
+                if (loadingMsg) loadingMsg.remove();
+
+                if (data.status === 'ok') {
+                    appendAiMessage('bot', data.response);
+                    handleAiActions(data.actions);
+                } else {
+                    appendAiMessage('bot', "Error: " + data.message);
+                }
+            } catch (err) {
+                const loadingMsg = document.getElementById(botMsgId);
+                if (loadingMsg) loadingMsg.remove();
+                appendAiMessage('bot', "Network error: " + err.message);
+            }
+        }
+
+        function appendAiMessage(sender, text, id = null) {
+            const div = document.createElement('div');
+            div.className = `ai-message ${sender}`;
+            div.textContent = text;
+            if (id) div.id = id;
+            aiMessages.appendChild(div);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+        }
+
+        function handleAiActions(actions) {
+            if (!actions) return;
+            actions.forEach(act => {
+                if (act.action === 'switch_account') {
+                    const selector = document.getElementById('account-selector');
+                    if (selector) {
+                        selector.value = act.account;
+                        // Manually trigger change
+                        handleAccountChange(act.account);
+                        appendAiMessage('bot', `📍 Switched view to account: ${act.account}`);
+                    }
+                } else if (act.action === 'fetch_emails') {
+                    // Update search filter and trigger fetch
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput && act.filter) {
+                        if (act.filter.query) {
+                            searchInput.value = act.filter.query;
+                            searchFilter = act.filter.query;
+                        }
+                        if (act.filter.start) {
+                            document.getElementById('filter-start-date').value = act.filter.start;
+                            filterStartDate = act.filter.start;
+                        }
+                        if (act.filter.end) {
+                            document.getElementById('filter-end-date').value = act.filter.end;
+                            filterEndDate = act.filter.end;
+                        }
+                        // Refresh with new filters
+                        fetchMessages(searchFilter);
+                        appendAiMessage('bot', `🔍 Filtered messages based on your request.`);
+                    }
+                }
+                // Add more actions here
+            });
+        }
+
+        // Voice Recognition
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            let recordingTimer = null;
+            let countdownInterval = null;
+            let originalPlaceholder = aiInput.placeholder;
+            let finalTranscript = '';
+
+            const statusEl = document.getElementById('ai-status');
+
+            recognition.onstart = () => {
+                finalTranscript = '';
+                voiceBtn.classList.add('recording');
+                if (statusEl) statusEl.style.display = 'block';
+                aiInput.placeholder = "Listening... Speak now.";
+                let secondsLeft = 10;
+                voiceBtn.title = `Listening... (${secondsLeft}s)`;
+
+                if (countdownInterval) clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    secondsLeft--;
+                    voiceBtn.title = `Listening... (${secondsLeft}s)`;
+                    if (secondsLeft <= 0) clearInterval(countdownInterval);
+                }, 1000);
+
+                if (recordingTimer) clearTimeout(recordingTimer);
+                recordingTimer = setTimeout(() => {
+                    recognition.stop();
+                }, 10000);
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                const full = finalTranscript + interimTranscript;
+                aiInput.value = full;
+                console.log("Voice captured:", full);
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Speech Recognition Error:", event.error);
+                if (event.error !== 'no-speech') {
+                    stopRecording();
+                }
+            };
+
+            recognition.onend = () => {
+                stopRecording();
+                const text = aiInput.value.trim();
+                if (text) {
+                    sendAiCommand();
+                }
+            };
+
+            function stopRecording() {
+                voiceBtn.classList.remove('recording');
+                if (statusEl) statusEl.style.display = 'none';
+                voiceBtn.title = "Start Voice Command";
+                aiInput.placeholder = originalPlaceholder;
+                if (recordingTimer) clearTimeout(recordingTimer);
+                if (countdownInterval) clearInterval(countdownInterval);
+            }
+
+            voiceBtn.addEventListener('click', () => {
+                if (voiceBtn.classList.contains('recording')) {
+                    recognition.stop();
+                } else {
+                    try {
+                        aiInput.value = '';
+                        recognition.start();
+                    } catch (e) {
+                        console.error("Failed to start voice:", e);
+                    }
+                }
+            });
+        } else {
+            voiceBtn.style.display = 'none';
+        }
+
+        document.getElementById('ai-send-btn').addEventListener('click', sendAiCommand);
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendAiCommand();
+        });
     </script>
 
     <!-- Quill.js Library -->
@@ -2198,8 +2599,28 @@
 
         // Compose Trigger Logic
         document.getElementById('compose-btn').addEventListener('click', () => {
+            const isWhatsapp = !currentConversationEmail.includes('@');
+
             document.getElementById('reply-bar').style.display = 'none';
             document.getElementById('email-composer').style.display = 'flex';
+
+            // Customize for WhatsApp
+            const subjectField = document.getElementById('email-subject').parentElement;
+            const toggleCC = document.getElementById('toggle-cc-bcc');
+            const sendBtn = document.getElementById('send-email-btn');
+
+            if (isWhatsapp) {
+                subjectField.style.display = 'none';
+                toggleCC.style.display = 'none';
+                sendBtn.innerHTML = '🟢 Send via WhatsApp';
+                // WhatsApp usually doesn't need rich text, but we can keep it for convenience 
+                // and the backend will strip it.
+            } else {
+                subjectField.style.display = 'flex';
+                toggleCC.style.display = 'inline';
+                sendBtn.innerHTML = '📧 Send Email';
+            }
+
             if (quillEditor) quillEditor.focus();
         });
 

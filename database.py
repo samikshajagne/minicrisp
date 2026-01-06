@@ -21,17 +21,26 @@ email_received = db["email_received"]       # table3_email_received
 threads = db["threads"]                     # optional future use
 counters = db["counters"] 
 email_accounts = db.email_accounts
+whatsapp_accounts = db["whatsapp_accounts"]
 # auto-increment counters
 
 # -----------------------------
 # Indexes
 # -----------------------------
-customers.create_index("cust_email", unique=True)
+# Drop existing non-sparse index if it exists to allow update
+try:
+    customers.drop_index("cust_email_1")
+except Exception:
+    pass
+
+customers.create_index("cust_email", unique=True, sparse=True)
+customers.create_index("phone", unique=True, sparse=True)
 customers.create_index("tb1_id", unique=True)
 email_received.create_index("email")
 email_received.create_index("tb1_id")
 email_received.create_index("message_id", unique=True, sparse=True)
 threads.create_index("visitor_email", unique=True)
+whatsapp_accounts.create_index("phone_number_id", unique=True)
 
 # -----------------------------
 # Auto-increment helper
@@ -49,31 +58,39 @@ def get_next_sequence(name: str) -> int:
 # -----------------------------
 # Customer helpers
 # -----------------------------
-def ensure_customer(email: str, name: str | None = None) -> dict:
+def ensure_customer(email: str | None = None, name: str | None = None, phone: str | None = None) -> dict:
     """
     Return customer doc.
     If not exists -> create.
     Always ensures last_seen & last_read_at fields exist.
+    Can identify by email OR phone.
     """
-    if not email:
-        raise ValueError("email required")
+    if not email and not phone:
+        raise ValueError("email or phone required")
 
-    email = email.strip().lower()
+    email = email.strip().lower() if email else None
     now = datetime.utcnow()
 
-    doc = customers.find_one({"cust_email": email})
+    # Try finding by email
+    doc = None
+    if email:
+        doc = customers.find_one({"cust_email": email})
+    
+    # Try finding by phone if email search failed or was not provided
+    if not doc and phone:
+        doc = customers.find_one({"phone": phone})
 
     if doc:
         # 🔄 Update last_seen
         customers.update_one(
-            {"cust_email": email},
+            {"_id": doc["_id"]},
             {"$set": {"last_seen": now}}
         )
 
         # 🧩 Backward compatibility (older customers)
         if "last_read_at" not in doc:
             customers.update_one(
-                {"cust_email": email},
+                {"_id": doc["_id"]},
                 {"$set": {"last_read_at": None}}
             )
             doc["last_read_at"] = None
@@ -83,19 +100,47 @@ def ensure_customer(email: str, name: str | None = None) -> dict:
 
     # 🆕 Create new customer
     tb1_id = get_next_sequence("tb1_id")
-    try:
-        customers.insert_one({
-            "tb1_id": tb1_id,
-            "name": name or "",
-            "cust_email": email,
-            "created_at": now,
-            "last_seen": now,
-            "last_read_at": None   # 🔴 required for unread counter
-        })
-    except DuplicateKeyError:
-        return customers.find_one({"cust_email": email})
+    customer_data = {
+        "tb1_id": tb1_id,
+        "name": name or "",
+        "created_at": now,
+        "last_seen": now,
+        "last_read_at": None
+    }
+    if email:
+        customer_data["cust_email"] = email
+    if phone:
+        customer_data["phone"] = phone
 
-    return customers.find_one({"cust_email": email})
+    try:
+        customers.insert_one(customer_data)
+        return customer_data
+    except DuplicateKeyError:
+        # In case of race condition, try fetching again
+        if email:
+            return customers.find_one({"cust_email": email})
+        if phone:
+            return customers.find_one({"phone": phone})
+    
+    return customers.find_one({"tb1_id": tb1_id})
+
+def get_whatsapp_accounts():
+    """List all configured WhatsApp business accounts."""
+    return list(whatsapp_accounts.find({}, {"_id": 0}))
+
+def add_whatsapp_account(phone_number_id: str, access_token: str, display_phone_number: str):
+    """Register a new WhatsApp Business account."""
+    whatsapp_accounts.update_one(
+        {"phone_number_id": phone_number_id},
+        {"$set": {
+            "phone_number_id": phone_number_id,
+            "access_token": access_token,
+            "display_phone_number": display_phone_number,
+            "active": True,
+            "created_at": datetime.utcnow()
+        }},
+        upsert=True
+    )
 
 def get_customer_by_email(email: str) -> dict | None:
     if not email:

@@ -1,20 +1,38 @@
 import os
-from dotenv import load_dotenv
-load_dotenv()
-
 import asyncio
 import threading
 import logging
-from pymongo.errors import DuplicateKeyError
+import json
 import time
-from datetime import datetime, timezone, timedelta # Added timedelta
-from database import mark_customer_read, create_user, get_user_by_email # Added auth helpers
-from passlib.context import CryptContext # Added
-from jose import jwt, JWTError # Added
-from fastapi.security import OAuth2PasswordBearer # Added
+from datetime import datetime, timezone, timedelta
+from typing import List, Optional
+
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
+
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException, BackgroundTasks, Response, Depends, status, Form, UploadFile, File
-import json # Added Form, Depends, status
-import os
+from fastapi.responses import PlainTextResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
+from passlib.context import CryptContext
+from jose import jwt, JWTError
+from fastapi.security import OAuth2PasswordBearer
+from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
+
+from database import (
+    mark_customer_read, create_user, get_user_by_email, ensure_customer, 
+    email_received, fs, whatsapp_accounts, get_email_accounts, add_email_account
+)
+from whatsapp_service import verify_webhook, process_whatsapp_payload, send_whatsapp_text
+from email_service import (
+    send_admin_and_customer_notifications,
+    send_reply_from_admin_to_customer,
+    forward_visitor_message_to_admin
+)
+from gmail_reader import fetch_emails, test_credentials
+
 try:
     from groq import Groq
 except ImportError:
@@ -23,16 +41,15 @@ try:
     import google.generativeai as genai
 except ImportError:
     genai = None
-from fastapi import FastAPI, WebSocket, Request, BackgroundTasks, WebSocketDisconnect, Response
-from fastapi.responses import PlainTextResponse, StreamingResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
-from database import ensure_customer, get_customer_by_email
-from database import get_email_accounts, add_email_account, fs
-from bson import ObjectId
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
 # DB
 from database import email_received, ensure_customer
+
+print("DEBUG: main.py is loading...")
+print(f"DEBUG: OPENAI_API_KEY present: {bool(os.environ.get('OPENAI_API_KEY'))}")
 
 # Email services
 from email_service import (
@@ -46,10 +63,76 @@ from gmail_reader import fetch_emails, test_credentials
 
 logger = logging.getLogger("main")
 logger.setLevel(logging.INFO)
+# Add file handler for debug
+fh = logging.FileHandler("debug_log.txt")
+fh.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(fh)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+# -----------------------------
+# WhatsApp Webhook
+# -----------------------------
+
+@app.get("/webhook/whatsapp")
+async def whatsapp_webhook_verify(request: Request):
+    """Meta webhook verification endpoint."""
+    params = request.query_params
+    hub_mode = params.get("hub.mode")
+    hub_token = params.get("hub.verify_token")
+    hub_challenge = params.get("hub.challenge")
+    
+    challenge = verify_webhook(hub_mode, hub_token, hub_challenge)
+    if challenge is not None:
+        return Response(content=str(challenge), media_type="text/plain")
+    return Response(content="Verification failed", status_code=403)
+
+@app.post("/webhook/whatsapp")
+async def whatsapp_webhook_receive(request: Request):
+    """WhatsApp message receiver endpoint with Automated Discovery."""
+    try:
+        payload = await request.json()
+        # Log raw payload pretty-printed for senior-level debugging
+        logger.info("--- Incoming WhatsApp Webhook ---")
+        logger.info(json.dumps(payload, indent=2))
+        
+        data = process_whatsapp_payload(payload)
+        if data:
+            # --- Automated Discovery Logic ---
+            # Capture phone_number_id and display_phone_number ONLY from webhook
+            business_id = data["business_number_id"]
+            display_num = data["display_phone_number"]
+            
+            if business_id:
+                from database import whatsapp_accounts
+                # Persistent record for routing, even if access_token is missing initially
+                whatsapp_accounts.update_one(
+                    {"phone_number_id": business_id},
+                    {"$set": {
+                        "phone_number_id": business_id,
+                        "display_phone_number": display_num,
+                        "last_seen_webhook": datetime.now(timezone.utc)
+                    }},
+                    upsert=True
+                )
+            # ----------------------------------
+
+            insert_message(
+                sender="visitor",
+                text=data["text"],
+                visitor_phone=data["visitor_phone"],
+                origin="whatsapp",
+                message_id=data["message_id"],
+                timestamp=data["timestamp"],
+                business_number_id=business_id
+            )
+            
+        return {"status": "ok"}
+    except Exception as e:
+        logger.error(f"Webhook processing error: {e}")
+        return {"status": "error", "message": str(e)}
 
 # -----------------------------
 # Security / Auth Config
@@ -121,25 +204,28 @@ async def broadcast(email, guest_id, payload):
 # -----------------------------
 
 
-def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", message_id=None, timestamp=None, attachments=None, account_email=None, html_content=None, subject=None, cc=None, bcc=None):
-    if not visitor_email:
+def insert_message(sender, text, visitor_email=None, guest_id=None, origin="chat", message_id=None, timestamp=None, attachments=None, account_email=None, html_content=None, subject=None, cc=None, bcc=None, visitor_phone=None, business_number_id=None):
+    if not visitor_email and not visitor_phone:
         return
 
-    visitor_email = visitor_email.lower().strip()
-
-    # Allow ALL origins to create customers (User Request: "read all mails... show as chats")
-    cust = ensure_customer(visitor_email)
+    # Normalize data
+    visitor_email = visitor_email.lower().strip() if visitor_email else None
+    
+    # Identify/Create customer
+    cust = ensure_customer(email=visitor_email, phone=visitor_phone)
     tb1_id = cust["tb1_id"]
-
+    
+    # Use phone as identifier if email is missing (for UI consistency)
+    display_identifier = visitor_email or visitor_phone
     
     now = timestamp or datetime.now(timezone.utc)
 
     doc = {
         "tb1_id": tb1_id,
-        "email": visitor_email,
+        "email": display_identifier, # Keep as 'email' field for dashboard compatibility, but can be phone
         "content": text,
         "sender": sender,
-        "source": origin,   # "chat" or "email" or "imap"
+        "source": origin,   # "chat", "email", "imap", "whatsapp"
         "timestamp": now,
         "seen_at": None,
         "attachments": attachments or [],
@@ -147,7 +233,9 @@ def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", me
         "html_content": html_content,
         "subject": subject,
         "cc": cc or [],
-        "bcc": bcc or []
+        "bcc": bcc or [],
+        "visitor_phone": visitor_phone,
+        "business_number_id": business_number_id
     }
     if message_id:
         doc["message_id"] = message_id
@@ -160,19 +248,18 @@ def insert_message(sender, text, visitor_email, guest_id=None, origin="chat", me
     payload = {
         "sender": sender,
         "text": text,
-        "email": visitor_email,
-        "timestamp": now.isoformat(),
+        "email": display_identifier,
         "timestamp": now.isoformat(),
         "attachments": attachments or [],
-        "html_content": html_content
+        "html_content": html_content,
+        "source": origin
     }
 
     try:
         loop = asyncio.get_running_loop()
-        loop.create_task(broadcast(visitor_email, guest_id, payload))
+        loop.create_task(broadcast(display_identifier, guest_id, payload))
     except RuntimeError:
-        # No running loop (e.g., script execution or background thread without loop)
-        pass # Broadcast not critical for sync scripts
+        pass
 
 # -----------------------------
 # Models
@@ -269,6 +356,10 @@ async def index(request: Request):
 async def admin(request: Request, user: str = Depends(login_required)):
     return templates.TemplateResponse("admin.html", {"request": request, "user": user})
 
+@app.get("/whatsapp")
+async def whatsapp_dashboard(request: Request, user: str = Depends(login_required)):
+    return templates.TemplateResponse("whatsapp.html", {"request": request, "user": user})
+
 # -----------------------------
 # ✅ ADMIN INBOX (CUSTOMERS ONLY)
 # -----------------------------
@@ -336,6 +427,9 @@ async def api_admin_messages(
     
     if source and source != "all":
         query["source"] = source.lower()
+    elif not source:
+        # Default for Email Dashboard: exclude whatsapp
+        query["source"] = {"$ne": "whatsapp"}
         
     cursor = email_received.find(query).sort("timestamp", -1)
 
@@ -406,6 +500,31 @@ async def add_account(payload: dict, response: Response):
         return {"status": "error", "message": error_msg}
 
     add_email_account(payload)
+    return {"status": "ok"}
+
+@app.post("/api/admin/whatsapp-accounts")
+async def add_whatsapp_account_api(payload: dict, user: str = Depends(login_required)):
+    from database import add_whatsapp_account
+    
+    phone_number_id = payload.get("phone_number_id")
+    access_token = payload.get("access_token")
+    display_phone_number = payload.get("display_phone_number")
+    
+    if not phone_number_id or not access_token:
+        raise HTTPException(status_code=400, detail="phone_number_id and access_token are required")
+        
+    add_whatsapp_account(phone_number_id, access_token, display_phone_number or phone_number_id)
+    return {"status": "ok"}
+
+@app.get("/api/admin/whatsapp-accounts")
+async def get_whatsapp_accounts_api(user: str = Depends(login_required)):
+    from database import get_whatsapp_accounts
+    return {"accounts": get_whatsapp_accounts()}
+
+@app.delete("/api/admin/whatsapp-accounts/{phone_number_id}")
+async def delete_whatsapp_account_api(phone_number_id: str, user: str = Depends(login_required)):
+    from database import whatsapp_accounts
+    whatsapp_accounts.delete_one({"phone_number_id": phone_number_id})
     return {"status": "ok"}
 
 def run_full_sync():
@@ -541,6 +660,7 @@ async def api_message(msg: Message):
 # -----------------------------
 @app.post("/api/reply")
 async def api_reply(
+    background_tasks: BackgroundTasks,
     visitor_email: str = Form(...),
     text: str = Form(...),
     account_email: str | None = Form(None),
@@ -548,8 +668,9 @@ async def api_reply(
     html_content: str | None = Form(None),
     cc: str | None = Form(None),
     bcc: str | None = Form(None),
-    files: list[UploadFile] = File(None)
+    files: Optional[List[UploadFile]] = File(None)
 ):
+    logger.info(f"api_reply called: visitor={visitor_email}, account={account_email}, text_len={len(text)}")
     try:
         # Parse CC/BCC if they come as JSON strings or plain text
         cc_list = []
@@ -603,25 +724,44 @@ async def api_reply(
         insert_message(
             "admin", 
             text, 
-            visitor_email, 
+            visitor_email if "@" in visitor_email else None,
+            visitor_phone=None if "@" in visitor_email else visitor_email,
             account_email=account_email,
             html_content=html_content,
             subject=subject,
             cc=cc_list,
             bcc=bcc_list,
-            attachments=attachments_metadata
+            attachments=attachments_metadata,
+            origin="email" if "@" in visitor_email else "whatsapp"
         )
         
-        send_reply_from_admin_to_customer(
-            visitor_email, 
-            text, 
-            account_email=account_email,
-            html_content=html_content,
-            subject=subject,
-            cc=cc_list,
-            bcc=bcc_list,
-            attachments=attachments_for_email
-        )
+        if "@" in visitor_email:
+            send_reply_from_admin_to_customer(
+                visitor_email, 
+                text, 
+                account_email=account_email,
+                html_content=html_content,
+                subject=subject,
+                cc=cc_list,
+                bcc=bcc_list,
+                attachments=attachments_for_email
+            )
+        else:
+            # Routing to WhatsApp
+            # In this case, 'visitor_email' actually contains the phone number
+            # We prioritize account_email (which will be business_number_id) if provided
+            business_id = account_email if account_email and "@" not in account_email else None
+            
+            if not business_id:
+                # Fallback: Find which business number received the LAST message in this thread
+                last_msg = email_received.find_one({"visitor_phone": visitor_email, "source": "whatsapp"}, sort=[("timestamp", -1)])
+                business_id = last_msg.get("business_number_id") if last_msg else None
+            
+            if business_id:
+                background_tasks.add_task(send_whatsapp_text, business_id, visitor_email, text)
+            else:
+                logger.error(f"Could not find business_number_id for WhatsApp reply to {visitor_email}")
+
         return {"status": "ok"}
     except Exception as e:
         logger.exception(f"API Reply Error: {e}")
@@ -704,6 +844,261 @@ async def generate_email(request: Request):
         return {"status": "error", "message": str(e)}
 
 # -----------------------------
+# AI Agent (Gemini Tool Calling)
+# -----------------------------
+
+# Configure Gemini
+api_key = os.environ.get("GEMINI_API_KEY")
+if api_key and genai:
+    genai.configure(api_key=api_key)
+
+def get_emails_tool(query: str = None, start_date: str = None, end_date: str = None, account: str = None):
+    """
+    Search for emails/messages based on criteria.
+    Dates should be in YYYY-MM-DD format.
+    """
+    filter_query = {}
+    if account:
+        filter_query["account_email"] = account.lower().strip()
+    
+    date_filter = {}
+    if start_date:
+        try:
+            sd = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+            date_filter["$gte"] = sd
+        except: pass
+    if end_date:
+        try:
+            ed = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)
+            date_filter["$lte"] = ed
+        except: pass
+    if date_filter:
+        filter_query["timestamp"] = date_filter
+
+    if query:
+        filter_query["$or"] = [
+            {"content": {"$regex": query, "$options": "i"}},
+            {"email": {"$regex": query, "$options": "i"}},
+            {"subject": {"$regex": query, "$options": "i"}}
+        ]
+
+    msgs = list(email_received.find(filter_query).sort("timestamp", -1).limit(10))
+    results = []
+    for m in msgs:
+        results.append({
+            "from": m["email"],
+            "content": m["content"][:200] + "..." if len(m["content"]) > 200 else m["content"],
+            "timestamp": m["timestamp"].isoformat(),
+            "subject": m.get("subject", "No Subject")
+        })
+    return results
+
+def switch_account_tool(email: str):
+    """Switch the current active email account in the dashboard."""
+    return {"action": "switch_account", "account": email}
+
+def send_email_tool(to: str, subject: str, body: str):
+    """Send an email to a recipient."""
+    # We'll use the first active account if none specified or we can ask for context
+    # For now, we'll just trigger the send logic
+    try:
+        send_reply_from_admin_to_customer(to, body, subject=subject)
+        insert_message("admin", body, to, subject=subject, origin="ai_agent")
+        return {"status": "success", "message": f"Email sent to {to}"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/ai/agent")
+async def ai_agent(request: Request):
+    if not genai:
+        return {"status": "error", "message": "google-generativeai not installed"}
+    
+    data = await request.json()
+    prompt = data.get("prompt")
+    if not prompt:
+        return {"status": "error", "message": "Prompt required"}
+
+    try:
+        model = genai.GenerativeModel(
+            model_name='gemini-1.5-flash',
+            tools=[get_emails_tool, switch_account_tool, send_email_tool]
+        )
+        
+        chat = model.start_chat(enable_automatic_function_calling=True)
+        response = chat.send_message(prompt)
+        
+        # Extract actions from response parts if any
+        actions = []
+        for part in response.candidates[0].content.parts:
+            if part.function_call:
+                # Automatic function calling might have already executed them
+                # But we might want to pass specific actions (like switch_account) to frontend
+                pass
+
+        # We can also manually check if the model suggested a tool call that we want the frontend to handle
+        # For switch_account, the tool returns a dict with "action"
+        
+        text_response = response.text
+        
+        # Check if any tool result contained an action for the frontend
+        # Gemini with enable_automatic_function_calling will put tool results in the chat history
+        final_actions = []
+        for msg in chat.history:
+            for part in msg.parts:
+                if part.function_response:
+                    res = part.function_response.response
+                    if isinstance(res, dict) and "action" in res:
+                        final_actions.append(res)
+
+        return {
+            "status": "ok",
+            "response": text_response,
+            "actions": final_actions
+        }
+    except Exception as e:
+        logger.exception("AI Agent Error")
+        return {"status": "error", "message": str(e)}
+
+# -----------------------------
+# AI Assistant (OpenAI Structured Commands)
+# -----------------------------
+
+OPENAI_CLIENT = None
+if os.environ.get("OPENAI_API_KEY") and OpenAI:
+    OPENAI_CLIENT = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+AI_SYSTEM_PROMPT = """
+You are a senior AI assistant for an email and chat admin dashboard.
+Your goal is to parse user commands into a strict JSON format for backend execution.
+
+SUPPORTED ACTIONS:
+1. fetch_emails (params: query, start_date, end_date, account)
+   - Dates MUST be YYYY-MM-DD.
+2. switch_account (params: email)
+3. send_email (params: to, subject, body)
+4. list_accounts (no params)
+5. get_unread_count (params: email)
+
+RULES:
+- Return ONLY JSON. No prose, no conversation.
+- If a date is relative (e.g. 'today', 'yesterday'), calculate it relative to current date: {current_date}.
+- If you don't understand, return: {"error": "unknown_command"}
+- If parameters are missing but required, try to infer them or ask (but only via JSON error field).
+
+Example: "Show me emails from yesterday"
+{"action": "fetch_emails", "start_date": "{yesterday_date}"}
+""".replace("{current_date}", datetime.now().strftime("%Y-%m-%d")) \
+   .replace("{yesterday_date}", (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"))
+
+@app.post("/api/ai/command")
+async def ai_command(request: Request):
+    global OPENAI_CLIENT
+    
+    # Reload env to pick up any changes (e.g. new API key or credits)
+    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
+    
+    # Force re-initialization if OPENAI_CLIENT is None or if we want to be safe
+    # Given the user just said they upgraded, let's ensure we use the latest state
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if api_key and OpenAI:
+        # Re-init client to ensure it's not using a stale session/key
+        OPENAI_CLIENT = OpenAI(api_key=api_key)
+            
+    if not OPENAI_CLIENT:
+        return {"status": "error", "message": "OpenAI client not configured (API key missing). Please ensure OPENAI_API_KEY is set in .env"}
+    
+    data = await request.json()
+    text = data.get("text")
+    if not text:
+        return {"status": "error", "message": "No command provided"}
+
+    try:
+        completion = OPENAI_CLIENT.chat.completions.create(
+            model="gpt-3.5-turbo", # or gpt-4
+            messages=[
+                {"role": "system", "content": AI_SYSTEM_PROMPT},
+                {"role": "user", "content": text}
+            ],
+            response_format={"type": "json_object"}
+        )
+        
+        raw_json = completion.choices[0].message.content
+        ai_data = json.loads(raw_json)
+        
+        # Action Router
+        action = ai_data.get("action")
+        if not action:
+            return {"status": "ok", "response": "I didn't quite catch that. Try asking to show emails or switch accounts.", "actions": []}
+
+        result_actions = []
+        response_text = ""
+
+        if action == "fetch_emails":
+            # Logic similar to get_emails_tool
+            query = ai_data.get("query")
+            sd = ai_data.get("start_date")
+            ed = ai_data.get("end_date")
+            acc = ai_data.get("account")
+            
+            emails = get_emails_tool(query=query, start_date=sd, end_date=ed, account=acc)
+            response_text = f"Found {len(emails)} emails matching your request."
+            # We return an action to the frontend to highlight/filter these
+            result_actions.append({"action": "fetch_emails", "results": emails, "filter": {"query": query, "start": sd, "end": ed}})
+
+        elif action == "switch_account":
+            email = ai_data.get("email")
+            if email:
+                result_actions.append({"action": "switch_account", "account": email})
+                response_text = f"Switching to account {email}."
+            else:
+                response_text = "Which account would you like to switch to?"
+
+        elif action == "send_email":
+            target = ai_data.get("to")
+            subj = ai_data.get("subject", "No Subject")
+            body = ai_data.get("body")
+            if target and body:
+                try:
+                    send_reply_from_admin_to_customer(target, body, subject=subj)
+                    insert_message("admin", body, target, subject=subj, origin="ai_agent")
+                    response_text = f"Email sent to {target}."
+                except Exception as e:
+                    response_text = f"Failed to send email: {str(e)}"
+            else:
+                response_text = "I need a recipient and a body to send an email."
+
+        elif action == "list_accounts":
+            accounts = get_email_accounts()
+            acc_list = ", ".join([a["email"] for a in accounts])
+            response_text = f"Available accounts: {acc_list}"
+
+        elif action == "get_unread_count":
+            # This requires tb1_id usually, but let's try via email
+            email = ai_data.get("email")
+            if email:
+                cust = get_customer_by_email(email)
+                if cust:
+                    count = get_unread_count(cust["tb1_id"])
+                    response_text = f"{email} has {count} unread messages."
+                else:
+                    response_text = f"Customer {email} not found."
+            else:
+                response_text = "Which user's unread count do you want?"
+
+        else:
+            response_text = "Command not recognized or not yet supported."
+
+        return {
+            "status": "ok",
+            "response": response_text,
+            "actions": result_actions
+        }
+
+    except Exception as e:
+        logger.exception("OpenAI Command Error")
+        return {"status": "error", "message": str(e)}
+
+# -----------------------------
 # Gmail sync (SAFE)
 # -----------------------------
 def gmail_sync_loop():
@@ -751,3 +1146,4 @@ threading.Thread(target=gmail_sync_loop, daemon=True).start()
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+ 

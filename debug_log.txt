@@ -1,0 +1,26 @@
+2026-01-02 17:00:26,614 - main - INFO - api_reply called: visitor=917620979617, account=EAAarZBVwJfKIBQcB7HjF4XoENfZAo7dbFo93tEoLU7qhWtjv85meNjCKYqZBnXrZBEex3QZBX9FOpYH7g4QBmJyN2QVTjLyRdWNfoLTLZBGKICWv9pIQHH28lF1MY5KITx0k2PcAVZCdq76ftkeOo7n0U46vdKjoUekeDCDjzvn8b31M9LL6o61dm7XM1ciZBjSDPT8T2knYXMHR5plVR5vA7U9pk3m8NCGfr6RtxEYNUGQZBFZC3Aif3DsA4WKTfNFK0kgZCsX5kemZBAOqsXVp0MUpkQxI07QZD, text_len=2
+2026-01-02 17:00:26,622 - main - ERROR - API Reply Error: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 693, in api_reply
+    insert_message(
+    ~~~~~~~~~~~~~~^
+        "admin",
+        ^^^^^^^^
+    ...<9 lines>...
+        origin="email" if "@" in visitor_email else "whatsapp"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\anticrisp\main.py", line 191, in insert_message
+    tb1_id = cust["tb1_id"]
+             ~~~~^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2026-01-02 17:19:57,337 - main - INFO - api_reply called: visitor=917620979617, account=EAAarZBVwJfKIBQcB7HjF4XoENfZAo7dbFo93tEoLU7qhWtjv85meNjCKYqZBnXrZBEex3QZBX9FOpYH7g4QBmJyN2QVTjLyRdWNfoLTLZBGKICWv9pIQHH28lF1MY5KITx0k2PcAVZCdq76ftkeOo7n0U46vdKjoUekeDCDjzvn8b31M9LL6o61dm7XM1ciZBjSDPT8T2knYXMHR5plVR5vA7U9pk3m8NCGfr6RtxEYNUGQZBFZC3Aif3DsA4WKTfNFK0kgZCsX5kemZBAOqsXVp0MUpkQxI07QZD, text_len=2
+2026-01-02 17:19:58,853 - whatsapp_service - ERROR - WhatsApp API error: {"error":{"message":"Unsupported post request. Object with ID 'EAAarZBVwJfKIBQcB7HjF4XoENfZAo7dbFo93tEoLU7qhWtjv85meNjCKYqZBnXrZBEex3QZBX9FOpYH7g4QBmJyN2QVTjLyRdWNfoLTLZBGKICWv9pIQHH28lF1MY5KITx0k2PcAVZCdq76ftkeOo7n0U46vdKjoUekeDCDjzvn8b31M9LL6o61dm7XM1ciZBjSDPT8T2knYXMHR5plVR5vA7U9pk3m8NCGfr6RtxEYNUGQZBFZC3Aif3DsA4WKTfNFK0kgZCsX5kemZBAOqsXVp0MUpkQxI07QZD' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https:\/\/developers.facebook.com\/docs\/graph-api","type":"GraphMethodException","code":100,"error_subcode":33,"fbtrace_id":"A5lL9k4R_sP7Fncg7tpy7et"}}
+2026-01-02 17:20:04,252 - main - INFO - api_reply called: visitor=917620979617, account=EAAarZBVwJfKIBQcB7HjF4XoENfZAo7dbFo93tEoLU7qhWtjv85meNjCKYqZBnXrZBEex3QZBX9FOpYH7g4QBmJyN2QVTjLyRdWNfoLTLZBGKICWv9pIQHH28lF1MY5KITx0k2PcAVZCdq76ftkeOo7n0U46vdKjoUekeDCDjzvn8b31M9LL6o61dm7XM1ciZBjSDPT8T2knYXMHR5plVR5vA7U9pk3m8NCGfr6RtxEYNUGQZBFZC3Aif3DsA4WKTfNFK0kgZCsX5kemZBAOqsXVp0MUpkQxI07QZD, text_len=2
+2026-01-02 17:20:05,275 - whatsapp_service - ERROR - WhatsApp API error: {"error":{"message":"Unsupported post request. Object with ID 'EAAarZBVwJfKIBQcB7HjF4XoENfZAo7dbFo93tEoLU7qhWtjv85meNjCKYqZBnXrZBEex3QZBX9FOpYH7g4QBmJyN2QVTjLyRdWNfoLTLZBGKICWv9pIQHH28lF1MY5KITx0k2PcAVZCdq76ftkeOo7n0U46vdKjoUekeDCDjzvn8b31M9LL6o61dm7XM1ciZBjSDPT8T2knYXMHR5plVR5vA7U9pk3m8NCGfr6RtxEYNUGQZBFZC3Aif3DsA4WKTfNFK0kgZCsX5kemZBAOqsXVp0MUpkQxI07QZD' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https:\/\/developers.facebook.com\/docs\/graph-api","type":"GraphMethodException","code":100,"error_subcode":33,"fbtrace_id":"A1l6nfzDXsgjv3HR1KnnFt5"}}
+2026-01-02 17:21:37,896 - main - INFO - api_reply called: visitor=917620979617, account=EAAarZBVwJfKIBQcB7HjF4XoENfZAo7dbFo93tEoLU7qhWtjv85meNjCKYqZBnXrZBEex3QZBX9FOpYH7g4QBmJyN2QVTjLyRdWNfoLTLZBGKICWv9pIQHH28lF1MY5KITx0k2PcAVZCdq76ftkeOo7n0U46vdKjoUekeDCDjzvn8b31M9LL6o61dm7XM1ciZBjSDPT8T2knYXMHR5plVR5vA7U9pk3m8NCGfr6RtxEYNUGQZBFZC3Aif3DsA4WKTfNFK0kgZCsX5kemZBAOqsXVp0MUpkQxI07QZD, text_len=2
+2026-01-02 17:21:39,011 - whatsapp_service - ERROR - WhatsApp API error: {"error":{"message":"Unsupported post request. Object with ID 'EAAarZBVwJfKIBQcB7HjF4XoENfZAo7dbFo93tEoLU7qhWtjv85meNjCKYqZBnXrZBEex3QZBX9FOpYH7g4QBmJyN2QVTjLyRdWNfoLTLZBGKICWv9pIQHH28lF1MY5KITx0k2PcAVZCdq76ftkeOo7n0U46vdKjoUekeDCDjzvn8b31M9LL6o61dm7XM1ciZBjSDPT8T2knYXMHR5plVR5vA7U9pk3m8NCGfr6RtxEYNUGQZBFZC3Aif3DsA4WKTfNFK0kgZCsX5kemZBAOqsXVp0MUpkQxI07QZD' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https:\/\/developers.facebook.com\/docs\/graph-api","type":"GraphMethodException","code":100,"error_subcode":33,"fbtrace_id":"AKvUJ1brxH8pANTv72GKiEU"}}
+2026-01-02 17:52:35,807 - main - INFO - api_reply called: visitor=917620979617, account=None, text_len=2
+2026-01-02 17:52:35,812 - main - ERROR - Could not find business_number_id for WhatsApp reply to 917620979617
+2026-01-05 13:30:58,040 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=613

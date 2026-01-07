@@ -38,7 +38,9 @@ customers.create_index("phone", unique=True, sparse=True)
 customers.create_index("tb1_id", unique=True)
 email_received.create_index("email")
 email_received.create_index("tb1_id")
+email_received.create_index("timestamp")
 email_received.create_index("message_id", unique=True, sparse=True)
+email_received.create_index([("tb1_id", 1), ("timestamp", -1)]) # Composite for faster conversation list
 threads.create_index("visitor_email", unique=True)
 whatsapp_accounts.create_index("phone_number_id", unique=True)
 
@@ -58,7 +60,7 @@ def get_next_sequence(name: str) -> int:
 # -----------------------------
 # Customer helpers
 # -----------------------------
-def ensure_customer(email: str | None = None, name: str | None = None, phone: str | None = None) -> dict:
+def ensure_customer(email: str | None = None, name: str | None = None, phone: str | None = None, refresh_last_seen: bool = True) -> dict:
     """
     Return customer doc.
     If not exists -> create.
@@ -82,10 +84,11 @@ def ensure_customer(email: str | None = None, name: str | None = None, phone: st
 
     if doc:
         # 🔄 Update last_seen
-        customers.update_one(
-            {"_id": doc["_id"]},
-            {"$set": {"last_seen": now}}
-        )
+        if refresh_last_seen:
+            customers.update_one(
+                {"_id": doc["_id"]},
+                {"$set": {"last_seen": now}}
+            )
 
         # 🧩 Backward compatibility (older customers)
         if "last_read_at" not in doc:
@@ -146,6 +149,21 @@ def get_customer_by_email(email: str) -> dict | None:
     if not email:
         return None
     return customers.find_one({"cust_email": email.strip().lower()})
+
+def search_customers(query: str) -> list:
+    """Fuzzy search for customers by name, email, or phone."""
+    if not query:
+        return []
+    # Simple regex search across relevant fields
+    regex = {"$regex": query, "$options": "i"}
+    curr = customers.find({
+        "$or": [
+            {"name": regex},
+            {"cust_email": regex},
+            {"phone": regex}
+        ]
+    }).limit(5) # Limit to 5 results for AI summary
+    return list(curr)
 
 # -----------------------------
 # Unread helpers (NEW)

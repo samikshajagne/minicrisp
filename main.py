@@ -23,7 +23,8 @@ from pymongo.errors import DuplicateKeyError
 
 from database import (
     mark_customer_read, create_user, get_user_by_email, ensure_customer, 
-    email_received, fs, whatsapp_accounts, get_email_accounts, add_email_account
+    email_received, fs, whatsapp_accounts, get_email_accounts, add_email_account,
+    search_customers, customers
 )
 from whatsapp_service import verify_webhook, process_whatsapp_payload, send_whatsapp_text
 from email_service import (
@@ -68,7 +69,19 @@ fh = logging.FileHandler("debug_log.txt")
 fh.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logger.addHandler(fh)
 
-app = FastAPI()
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global MAIN_LOOP
+    MAIN_LOOP = asyncio.get_running_loop()
+    # Start sync thread
+    thread = threading.Thread(target=gmail_sync_loop, daemon=True)
+    thread.start()
+    yield
+    # Shutdown logic if needed
+
+app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -179,6 +192,8 @@ def login_required(request: Request):
         raise HTTPException(status_code=status.HTTP_307_TEMPORARY_REDIRECT, headers={"Location": "/login"})
     return user
 
+MAIN_LOOP = None
+
 # -----------------------------
 # WebSocket connections
 # -----------------------------
@@ -256,8 +271,11 @@ def insert_message(sender, text, visitor_email=None, guest_id=None, origin="chat
     }
 
     try:
-        loop = asyncio.get_running_loop()
-        loop.create_task(broadcast(display_identifier, guest_id, payload))
+        if MAIN_LOOP and MAIN_LOOP.is_running():
+            asyncio.run_coroutine_threadsafe(broadcast(display_identifier, guest_id, payload), MAIN_LOOP)
+        else:
+            loop = asyncio.get_running_loop()
+            loop.create_task(broadcast(display_identifier, guest_id, payload))
     except RuntimeError:
         pass
 
@@ -384,7 +402,11 @@ async def api_admin_messages(
         matched = email_received.find({
             "$or": [
                 {"content": regex},
-                {"email": regex}
+                {"html_content": regex},
+                {"subject": regex},
+                {"email": regex},
+                {"cc": regex},
+                {"bcc": regex}
             ]
         }, {"tb1_id": 1})
         for m in matched:
@@ -431,6 +453,8 @@ async def api_admin_messages(
         # Default for Email Dashboard: exclude whatsapp
         query["source"] = {"$ne": "whatsapp"}
         
+    # Limit search to avoid hanging if there are thousands of messages
+    # We still fetch ALL unique conversations eventually, but we sort by newest first
     cursor = email_received.find(query).sort("timestamp", -1)
 
     for m in cursor:
@@ -443,7 +467,8 @@ async def api_admin_messages(
 
         # ONLY keep latest message per customer
         if tb1_id not in conversations:
-            customer = ensure_customer(m["email"])
+            # OPTIMIZATION: Do not update 'last_seen' writing into DB during a simple list fetch
+            customer = ensure_customer(m["email"], refresh_last_seen=False)
 
             last_read = customer.get("last_read_at")
             unread = email_received.count_documents({
@@ -817,30 +842,25 @@ async def generate_email(request: Request):
         if not prompt_text:
             raise HTTPException(status_code=400, detail="Prompt required")
 
-        api_key = os.environ.get("GROQ_API_KEY")
+        api_key = os.environ.get("GEMINI_API_KEY")
         if not api_key:
-             return {"status": "error", "message": "GROQ_API_KEY missing. Please set it in .env"}
+             return {"status": "error", "message": "GEMINI_API_KEY missing. Please set it in .env"}
         
-        if not Groq:
-             return {"status": "error", "message": "groq library not installed."}
-
-        client = Groq(api_key=api_key)
+        if not genai:
+             return {"status": "error", "message": "google-generativeai library not installed."}
         
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {"role": "system", "content": "You are a professional email assistant. Return ONLY the HTML body of the email (using p, br, ul tags). No <html> or <body> tags. No subject line. Just the body."},
-                {"role": "user", "content": prompt_text}
-            ],
-            temperature=0.7,
-            max_tokens=1024,
-            stream=False,
-        )
+        genai.configure(api_key=api_key)
+        model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-1.5-flash")
+        model = genai.GenerativeModel(model_name)
         
-        content = completion.choices[0].message.content
+        system_instr = "You are a professional email assistant. Return ONLY the HTML body of the email (using p, br, ul tags). No <html> or <body> tags. No subject line. Just the body."
+        
+        response = model.generate_content(f"{system_instr}\n\nUser request: {prompt_text}")
+        
+        content = response.text.replace("```html", "").replace("```", "").strip()
         return {"status": "ok", "content": content}
     except Exception as e:
-        logger.error(f"Groq Generation Error: {e}")
+        logger.error(f"Gemini Generation Error: {e}")
         return {"status": "error", "message": str(e)}
 
 # -----------------------------
@@ -891,11 +911,26 @@ def get_emails_tool(query: str = None, start_date: str = None, end_date: str = N
             "timestamp": m["timestamp"].isoformat(),
             "subject": m.get("subject", "No Subject")
         })
-    return results
+    return {
+        "action": "fetch_emails", 
+        "results": results, 
+        "filter": {"query": query, "start": start_date, "end": end_date}
+    }
 
-def switch_account_tool(email: str):
-    """Switch the current active email account in the dashboard."""
-    return {"action": "switch_account", "account": email}
+def switch_admin_sender_account_view_tool(account_email: str):
+    """
+    CRITICAL: Switches WHICH admin account YOU are currently viewing/sending FROM.
+    Use this ONLY when the user says 'switch to my other account' or 'switch view to [email]'.
+    DO NOT use this to select a person to talk to.
+    """
+    return {"action": "switch_account", "account": account_email}
+
+def open_chat_tool(email: str):
+    """
+    Open the conversation/chat with a specific RECIPIENT (visitor).
+    Use this when the user picks a contact from a list or asks to see a specific person's messages.
+    """
+    return {"action": "open_chat", "email": email}
 
 def send_email_tool(to: str, subject: str, body: str):
     """Send an email to a recipient."""
@@ -908,6 +943,85 @@ def send_email_tool(to: str, subject: str, body: str):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
+def search_customers_tool(query: str):
+    """Search for customers by name, email, or phone in the database."""
+    from database import search_customers
+    results = search_customers(query)
+    formatted = []
+    for r in results:
+        formatted.append({
+            "name": r.get("name", "Unknown"),
+            "email": r.get("cust_email") or r.get("phone") or "No Email/Phone",
+            "phone": r.get("phone"),
+            "last_seen": r.get("last_seen").isoformat() if r.get("last_seen") else None
+        })
+    return {"results": formatted}
+
+def draft_reply_tool(email: str, body: str):
+    """
+    Draft a reply to a specific conversation. 
+    This opens the composer and fills it with the suggested body, but does NOT send it.
+    """
+    return {"action": "draft_reply", "email": email, "body": body}
+
+def get_inbox_stats_tool():
+    """Get unread message counts across all email and WhatsApp sources."""
+    from database import get_unread_count, get_email_accounts, get_whatsapp_accounts
+    stats = {"unread_total": 0, "email_accounts": [], "whatsapp_accounts": []}
+    all_customers = list(customers.find({"last_read_at": {"$exists": True}}))
+    for cust in all_customers:
+        stats["unread_total"] += get_unread_count(cust["tb1_id"])
+    stats["email_accounts"] = [a["email"] for a in get_email_accounts()]
+    stats["whatsapp_accounts"] = [a["display_phone_number"] for a in get_whatsapp_accounts()]
+    return stats
+
+def summarize_conversation_tool(email: str):
+    """Fetch the last 10 messages for a conversation and return a summary."""
+    cust = ensure_customer(email=email)
+    if not cust: return "Customer not found."
+    msgs = list(email_received.find({"tb1_id": cust["tb1_id"]}).sort("timestamp", -1).limit(10))
+    if not msgs: return "No messages found."
+    summary_data = []
+    for m in reversed(msgs):
+        summary_data.append(f"{m['sender']}: {m['content'][:100]}")
+    return "\n".join(summary_data)
+
+def compose_new_tool(to: str, subject: str = "", body: str = ""):
+    """Open the composer for a new recipient (global email)."""
+    return {"action": "compose_new", "to": to, "subject": subject, "body": body}
+
+def confirm_and_send_action_tool():
+    """Execute the final send action on the dashboard after user confirmation."""
+    return {"action": "send_email"}
+
+def sync_emails_tool():
+    """Trigger a fresh manual resync of all email accounts to fetch latest messages."""
+    return {"action": "sync_emails"}
+
+def wait_tool(ms: int = 500):
+    """Wait for a brief period (in milliseconds) for the UI to stabilize or background tasks to finish."""
+    return {"action": "wait", "ms": ms}
+
+def update_search_tool(query: str):
+    """Type a query into the sidebar search box to filter conversations."""
+    return {"action": "update_search", "query": query}
+
+def navigate_tool(target: str):
+    """Navigate to a dashboard section: 'whatsapp', 'inbox', 'add_account', 'resync', 'logout', 'filters'."""
+    return {"action": "navigate", "target": target}
+
+def clear_filters_tool():
+    """Clear all active search and date filters in the sidebar."""
+    return {"action": "clear_filters"}
+
+def mark_read_tool(email: str):
+    """Mark a specific conversation as read."""
+    return {"action": "mark_read", "email": email}
+
+def export_chat_tool(email: str):
+    """Export the conversation with this email to a TXT file."""
+    return {"action": "export_chat", "email": email}
+
 @app.post("/api/ai/agent")
 async def ai_agent(request: Request):
     if not genai:
@@ -919,40 +1033,82 @@ async def ai_agent(request: Request):
         return {"status": "error", "message": "Prompt required"}
 
     try:
+        def safe_get_text(resp):
+            try:
+                if resp.candidates and resp.candidates[0].content.parts:
+                    for p in resp.candidates[0].content.parts:
+                        if p.text: return p.text
+            except: pass
+            return "I've processed your request and performed the necessary actions on your dashboard."
+    
+        # Grounding: Get available accounts to inject into system prompt
+        from database import get_email_accounts
+        accounts_data = get_email_accounts()
+        env_email = os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in").lower()
+        if not any(a["email"] == env_email for a in accounts_data):
+            accounts_data.append({"email": env_email})
+        account_list_str = ", ".join([a["email"] for a in accounts_data])
+
+        model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-1.5-flash")
         model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash',
-            tools=[get_emails_tool, switch_account_tool, send_email_tool]
+            model_name=model_name,
+            system_instruction=(
+                "You are an OPERATOR for the Mini Crisp Admin UI. "
+                "Your job is to EXECUTE ACTIONS using the provided tools. "
+                "DO NOT narrate an action unless you have also emitted the corresponding TOOL CALL. "
+                f"AVAILABLE SENDER ACCOUNTS: [{account_list_str}]. "
+                "Rules:\n"
+                "1. To switch the admin view, use 'switch_admin_sender_account_view_tool'.\n"
+                "2. To open a chat with a visitor, use 'open_chat_tool'.\n"
+                "3. Always use 'open_chat_tool' before 'draft_reply_tool'.\n"
+                "4. Distinguish between switching YOUR account (sender) and opening a visitor chat (recipient)."
+            ),
+            tools=[
+                get_emails_tool, switch_admin_sender_account_view_tool, send_email_tool,
+                search_customers_tool, get_inbox_stats_tool, summarize_conversation_tool,
+                compose_new_tool, navigate_tool, clear_filters_tool,
+                mark_read_tool, export_chat_tool, draft_reply_tool,
+                confirm_and_send_action_tool, open_chat_tool,
+                sync_emails_tool, wait_tool, update_search_tool
+            ]
         )
         
         chat = model.start_chat(enable_automatic_function_calling=True)
         response = chat.send_message(prompt)
         
-        # Extract actions from response parts if any
-        actions = []
-        for part in response.candidates[0].content.parts:
-            if part.function_call:
-                # Automatic function calling might have already executed them
-                # But we might want to pass specific actions (like switch_account) to frontend
-                pass
-
-        # We can also manually check if the model suggested a tool call that we want the frontend to handle
-        # For switch_account, the tool returns a dict with "action"
-        
-        text_response = response.text
-        
-        # Check if any tool result contained an action for the frontend
-        # Gemini with enable_automatic_function_calling will put tool results in the chat history
+        # Check tool results for actions
         final_actions = []
         for msg in chat.history:
             for part in msg.parts:
                 if part.function_response:
-                    res = part.function_response.response
-                    if isinstance(res, dict) and "action" in res:
-                        final_actions.append(res)
+                    # Robust extraction for Gemini's complex protobuf-like objects
+                    try:
+                        # Convert MapComposite/RepeatedComposite to dict/list
+                        def recursive_to_dict(obj):
+                            if hasattr(obj, 'items'):
+                                return {k: recursive_to_dict(v) for k, v in obj.items()}
+                            elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
+                                return [recursive_to_dict(x) for x in obj]
+                            else:
+                                return obj
+                                
+                        res = recursive_to_dict(part.function_response.response)
+                        
+                        # Handle potential 'result' wrapper
+                        if "result" in res:
+                            res = res["result"]
+
+                        if isinstance(res, dict):
+                            if "action" in res:
+                                final_actions.append(res)
+                            elif "results" in res:
+                                final_actions.append({"action": "search_customers", "results": res["results"]})
+                    except Exception as e:
+                        print(f"Error parsing tool response: {e}")
 
         return {
             "status": "ok",
-            "response": text_response,
+            "response": safe_get_text(response),
             "actions": final_actions
         }
     except Exception as e:
@@ -960,52 +1116,21 @@ async def ai_agent(request: Request):
         return {"status": "error", "message": str(e)}
 
 # -----------------------------
-# AI Assistant (OpenAI Structured Commands)
+# AI Assistant (Gemini Autonomous Agent)
 # -----------------------------
-
-OPENAI_CLIENT = None
-if os.environ.get("OPENAI_API_KEY") and OpenAI:
-    OPENAI_CLIENT = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-
-AI_SYSTEM_PROMPT = """
-You are a senior AI assistant for an email and chat admin dashboard.
-Your goal is to parse user commands into a strict JSON format for backend execution.
-
-SUPPORTED ACTIONS:
-1. fetch_emails (params: query, start_date, end_date, account)
-   - Dates MUST be YYYY-MM-DD.
-2. switch_account (params: email)
-3. send_email (params: to, subject, body)
-4. list_accounts (no params)
-5. get_unread_count (params: email)
-
-RULES:
-- Return ONLY JSON. No prose, no conversation.
-- If a date is relative (e.g. 'today', 'yesterday'), calculate it relative to current date: {current_date}.
-- If you don't understand, return: {"error": "unknown_command"}
-- If parameters are missing but required, try to infer them or ask (but only via JSON error field).
-
-Example: "Show me emails from yesterday"
-{"action": "fetch_emails", "start_date": "{yesterday_date}"}
-""".replace("{current_date}", datetime.now().strftime("%Y-%m-%d")) \
-   .replace("{yesterday_date}", (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"))
 
 @app.post("/api/ai/command")
 async def ai_command(request: Request):
-    global OPENAI_CLIENT
+    if not genai:
+        return {"status": "error", "message": "google-generativeai not installed"}
     
-    # Reload env to pick up any changes (e.g. new API key or credits)
+    # Reload env to pick up latest API key
     load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return {"status": "error", "message": "GEMINI_API_KEY missing in .env"}
     
-    # Force re-initialization if OPENAI_CLIENT is None or if we want to be safe
-    # Given the user just said they upgraded, let's ensure we use the latest state
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if api_key and OpenAI:
-        # Re-init client to ensure it's not using a stale session/key
-        OPENAI_CLIENT = OpenAI(api_key=api_key)
-            
-    if not OPENAI_CLIENT:
-        return {"status": "error", "message": "OpenAI client not configured (API key missing). Please ensure OPENAI_API_KEY is set in .env"}
+    genai.configure(api_key=api_key)
     
     data = await request.json()
     text = data.get("text")
@@ -1013,89 +1138,96 @@ async def ai_command(request: Request):
         return {"status": "error", "message": "No command provided"}
 
     try:
-        completion = OPENAI_CLIENT.chat.completions.create(
-            model="gpt-3.5-turbo", # or gpt-4
-            messages=[
-                {"role": "system", "content": AI_SYSTEM_PROMPT},
-                {"role": "user", "content": text}
-            ],
-            response_format={"type": "json_object"}
+        # Grounding: Get available accounts to inject into system prompt
+        accounts_data = get_email_accounts()
+        env_email = os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in").lower()
+        if not any(a["email"] == env_email for a in accounts_data):
+            accounts_data.append({"email": env_email})
+        account_list_str = ", ".join([a["email"] for a in accounts_data])
+
+        def safe_get_text(resp):
+            try:
+                if resp.candidates and resp.candidates[0].content.parts:
+                    for part in resp.candidates[0].content.parts:
+                        if part.text:
+                            return part.text
+            except: pass
+            return "Request handled. I've updated the dashboard according to your instructions."
+
+        # We use the same model config as ai_agent for consistency and power
+        model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-1.5-flash")
+        model = genai.GenerativeModel(
+            model_name=model_name,
+            system_instruction=(
+                "You are an OPERATOR for the Mini Crisp Admin UI. "
+                "Your job is to EXECUTE ACTIONS using the provided tools. "
+                "DO NOT narrate an action unless you have also emitted the corresponding TOOL CALL. "
+                f"AVAILABLE SENDER ACCOUNTS: [{account_list_str}]. "
+                "Rules:\n"
+                "1. To switch the admin view, use 'switch_admin_sender_account_view_tool'.\n"
+                "2. To open a chat with a visitor, use 'open_chat_tool'.\n"
+                "3. Always use 'open_chat_tool' before 'draft_reply_tool'.\n"
+                "4. Distinguish between switching YOUR account (sender) and opening a visitor chat (recipient)."
+            ),
+            tools=[
+                get_emails_tool, switch_admin_sender_account_view_tool, send_email_tool,
+                search_customers_tool, get_inbox_stats_tool, summarize_conversation_tool,
+                compose_new_tool, navigate_tool, clear_filters_tool,
+                mark_read_tool, export_chat_tool, draft_reply_tool,
+                confirm_and_send_action_tool, open_chat_tool,
+                sync_emails_tool, wait_tool, update_search_tool
+            ]
         )
         
-        raw_json = completion.choices[0].message.content
-        ai_data = json.loads(raw_json)
+        chat = model.start_chat(enable_automatic_function_calling=True)
+        response = chat.send_message(text)
         
-        # Action Router
-        action = ai_data.get("action")
-        if not action:
-            return {"status": "ok", "response": "I didn't quite catch that. Try asking to show emails or switch accounts.", "actions": []}
-
+        # Collect any "action" dicts returned by tools to pass to frontend
         result_actions = []
-        response_text = ""
+        for msg in chat.history:
+            for part in msg.parts:
+                if part.function_response:
+                    # Robust extraction for Gemini's complex protobuf-like objects
+                    try:
+                        # Convert MapComposite/RepeatedComposite to dict/list
+                        def recursive_to_dict(obj):
+                            if hasattr(obj, 'items'):
+                                return {k: recursive_to_dict(v) for k, v in obj.items()}
+                            elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
+                                return [recursive_to_dict(x) for x in obj]
+                            else:
+                                return obj
+                                
+                        res = recursive_to_dict(part.function_response.response)
+                        
+                        # Handle potential 'result' wrapper
+                        if "result" in res:
+                            res = res["result"]
 
-        if action == "fetch_emails":
-            # Logic similar to get_emails_tool
-            query = ai_data.get("query")
-            sd = ai_data.get("start_date")
-            ed = ai_data.get("end_date")
-            acc = ai_data.get("account")
-            
-            emails = get_emails_tool(query=query, start_date=sd, end_date=ed, account=acc)
-            response_text = f"Found {len(emails)} emails matching your request."
-            # We return an action to the frontend to highlight/filter these
-            result_actions.append({"action": "fetch_emails", "results": emails, "filter": {"query": query, "start": sd, "end": ed}})
-
-        elif action == "switch_account":
-            email = ai_data.get("email")
-            if email:
-                result_actions.append({"action": "switch_account", "account": email})
-                response_text = f"Switching to account {email}."
-            else:
-                response_text = "Which account would you like to switch to?"
-
-        elif action == "send_email":
-            target = ai_data.get("to")
-            subj = ai_data.get("subject", "No Subject")
-            body = ai_data.get("body")
-            if target and body:
-                try:
-                    send_reply_from_admin_to_customer(target, body, subject=subj)
-                    insert_message("admin", body, target, subject=subj, origin="ai_agent")
-                    response_text = f"Email sent to {target}."
-                except Exception as e:
-                    response_text = f"Failed to send email: {str(e)}"
-            else:
-                response_text = "I need a recipient and a body to send an email."
-
-        elif action == "list_accounts":
-            accounts = get_email_accounts()
-            acc_list = ", ".join([a["email"] for a in accounts])
-            response_text = f"Available accounts: {acc_list}"
-
-        elif action == "get_unread_count":
-            # This requires tb1_id usually, but let's try via email
-            email = ai_data.get("email")
-            if email:
-                cust = get_customer_by_email(email)
-                if cust:
-                    count = get_unread_count(cust["tb1_id"])
-                    response_text = f"{email} has {count} unread messages."
-                else:
-                    response_text = f"Customer {email} not found."
-            else:
-                response_text = "Which user's unread count do you want?"
-
-        else:
-            response_text = "Command not recognized or not yet supported."
+                        if isinstance(res, dict):
+                            if "action" in res:
+                                result_actions.append(res)
+                            elif "results" in res:
+                                result_actions.append({"action": "search_customers", "results": res["results"]})
+                    except Exception as e:
+                        print(f"Error parsing tool response: {e}")
+        
+        # DEBUG LOGGING
+        try:
+            with open("ai_actions_debug.log", "a", encoding="utf-8") as f:
+                 f.write(f"PROMPT: {text}\n")
+                 f.write(f"HISTORY DUMP: {chat.history}\n")
+                 f.write(f"ACTIONS DETECTED: {result_actions}\n-------------------\n")
+        except Exception as e:
+            print(f"Log error: {e}")
 
         return {
             "status": "ok",
-            "response": response_text,
+            "response": safe_get_text(response),
             "actions": result_actions
         }
-
     except Exception as e:
-        logger.exception("OpenAI Command Error")
+        logger.exception("AI Command Error")
         return {"status": "error", "message": str(e)}
 
 # -----------------------------
@@ -1108,7 +1240,9 @@ def gmail_sync_loop():
     # 1. Backfill history (fetch ALL) - run once on startup
     try:
         logging.info("Starting initial email backfill...")
-        initial_emails = fetch_emails(criteria="ALL")
+        # Optimization: Only backfill last 7 days initially to avoid hanging on massive inboxes
+        seven_days_ago = (datetime.now() - timedelta(days=7)).strftime("%d-%b-%Y")
+        initial_emails = fetch_emails(criteria=f'(SINCE "{seven_days_ago}")')
         for r in initial_emails:
             insert_message(r["sender"], r["body"], r["visitor"], origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"))
         logging.info("Initial backfill complete.")
@@ -1138,12 +1272,7 @@ def gmail_sync_loop():
 
         time.sleep(1)
 
-threading.Thread(target=gmail_sync_loop, daemon=True).start()
-
-# -----------------------------
-# Start server
-# -----------------------------
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
  

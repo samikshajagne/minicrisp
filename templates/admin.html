@@ -1420,7 +1420,8 @@
 
                 <!-- Advanced Panel -->
                 <div class="advanced-search-panel" id="adv-search-panel">
-                    <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary);">Date Filter</div>
+                    <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary); margin-top:4px;">Date
+                        Filter</div>
                     <div class="panel-row">
                         <div>
                             <label style="font-size:0.75rem; color:var(--text-secondary);">Start</label>
@@ -1430,6 +1431,13 @@
                             <label style="font-size:0.75rem; color:var(--text-secondary);">End</label>
                             <input type="date" id="filter-end-date">
                         </div>
+                    </div>
+
+                    <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary); margin-top:10px;">Message
+                        Keywords</div>
+                    <div class="panel-row">
+                        <input type="text" id="filter-keywords" placeholder="Search message content..."
+                            style="width:100%; padding:8px; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem;">
                     </div>
 
                     <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary); margin-top:4px;">Filter By
@@ -1871,13 +1879,17 @@
                 });
             });
 
-            // Keyword Search (Local)
+            // Keyword Search (Local) - Debounced
+            let localSearchTimeout;
             const chatKeywordSearch = document.getElementById('chat-keyword-search');
             chatKeywordSearch.addEventListener('input', (e) => {
                 localSearchTerm = e.target.value.trim();
-                if (currentConversationEmail) {
-                    renderChat(currentConversationEmail, searchFilter);
-                }
+                clearTimeout(localSearchTimeout);
+                localSearchTimeout = setTimeout(() => {
+                    if (currentConversationEmail) {
+                        renderChat(currentConversationEmail, searchFilter);
+                    }
+                }, 300);
             });
         });
 
@@ -1893,6 +1905,10 @@
                 fetchMessages(val);
                 // If a conversation is open, re-render it to apply highlights
                 if (currentConversationEmail) {
+                    // Update local search too
+                    localSearchTerm = val;
+                    const lsk = document.getElementById('chat-keyword-search');
+                    if (lsk) lsk.value = val;
                     renderChat(currentConversationEmail, val);
                 }
             }, 300);
@@ -1907,6 +1923,7 @@
         const endDateInput = document.getElementById('filter-end-date');
         const sourceInput = document.getElementById('filter-source');
         const attachmentsInput = document.getElementById('filter-has-attachments');
+        const keywordsInput = document.getElementById('filter-keywords');
 
         advToggle.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1928,9 +1945,23 @@
             filterSource = sourceInput.value;
             filterHasAttachments = attachmentsInput.checked;
 
+            // Sync advanced keywords to global search term
+            searchFilter = keywordsInput.value.trim();
+            searchInputEl.value = searchFilter;
+
+            // Sync to local chat search box too for immediate feedback
+            const chatKeywordSearch = document.getElementById('chat-keyword-search');
+            if (chatKeywordSearch) {
+                chatKeywordSearch.value = searchFilter;
+                localSearchTerm = searchFilter;
+            }
+
             fetchMessages(searchFilter);
+            if (currentConversationEmail) {
+                renderChat(currentConversationEmail, searchFilter);
+            }
             advPanel.classList.remove('open');
-            const isActive = filterStartDate || filterEndDate || filterSource !== 'all' || filterHasAttachments;
+            const isActive = filterStartDate || filterEndDate || filterSource !== 'all' || filterHasAttachments || searchFilter;
             advToggle.style.color = isActive ? 'var(--primary-color)' : '';
             advToggle.style.background = isActive ? '#ecfdf5' : '';
         });
@@ -1940,16 +1971,29 @@
             endDateInput.value = '';
             sourceInput.value = 'all';
             attachmentsInput.checked = false;
+            keywordsInput.value = '';
 
             filterStartDate = null;
             filterEndDate = null;
             filterSource = 'all';
             filterHasAttachments = false;
 
+            // Clear global search term as well
+            searchFilter = '';
+            searchInputEl.value = '';
+            localSearchTerm = ''; // Clear local search too
+            const localSearchInput = document.getElementById('chat-keyword-search');
+            if (localSearchInput) localSearchInput.value = '';
+
             fetchMessages(searchFilter);
             advPanel.classList.remove('open');
             advToggle.style.color = '';
             advToggle.style.background = '';
+
+            // If chat is open, re-render to clear highlights
+            if (currentConversationEmail) {
+                renderChat(currentConversationEmail, '');
+            }
         });
 
 
@@ -2040,6 +2084,8 @@
 
                 const div = document.createElement('div');
                 div.className = 'visitor-item';
+                div.setAttribute('data-email', id); // Added for robust selection
+                if (id === currentConversationEmail) div.classList.add('active');
 
                 // Escape helper
                 const safePreview = lastMsg.replace(/&/g, "&amp;")
@@ -2083,7 +2129,16 @@
         document.getElementById('clear-date-filter').onclick = () => {
             document.getElementById('chat-start-date').value = '';
             document.getElementById('chat-end-date').value = '';
-            if (currentConversationEmail) renderChat(currentConversationEmail, searchFilter);
+
+            // Also clear search state globally and locally
+            searchFilter = '';
+            searchInputEl.value = '';
+            localSearchTerm = '';
+            const localSearchInput = document.getElementById('chat-keyword-search');
+            if (localSearchInput) localSearchInput.value = '';
+
+            fetchMessages(''); // Refresh sidebar list
+            if (currentConversationEmail) renderChat(currentConversationEmail, '');
         };
 
         // Export Logic
@@ -2097,6 +2152,14 @@
             const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
             const res = text.replace(regex, '<span class="highlight">$1</span>');
             return res;
+        }
+
+        function highlightHtml(html, searchTerm) {
+            if (!searchTerm || !html || searchTerm.length < 2) return html;
+            const escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // Match searchTerm only when not inside a tag
+            const regex = new RegExp(`(${escaped})(?![^<]*>)`, 'gi');
+            return html.replace(regex, '<span class="highlight">$1</span>');
         }
 
         function scrollToMatch(index) {
@@ -2135,11 +2198,19 @@
         async function renderChat(email, searchTerm = "") {
             currentConversationEmail = email;
 
+            // If we have a searchTerm (from global search or similar), 
+            // update the local search box for consistency
+            if (searchTerm) {
+                localSearchTerm = searchTerm;
+                const localSearchInput = document.getElementById('chat-keyword-search');
+                if (localSearchInput) localSearchInput.value = searchTerm;
+            }
+
             // Highlight selected conversation
             const items = document.querySelectorAll('.visitor-item');
             items.forEach(el => el.classList.remove('active'));
-            // Find the item matching this email (logic depends on how we stored it, usually by visitor-name text)
-            // Ideally we should add data-email attribute to visitor-item
+            const activeEl = document.querySelector(`.visitor-item[data-email='${email}']`);
+            if (activeEl) activeEl.classList.add('active');
 
             chatHeaderEl.style.display = 'flex';
 
@@ -2205,6 +2276,10 @@
                     // Render HTML for visitor emails in IFRAME (Security + Layout)
                     isHtmlEmail = true;
                     const uniqueId = `frame-${m.timestamp}`;
+
+                    // Highlight inside the HTML content before setting it in srcdoc
+                    const highlightedHtml = highlightHtml(m.html_content, finalSearch);
+
                     contentHtml = `
                         <div class="iframe-wrapper" style="max-height: 400px; overflow-y: auto; display:block;">
                              <iframe 
@@ -2212,7 +2287,7 @@
                                 sandbox="allow-same-origin"
                                 scrolling="no" 
                                 style="width:100%; border:none; display: block; overflow: hidden;"
-                                srcdoc="<style>body{margin:0;padding:2px;font-family:system-ui,-apple-system,sans-serif;font-size:13.5px;color:#0f172a;line-height:1.2;overflow:hidden}p{margin:0;padding:0}div{margin:0}</style>${m.html_content.replace(/"/g, '&quot;')}"
+                                srcdoc="<style>body{margin:0;padding:2px;font-family:system-ui,-apple-system,sans-serif;font-size:13.5px;color:#0f172a;line-height:1.2;overflow:hidden}.highlight{background-color:#fef08a;color:#854d0e;font-weight:bold;border-radius:2px;padding:0 2px;}p{margin:0;padding:0}div{margin:0}</style>${highlightedHtml.replace(/"/g, '&quot;')}"
                                 onload="this.style.height = (this.contentWindow.document.body.scrollHeight) + 'px'; this.contentWindow.document.body.style.margin='0';"
                              ></iframe>
                         </div>
@@ -2221,7 +2296,8 @@
                     // Render HTML for admin emails DIRECTLY (Auto-size bubble)
                     // We trust our own sanitized/generated HTML
                     isHtmlEmail = false;
-                    contentHtml = `<div class="email-content">${m.html_content}</div>`;
+                    const highlightedHtml = highlightHtml(m.html_content, finalSearch);
+                    contentHtml = `<div class="email-content">${highlightedHtml}</div>`;
                 } else {
                     // LINKIFY + HIGHLIGHT Logic
                     // 1. Split text by URLs so we don't break <a> tags with highlighting or vice versa
@@ -2239,6 +2315,11 @@
                             return highlightText(safePart, finalSearch);
                         }
                     }).join('');
+                }
+
+                // Also highlight subject if present
+                if (m.subject) {
+                    m.subject = highlightText(m.subject, finalSearch);
                 }
 
                 if (isHtmlEmail) div.classList.add('has-iframe');
@@ -2269,14 +2350,17 @@
                 // Add email metadata if present (subject, CC, BCC)
                 let metadataHtml = '';
                 if (m.subject) {
-                    metadataHtml = `<div class="message-subject">📧 ${m.subject}</div>`;
+                    const highlightedSubject = highlightText(m.subject, finalSearch);
+                    metadataHtml = `<div class="message-subject">📧 ${highlightedSubject}</div>`;
                 }
                 let recipientsHtml = '';
                 if (m.cc && m.cc.length > 0) {
-                    recipientsHtml += `<div class="message-recipients">CC: ${m.cc.join(', ')}</div>`;
+                    const safeCC = m.cc.join(', ').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    recipientsHtml += `<div class="message-recipients">CC: ${highlightText(safeCC, finalSearch)}</div>`;
                 }
                 if (m.bcc && m.bcc.length > 0) {
-                    recipientsHtml += `<div class="message-recipients">BCC: ${m.bcc.join(', ')}</div>`;
+                    const safeBCC = m.bcc.join(', ').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    recipientsHtml += `<div class="message-recipients">BCC: ${highlightText(safeBCC, finalSearch)}</div>`;
                 }
 
                 div.innerHTML = `
@@ -2402,7 +2486,7 @@
 
                 if (data.status === 'ok') {
                     appendAiMessage('bot', data.response);
-                    handleAiActions(data.actions);
+                    handleAiActions(data.actions, data.response);
                 } else {
                     appendAiMessage('bot', "Error: " + data.message);
                 }
@@ -2413,49 +2497,254 @@
             }
         }
 
-        function appendAiMessage(sender, text, id = null) {
+        function appendAiMessage(sender, text, id = null, options = null) {
             const div = document.createElement('div');
             div.className = `ai-message ${sender}`;
-            div.textContent = text;
+
+            const textDiv = document.createElement('div');
+            textDiv.textContent = text;
+            div.appendChild(textDiv);
+
+            if (options && options.length > 0) {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'ai-options';
+                optionsDiv.style.marginTop = '8px';
+                optionsDiv.style.display = 'flex';
+                optionsDiv.style.flexWrap = 'wrap';
+                optionsDiv.style.gap = '6px';
+
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'pill-btn';
+                    btn.style.padding = '4px 10px';
+                    btn.style.fontSize = '0.8rem';
+                    btn.textContent = opt.label || opt;
+                    btn.onclick = () => {
+                        if (opt.email) {
+                            // Automatically open chat for this email
+                            const visitors = document.querySelectorAll('.visitor-item');
+                            let found = false;
+                            visitors.forEach(v => {
+                                if (v.innerText.toLowerCase().includes(opt.email.toLowerCase())) {
+                                    v.click();
+                                    found = true;
+                                }
+                            });
+                            if (!found) {
+                                // If not in sidebar list (filtered or below fold), call renderChat directly
+                                renderChat(opt.email, "");
+                            }
+                            appendAiMessage('user', `Selected: ${opt.label || opt.email}`);
+                            // Follow up prompt to AI to continue the flow
+                            aiInput.value = `I picked ${opt.email}. Please continue with the draft.`;
+                            sendAiCommand();
+                        }
+                        else {
+                            aiInput.value = opt.label || opt;
+                            sendAiCommand();
+                        }
+                    };
+                    optionsDiv.appendChild(btn);
+                });
+                div.appendChild(optionsDiv);
+            }
+
             if (id) div.id = id;
             aiMessages.appendChild(div);
             aiMessages.scrollTop = aiMessages.scrollHeight;
         }
 
-        function handleAiActions(actions) {
-            if (!actions) return;
-            actions.forEach(act => {
-                if (act.action === 'switch_account') {
-                    const selector = document.getElementById('account-selector');
-                    if (selector) {
-                        selector.value = act.account;
-                        // Manually trigger change
-                        handleAccountChange(act.account);
-                        appendAiMessage('bot', `📍 Switched view to account: ${act.account}`);
-                    }
-                } else if (act.action === 'fetch_emails') {
-                    // Update search filter and trigger fetch
-                    const searchInput = document.getElementById('search-input');
-                    if (searchInput && act.filter) {
-                        if (act.filter.query) {
-                            searchInput.value = act.filter.query;
-                            searchFilter = act.filter.query;
-                        }
-                        if (act.filter.start) {
-                            document.getElementById('filter-start-date').value = act.filter.start;
-                            filterStartDate = act.filter.start;
-                        }
-                        if (act.filter.end) {
-                            document.getElementById('filter-end-date').value = act.filter.end;
-                            filterEndDate = act.filter.end;
-                        }
-                        // Refresh with new filters
-                        fetchMessages(searchFilter);
-                        appendAiMessage('bot', `🔍 Filtered messages based on your request.`);
+        // --- AI Action Bridge (Wiring Layer) ---
+        const ActionBridge = {
+            log: (msg) => console.log(`%c[AI Action Bridge] %c${msg}`, "color: #5b7cfa; font-weight: bold", "color: inherit"),
+
+            async wait(ms) {
+                this.log(`Waiting for ${ms}ms...`);
+                return new Promise(resolve => setTimeout(resolve, ms));
+            },
+
+            async openChat(email) {
+                this.log(`Opening chat for: ${email}`);
+                // Use robust data-email selector
+                const visitorEl = document.querySelector(`.visitor-item[data-email='${email}']`);
+                if (visitorEl) {
+                    this.log(`Found visitor element in sidebar, clicking.`);
+                    visitorEl.click();
+                } else {
+                    this.log(`Contact not in active sidebar DOM, calling renderChat directly for ${email}`);
+                    await renderChat(email, "");
+                }
+                await this.wait(400); // Wait for UI transition and loading
+            },
+
+            async draftReply(body, email = null) {
+                this.log(`Drafting message${email ? ' for ' + email : ''}`);
+                // Ensure composer is open
+                if (document.getElementById('email-composer').style.display === 'none') {
+                    const composeBtn = document.getElementById('compose-btn');
+                    if (composeBtn) composeBtn.click();
+                }
+                await this.wait(200);
+                if (quillEditor && body) {
+                    quillEditor.root.innerHTML = body;
+                    appendAiMessage('bot', `✍️ I've drafted the message${email ? ' for ' + email : ''}. Should I proceed to send it?`, null, ["Yes, send it", "No, let me edit"]);
+                }
+            },
+
+            async sendEmail() {
+                this.log("Clicking Send Email button");
+                const sendBtn = document.getElementById('send-email-btn');
+                if (sendBtn) sendBtn.click();
+            },
+
+            async syncEmails() {
+                this.log("Triggering manual resync");
+                const syncBtn = document.querySelector('button[onclick*="fetch(\'/api/admin/resync\'"]');
+                if (syncBtn) syncBtn.click();
+                else fetch('/api/admin/resync', { method: 'POST' });
+            },
+
+            async updateSearch(query) {
+                this.log(`Updating sidebar search to: "${query}"`);
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.value = query;
+                    searchFilter = query;
+                    fetchMessages(query);
+                }
+            },
+
+            async navigate(target) {
+                this.log(`Navigating to: ${target}`);
+                const tar = target.toLowerCase();
+                if (tar === 'whatsapp') window.location.href = '/whatsapp';
+                else if (tar === 'logout') window.location.href = '/logout';
+                else if (tar === 'inbox') window.location.href = '/admin';
+                else if (tar === 'resync') this.syncEmails();
+            },
+
+            async switchAccount(account) {
+                this.log(`Attempting to switch active account to: "${account}"`);
+                const selector = document.getElementById('account-selector');
+                if (!selector) {
+                    this.log("ERROR: account-selector not found!");
+                    return;
+                }
+
+                this.log(`Available options: ${Array.from(selector.options).map(o => o.value).join(', ')}`);
+
+                // Try to find the closest match in case of case mismatch
+                let targetVal = account;
+                let foundMatch = false;
+                for (let i = 0; i < selector.options.length; i++) {
+                    if (selector.options[i].value.toLowerCase() === account.toLowerCase()) {
+                        targetVal = selector.options[i].value;
+                        foundMatch = true;
+                        break;
                     }
                 }
-                // Add more actions here
-            });
+
+                if (!foundMatch) {
+                    this.log(`WARNING: No exact match found for "${account}" in selector.`);
+                }
+
+                selector.value = targetVal;
+                handleAccountChange(targetVal);
+
+                // Clear current chat to avoid confusion when switching accounts
+                currentConversationEmail = null;
+                const messagesArea = document.getElementById('messages-area');
+                if (messagesArea) messagesArea.innerHTML = '<div class="empty-state">Select a conversation to start chatting</div>';
+
+                const chatHeader = document.getElementById('chat-header');
+                if (chatHeader) chatHeader.style.display = 'none';
+
+                appendAiMessage('bot', `📍 Switched view to account: ${targetVal}`);
+            },
+
+            async searchInChat(query) {
+                this.log(`Searching in current chat for: "${query}"`);
+                const localSearch = document.getElementById('chat-keyword-search');
+                if (localSearch) {
+                    localSearch.value = query;
+                    localSearchTerm = query;
+                    if (currentConversationEmail) renderChat(currentConversationEmail, searchFilter);
+                }
+            }
+        };
+
+        async function handleAiActions(actions, botResponse) {
+            console.log("[AI Assistant] Received actions:", actions);
+            if (!actions || actions.length === 0) return;
+            // Process actions sequentially
+            for (const act of actions) {
+                try {
+                    if (act.action === 'send_email') {
+                        await ActionBridge.sendEmail();
+                    } else if (act.action === 'switch_account') {
+                        await ActionBridge.switchAccount(act.account);
+                    } else if (act.action === 'sync_emails') {
+                        await ActionBridge.syncEmails();
+                    } else if (act.action === 'wait') {
+                        await ActionBridge.wait(act.ms || 500);
+                    } else if (act.action === 'update_search') {
+                        await ActionBridge.updateSearch(act.query);
+                    } else if (act.action === 'fetch_emails') {
+                        if (act.filter && act.filter.query) {
+                            await ActionBridge.updateSearch(act.filter.query);
+                        } else {
+                            fetchMessages("");
+                        }
+                    } else if (act.action === 'search_in_chat') {
+                        await ActionBridge.searchInChat(act.query);
+                    } else if (act.action === 'search_customers' || act.action === 'fetch_customers') {
+                        if (act.results && act.results.length > 0) {
+                            const options = act.results.map(r => ({
+                                label: `${r.name} (${r.email})`,
+                                email: r.email
+                            }));
+                            appendAiMessage('bot', "I found these matches. Which one did you mean?", null, options);
+                        }
+                    } else if (act.action === 'open_chat') {
+                        await ActionBridge.openChat(act.email);
+                    } else if (act.action === 'draft_reply') {
+                        await ActionBridge.draftReply(act.body, act.email);
+                    } else if (act.action === 'navigate') {
+                        await ActionBridge.navigate(act.target);
+                    } else if (act.action === 'clear_filters') {
+                        const clearBtn = document.getElementById('adv-clear-btn');
+                        if (clearBtn) clearBtn.click();
+                    } else if (act.action === 'mark_read') {
+                        if (act.email) {
+                            fetch('/api/admin/mark-read', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ email: act.email })
+                            }).then(() => fetchMessages(searchFilter));
+                        }
+                    } else if (act.action === 'export_chat') {
+                        const email = act.email || currentConversationEmail;
+                        if (email) window.location.href = `/api/export?email=${encodeURIComponent(email)}`;
+                    } else if (act.action === 'compose_new') {
+                        currentConversationEmail = act.to;
+                        document.getElementById('reply-bar').style.display = 'none';
+                        document.getElementById('email-composer').style.display = 'flex';
+                        document.getElementById('email-subject').value = act.subject || "";
+                        if (quillEditor) quillEditor.root.innerHTML = act.body || "";
+                        appendAiMessage('bot', `📝 Ready to email ${act.to}.`);
+                    }
+                } catch (e) {
+                    console.error("Action Error:", e);
+                }
+            }
+
+            // Text-to-Speech
+            if (botResponse && ('speechSynthesis' in window)) {
+                const utterance = new SpeechSynthesisUtterance(botResponse);
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
         }
 
         // Voice Recognition

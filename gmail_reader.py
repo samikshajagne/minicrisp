@@ -345,7 +345,6 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
                             "source": "imap",
                             "message_id": msg_id,
                             "timestamp": email_date,
-                            "timestamp": email_date,
                             "attachments": attachments,
                             "account_email": email_addr,
                             "html_content": full_html

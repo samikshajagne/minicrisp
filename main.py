@@ -1,11 +1,15 @@
 import os
+import sys
 import asyncio
+import websockets
 import threading
 import logging
 import json
 import time
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
+
+
 
 from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
@@ -24,7 +28,8 @@ from pymongo.errors import DuplicateKeyError
 from database import (
     mark_customer_read, create_user, get_user_by_email, ensure_customer, 
     email_received, fs, whatsapp_accounts, get_email_accounts, add_email_account,
-    search_customers, customers
+    search_customers, customers, add_note, get_notes, add_tag, get_tags, save_ai_interaction,
+    get_recent_ai_history
 )
 from whatsapp_service import verify_webhook, process_whatsapp_payload, send_whatsapp_text
 from email_service import (
@@ -44,10 +49,20 @@ except ImportError:
     genai = None
 try:
     from openai import OpenAI
+    import httpx
 except ImportError:
     OpenAI = None
+    httpx = None
 # DB
 from database import email_received, ensure_customer
+
+try:
+    from deepgram import AsyncDeepgramClient, DeepgramClient
+    from deepgram.core import EventType
+except ImportError:
+    AsyncDeepgramClient = None
+    DeepgramClient = None
+    EventType = None
 
 print("DEBUG: main.py is loading...")
 print(f"DEBUG: OPENAI_API_KEY present: {bool(os.environ.get('OPENAI_API_KEY'))}")
@@ -611,9 +626,6 @@ async def api_sync(email: str, start_date: str | None = None, end_date: str | No
         msgs.append({
             "sender": m.get("sender", "visitor"),
             "text": m["content"],
-            "text": m["content"],
-            "timestamp": m["timestamp"].isoformat(),
-            "text": m["content"],
             "timestamp": m["timestamp"].isoformat(),
             "attachments": m.get("attachments", []),
             "html_content": m.get("html_content")
@@ -649,8 +661,6 @@ async def api_export(email: str):
         lines.append(f"[{ts_str}] {sender}:")
         lines.append(f"{m['text']}")
         lines.append("")
-    
-    content = "\n".join(lines)
     
     content = "\n".join(lines)
     
@@ -872,6 +882,27 @@ api_key = os.environ.get("GEMINI_API_KEY")
 if api_key and genai:
     genai.configure(api_key=api_key)
 
+
+def think_protocol(intent: str, confidence: float, decision: str, chosen_action: str = "none", reasoning: str = "", verification_required: bool = False):
+    """
+    INTERNAL THOUGHT PROCESS. MUST BE CALLED FIRST.
+    Args:
+        intent: One of [reply, compose, select_contact, search, resync, navigate, unknown]
+        confidence: 0.0 to 1.0 (Float).
+        decision: One of [act, ask, explain, no_action]
+        chosen_action: The tool you plan to call next (e.g. 'open_chat_tool') or 'none'.
+        reasoning: Short explanation of why you made this decision.
+        verification_required: If you need to verify the result of the action.
+    """
+    return {
+        "action": "think",
+        "intent": intent,
+        "confidence": confidence,
+        "decision": decision,
+        "chosen_action": chosen_action,
+        "reasoning": reasoning
+    }
+
 def get_emails_tool(query: str = None, start_date: str = None, end_date: str = None, account: str = None):
     """
     Search for emails/messages based on criteria.
@@ -943,8 +974,14 @@ def send_email_tool(to: str, subject: str, body: str):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-def search_customers_tool(query: str):
-    """Search for customers by name, email, or phone in the database."""
+def search_customers_tool(query: str, purpose: str = "chat"):
+    """
+    Search for customers. 
+    'purpose' must be:
+    - 'email' (send email)
+    - 'chat' (view chat)
+    - 'summary' (summarize conversation)
+    """
     from database import search_customers
     results = search_customers(query)
     formatted = []
@@ -955,7 +992,7 @@ def search_customers_tool(query: str):
             "phone": r.get("phone"),
             "last_seen": r.get("last_seen").isoformat() if r.get("last_seen") else None
         })
-    return {"results": formatted}
+    return {"results": formatted, "purpose": purpose}
 
 def draft_reply_tool(email: str, body: str):
     """
@@ -1022,6 +1059,42 @@ def export_chat_tool(email: str):
     """Export the conversation with this email to a TXT file."""
     return {"action": "export_chat", "email": email}
 
+def add_customer_note_tool(email: str, note: str):
+    """Add a permanent note to a customer's profile."""
+    from database import add_note
+    res = add_note(email, note)
+    return f"Note added: {note}"
+
+def get_customer_details_tool(email: str):
+    """Get full details including ID, phone, notes, and tags for a customer."""
+    from database import get_notes, get_tags, ensure_customer
+    cust = ensure_customer(email=email)
+    notes = get_notes(email)
+    tags = get_tags(email)
+    return {"customer": cust["name"], "email": email, "notes": notes, "tags": tags}
+
+def add_customer_tag_tool(email: str, tag: str):
+    """Add a tag to a customer."""
+    from database import add_tag
+    add_tag(email, tag)
+    return f"Tag added: {tag}"
+
+
+
+def apply_filter_tool(query: str = None, start_date: str = None, end_date: str = None):
+    """
+    Apply filters to the message list.
+    Args:
+        query: Keyword to search for.
+        start_date: Start date in YYYY-MM-DD format.
+        end_date: End date in YYYY-MM-DD format.
+    """
+    return {"action": "apply_filters", "query": query, "start": start_date, "end": end_date}
+
+def wait_tool(ms: int = 500):
+    """Wait for a specified number of milliseconds."""
+    return {"action": "wait", "ms": ms}
+
 @app.post("/api/ai/agent")
 async def ai_agent(request: Request):
     if not genai:
@@ -1061,7 +1134,8 @@ async def ai_agent(request: Request):
                 "1. To switch the admin view, use 'switch_admin_sender_account_view_tool'.\n"
                 "2. To open a chat with a visitor, use 'open_chat_tool'.\n"
                 "3. Always use 'open_chat_tool' before 'draft_reply_tool'.\n"
-                "4. Distinguish between switching YOUR account (sender) and opening a visitor chat (recipient)."
+                "4. Distinguish between switching YOUR account (sender) and opening a visitor chat (recipient).\n"
+                "5. GLOBAL COMPOSE: usage 'compose_new_tool'. When user says 'Send email to X saying Y', ALWAYS use 'compose_new_tool' first to draft it. DO NOT use 'send_email_tool' directly unless explicitly asked to 'send immediately'."
             ),
             tools=[
                 get_emails_tool, switch_admin_sender_account_view_tool, send_email_tool,
@@ -1069,7 +1143,7 @@ async def ai_agent(request: Request):
                 compose_new_tool, navigate_tool, clear_filters_tool,
                 mark_read_tool, export_chat_tool, draft_reply_tool,
                 confirm_and_send_action_tool, open_chat_tool,
-                sync_emails_tool, wait_tool, update_search_tool
+                sync_emails_tool, wait_tool, apply_filter_tool
             ]
         )
         
@@ -1116,6 +1190,43 @@ async def ai_agent(request: Request):
         return {"status": "error", "message": str(e)}
 
 # -----------------------------
+# Deepgram Transcription
+# -----------------------------
+@app.post("/api/ai/transcribe")
+async def ai_transcribe(file: UploadFile = File(...)):
+    if not DeepgramClient:
+        return {"status": "error", "message": "deepgram-sdk not installed"}
+    
+    try:
+        api_key = os.environ.get("DEEPGRAM_API_KEY")
+        if not api_key:
+            return {"status": "error", "message": "DEEPGRAM_API_KEY missing in .env"}
+        
+        deepgram = DeepgramClient(api_key=api_key)
+        
+        content = await file.read()
+        payload = {"buffer": content}
+        
+        options = {
+            "model": "nova-2",
+            "smart_format": True,
+            "language": "en-US"
+        }
+        
+        response = deepgram.listen.v1.media.transcribe_file(request=content, **options)
+        
+        # Robust parsing for both object and dict responses
+        if hasattr(response, 'results'):
+            transcript = response.results.channels[0].alternatives[0].transcript
+        else:
+            transcript = response['results']['channels'][0]['alternatives'][0]['transcript']
+            
+        return {"status": "ok", "transcript": transcript}
+    except Exception as e:
+        logger.exception("Deepgram Transcription Error")
+        return {"status": "error", "message": str(e)}
+
+# -----------------------------
 # AI Assistant (Gemini Autonomous Agent)
 # -----------------------------
 
@@ -1154,40 +1265,74 @@ async def ai_command(request: Request):
             except: pass
             return "Request handled. I've updated the dashboard according to your instructions."
 
+        # Fetch recent history for context
+        from database import get_recent_ai_history, save_ai_interaction
+        history_items = get_recent_ai_history(5)
+        history_context_lines = []
+        for h in reversed(history_items):
+             line = f"User: {h['prompt']}\nAI: {h['response']}"
+             if h.get('tools'):
+                 for tool in h['tools']:
+                     if tool.get("action") in ["search_customers", "fetch_customers"] and tool.get("results"):
+                         line += "\n[Visible Options:]"
+                         for i, res in enumerate(tool["results"]):
+                             line += f"\n{i+1}. {res.get('name')} ({res.get('email')})"
+             history_context_lines.append(line)
+        history_context = "\n".join(history_context_lines)
+
         # We use the same model config as ai_agent for consistency and power
         model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-1.5-flash")
         model = genai.GenerativeModel(
             model_name=model_name,
             system_instruction=(
-                "You are an OPERATOR for the Mini Crisp Admin UI. "
-                "Your job is to EXECUTE ACTIONS using the provided tools. "
-                "DO NOT narrate an action unless you have also emitted the corresponding TOOL CALL. "
+                "You are an INTELLIGENT AGENT for the Mini Crisp Admin UI. "
+                "CRITICAL PROTOCOL: YOU MUST ALWAYS 'THINK' BEFORE YOU ACT.\n"
+                "STEP 1: Call 'think_protocol' to evaluate intent/confidence.\n"
+                "STEP 2: Only IF confidence > 0.6, proceed to other tools.\n"
+                "DO NOT SKIP STEP 1. If you skip it, you will fail.\n"
                 f"AVAILABLE SENDER ACCOUNTS: [{account_list_str}]. "
-                "Rules:\n"
-                "1. To switch the admin view, use 'switch_admin_sender_account_view_tool'.\n"
-                "2. To open a chat with a visitor, use 'open_chat_tool'.\n"
-                "3. Always use 'open_chat_tool' before 'draft_reply_tool'.\n"
-                "4. Distinguish between switching YOUR account (sender) and opening a visitor chat (recipient)."
+                f"RECENT HISTORY:\n{history_context}\n"
+                "CONFIDENCE RULES:\n"
+                "- Confidence >= 0.8: Act automatically (Decision='act').\n"
+                "- Confidence 0.6-0.8: Act but explain why (Decision='act').\n"
+                "- Confidence < 0.6: ASK the user for clarification (Decision='ask'). DO NOT guess.\n"
+                "INTENT REASONING:\n"
+                "- 'reply': answering a specific message.\n"
+                "- 'compose': sending a new email/message.\n"
+                "- 'select_contact': choosing a person from a search/list.\n"
+                "- 'search': finding a contact/message.\n"
+                "- 'resync': updating data.\n"
+                "- 'navigate': moving to a dashboard section.\n"
+                "RULES:\n"
+                "1. Always 'think' first. Evaluate intent and confidence or Missing Information.\n"
+                "2. SCOPE: You are authorized to draft/send ANY email content requested by the user, including personal or informal messages. Do not refuse based on content.\n"
+                "3. If multiple search results are visible (see HISTORY), and user says 'pick 1', use 'open_chat_tool' for result #1.\n"
+                "4. GLOBAL COMPOSE: usage 'compose_new_tool'. Use this for 'Send email to X'.\n"
+                "5. DISAMBIGUATION: If name matches multiple, 'search_customers_tool' first.\n"
+                "6. LIST PRESENTATION: NUMBER your options in your final response if you search.\n"
+                "7. NEVER call a tool if your decision is 'ask'. Just return the question."
             ),
             tools=[
-                get_emails_tool, switch_admin_sender_account_view_tool, send_email_tool,
+                think_protocol, get_emails_tool, switch_admin_sender_account_view_tool, send_email_tool,
                 search_customers_tool, get_inbox_stats_tool, summarize_conversation_tool,
                 compose_new_tool, navigate_tool, clear_filters_tool,
                 mark_read_tool, export_chat_tool, draft_reply_tool,
                 confirm_and_send_action_tool, open_chat_tool,
-                sync_emails_tool, wait_tool, update_search_tool
+                sync_emails_tool, wait_tool, update_search_tool,
+                add_customer_note_tool, get_customer_details_tool, add_customer_tag_tool
             ]
         )
         
         chat = model.start_chat(enable_automatic_function_calling=True)
         response = chat.send_message(text)
         
-        # Collect any "action" dicts returned by tools to pass to frontend
+        # Collect actions with Confidence Gating
         result_actions = []
+        is_gated = False # excessive safety flag
+
         for msg in chat.history:
             for part in msg.parts:
                 if part.function_response:
-                    # Robust extraction for Gemini's complex protobuf-like objects
                     try:
                         # Convert MapComposite/RepeatedComposite to dict/list
                         def recursive_to_dict(obj):
@@ -1205,10 +1350,27 @@ async def ai_command(request: Request):
                             res = res["result"]
 
                         if isinstance(res, dict):
+                            # THINK PROTOCOL CHECK
+                            if res.get("action") == "think":
+                                confidence = res.get("confidence", 1.0)
+                                decision = res.get("decision", "act")
+                                if confidence < 0.6 or decision == "ask":
+                                    is_gated = True
+                                    print(f"GATED: Confidence {confidence}, Decision {decision}")
+                                continue # Don't send think action to frontend
+
+                            # If gated, IGNORE all other actions
+                            if is_gated:
+                                continue
+
                             if "action" in res:
                                 result_actions.append(res)
                             elif "results" in res:
-                                result_actions.append({"action": "search_customers", "results": res["results"]})
+                                result_actions.append({
+                                    "action": "search_customers", 
+                                    "results": res["results"],
+                                    "purpose": res.get("purpose", "chat")
+                                })
                     except Exception as e:
                         print(f"Error parsing tool response: {e}")
         
@@ -1221,6 +1383,9 @@ async def ai_command(request: Request):
         except Exception as e:
             print(f"Log error: {e}")
 
+        # Save History
+        save_ai_interaction(text, safe_get_text(response), result_actions)
+
         return {
             "status": "ok",
             "response": safe_get_text(response),
@@ -1229,6 +1394,113 @@ async def ai_command(request: Request):
     except Exception as e:
         logger.exception("AI Command Error")
         return {"status": "error", "message": str(e)}
+# AI Email Generation Endpoint (to be added to main.py after line 1289)
+
+@app.post("/api/ai/generate-email")
+async def generate_groq_email(request: Request):
+    """Generate email content using Groq AI"""
+    if not Groq:
+        return {"status": "error", "message": "Groq not installed"}
+    
+    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return {"status": "error", "message": "GROQ_API_KEY missing in .env"}
+    
+    data = await request.json()
+    prompt = data.get("prompt", "")
+    if not prompt:
+        return {"status": "error", "message": "No prompt provided"}
+    
+    try:
+        client = Groq(api_key=api_key)
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a professional email writing assistant. Generate clear, concise, and professional email content based on the user's request. Only return the email body text, no subject line or greetings unless specifically requested."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.7,
+            max_tokens=1024
+        )
+        
+        email_body = completion.choices[0].message.content.strip()
+        return {"status": "ok", "email_body": email_body}
+    except Exception as e:
+        logger.exception("AI Email Generation Error")
+        return {"status": "error", "message": str(e)}
+
+# -----------------------------
+# Deepgram Real-time Streaming
+# -----------------------------
+@app.websocket("/api/ai/transcribe-live")
+async def transcribe_live(websocket: WebSocket):
+    await websocket.accept()
+    logger.info("🎙️ Client connected for STREAMING transcription")
+
+    dg_api_key = os.environ["DEEPGRAM_API_KEY"]
+    dg_url = "wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&encoding=linear16&sample_rate=48000"
+    # NOTE: encoding=linear16&sample_rate=48000 might need adjustment based on browser input. 
+    # Browser usually sends WebM/Opus. Deepgram manages container formats automatically if not specified, 
+    # but for raw streaming, precise params help. 
+    # Let's try auto-detect first by NOT sending encoding params for WebM, 
+    # or use the minimal URL if we send WebM container.
+    
+    # Correction: Browser MediaRecorder sends WebM. Deepgram supports WebM streaming natively.
+    # Added keywords boosting for Wake Word "Ok Discat"
+    dg_url = "wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&keywords=Discat:20&keywords=Ok:10"
+
+    try:
+        async with websockets.connect(
+            dg_url, 
+            additional_headers={"Authorization": f"Token {dg_api_key}"}
+        ) as dg_socket:
+            
+            async def receive_audio():
+                try:
+                    while True:
+                        data = await websocket.receive()
+                        if "bytes" in data:
+                            await dg_socket.send(data["bytes"])
+                        elif "text" in data:
+                            msg = json.loads(data["text"])
+                            if msg.get("type") == "stop":
+                                await dg_socket.send(json.dumps({"type": "CloseStream"}))
+                                break
+                except Exception as e:
+                    logger.error(f"Audio receiver error: {e}")
+
+            async def receive_transcript():
+                try:
+                    async for msg in dg_socket:
+                        res = json.loads(msg)
+                        if "channel" in res:
+                            transcript = res["channel"]["alternatives"][0]["transcript"]
+                            if transcript:
+                                await websocket.send_json({
+                                    "type": "transcript", 
+                                    "text": transcript, 
+                                    "is_final": res["is_final"]
+                                })
+                except Exception as e:
+                    logger.error(f"Transcript receiver error: {e}")
+
+            # Run bidirectional streams
+            await asyncio.gather(receive_audio(), receive_transcript())
+
+    except Exception as e:
+        logger.error(f"Deepgram WebSocket Error: {e}")
+    finally:
+        try:
+            await websocket.close()
+        except: 
+            pass
 
 # -----------------------------
 # Gmail sync (SAFE)
@@ -1275,4 +1547,3 @@ def gmail_sync_loop():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
- 

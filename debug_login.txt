@@ -1,37 +1,4 @@
-Login attempt for sam@gmail.com
-User found: No
-Login attempt for test@admin.com
-Login attempt for test@admin.com
-Login attempt for sam@test.com
-User found: Yes, Password valid: True
-Token created, redirecting...
 Login attempt for ai@gmail.com
-User found: No
-Login attempt for ai@gmail.com
-User found: Yes, Password valid: True
-Token created, redirecting...
-Login attempt for ai@gmail.com
-User found: Yes, Password valid: True
-Token created, redirecting...
-Login attempt for test@admin.com
-User found: Yes, Password valid: True
-Token created, redirecting...
-Login attempt for test@admin.com
-User found: Yes, Password valid: True
-Token created, redirecting...
-Login attempt for test@admin.com
-User found: Yes, Password valid: True
-Token created, redirecting...
-Login attempt for test@admin.com
-User found: Yes, Password valid: True
-Token created, redirecting...
-Login attempt for ai@gmail.com
-User found: Yes, Password valid: True
-Token created, redirecting...
-Login attempt for test@admin.com
-User found: Yes, Password valid: True
-Token created, redirecting...
-Login attempt for test@admin.com
 User found: Yes, Password valid: True
 Token created, redirecting...
 Login attempt for ai@gmail.com
@@ -43,7 +10,7 @@ Token created, redirecting...
 Login attempt for ai@gmail.com
 User found: Yes, Password valid: True
 Token created, redirecting...
-Login attempt for sam@test.com
+Login attempt for ai@gmail.com
 User found: Yes, Password valid: True
 Token created, redirecting...
 Login attempt for ai@gmail.com

@@ -157,6 +157,38 @@
             margin-top: 4px;
         }
 
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            padding: 8px 16px 0 16px;
+            align-items: center;
+        }
+
+        .filter-row input[type="date"] {
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            padding: 8px 16px 0 16px;
+            align-items: center;
+        }
+
+        .filter-row input[type="date"] {
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
         .search-box input {
             width: 100%;
             padding: 11px 14px;
@@ -1104,7 +1136,7 @@
             background: #fff;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
+            z-index: 10000;
             flex-direction: column;
             overflow: hidden;
             border: 1px solid var(--border-color);
@@ -1672,6 +1704,10 @@
             ● Listening...
         </div>
         <div class="ai-input-area">
+            <button id="wake-word-btn" class="voice-btn" title="Enable Continuous Loop Mode"
+                style="margin-right: 4px; opacity: 0.4;">🔁</button>
+            <button id="tts-toggle-btn" class="voice-btn" title="Toggle Voice Output"
+                style="margin-right: 4px;">🔊</button>
             <button id="voice-btn" class="voice-btn" title="Voice Command">🎤</button>
             <input type="text" id="ai-input" class="ai-input" placeholder="Type a command...">
             <button id="ai-send-btn" class="icon-btn"
@@ -2450,6 +2486,21 @@
         const aiInput = document.getElementById('ai-input');
         const voiceBtn = document.getElementById('voice-btn');
         const assistantBtn = document.getElementById('ai-assistant-btn');
+        const ttsBtn = document.getElementById('tts-toggle-btn');
+
+        // TTS State
+        let isTtsEnabled = true;
+
+        if (ttsBtn) {
+            ttsBtn.onclick = () => {
+                isTtsEnabled = !isTtsEnabled;
+                ttsBtn.textContent = isTtsEnabled ? '🔊' : '🔇';
+                if (!isTtsEnabled) {
+                    // Stop currently speaking audio
+                    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                }
+            };
+        }
 
         if (assistantBtn) assistantBtn.addEventListener('click', toggleAiBox);
 
@@ -2461,9 +2512,100 @@
         }
         window.toggleAiBox = toggleAiBox;
 
+        // Make AI Assistant Draggable
+        (function makeDraggable() {
+            const aiHeader = aiBox.querySelector('.ai-header');
+            if (!aiHeader) return;
+
+            aiHeader.style.cursor = 'move';
+            let isDragging = false;
+            let currentX, currentY, initialX, initialY;
+
+            aiHeader.addEventListener('mousedown', (e) => {
+                // Don't drag if clicking the close button
+                if (e.target.tagName === 'BUTTON') return;
+
+                isDragging = true;
+                initialX = e.clientX - aiBox.offsetLeft;
+                initialY = e.clientY - aiBox.offsetTop;
+                aiBox.style.transition = 'none';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+
+                // Keep within viewport bounds
+                const maxX = window.innerWidth - aiBox.offsetWidth;
+                const maxY = window.innerHeight - aiBox.offsetHeight;
+
+                currentX = Math.max(0, Math.min(currentX, maxX));
+                currentY = Math.max(0, Math.min(currentY, maxY));
+
+                aiBox.style.left = currentX + 'px';
+                aiBox.style.top = currentY + 'px';
+                aiBox.style.right = 'auto';
+                aiBox.style.bottom = 'auto';
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    aiBox.style.transition = '';
+                }
+            });
+        })();
+
+        // Helper to resume listening safely
+        function resumeContinuousListening() {
+            if (typeof isWakeWordMode !== 'undefined' && isWakeWordMode) {
+                console.log("Resuming Continuous Listening...");
+                // Brief delay to ensure audio effectively cleared
+                setTimeout(() => {
+                    if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                        startRecording();
+                    }
+                }, 500);
+            }
+        }
+
         async function sendAiCommand() {
             const prompt = aiInput.value.trim();
             if (!prompt) return;
+
+            // ... (rest of send logic) ...
+            // Check if user said "send" - trigger appropriate send button
+            if (prompt.toLowerCase().includes('send')) {
+                // ... (existing send logic for composers) ...
+                // Note: If sending email, we probably want to resume listening too?
+                // But typically sending closes the loop or composer. 
+                // Let's assume sending handles its own state or we fall through.
+                // Actually the existing code returns early here. 
+                // We should probably resume here too if we want "Continuous" to persist.
+            }
+
+            if (prompt.toLowerCase().includes('send')) {
+                // Check which composer is open
+                const mainComposer = document.getElementById('email-composer');
+                const globalComposer = document.getElementById('global-composer-modal');
+
+                if (mainComposer && mainComposer.style.display !== 'none') {
+                    document.getElementById('send-email-btn').click();
+                    appendAiMessage('bot', '📧 Sending email...');
+                    aiInput.value = '';
+                    resumeContinuousListening(); // RESUME HERE
+                    return;
+                } else if (globalComposer && globalComposer.style.display === 'flex') {
+                    document.getElementById('global-send-btn').click();
+                    appendAiMessage('bot', '📧 Sending email...');
+                    aiInput.value = '';
+                    resumeContinuousListening(); // RESUME HERE
+                    return;
+                }
+            }
 
             appendAiMessage('user', prompt);
             aiInput.value = '';
@@ -2486,15 +2628,19 @@
 
                 if (data.status === 'ok') {
                     appendAiMessage('bot', data.response);
+                    // Pass responsibility to handleAiActions
                     handleAiActions(data.actions, data.response);
                 } else {
                     appendAiMessage('bot', "Error: " + data.message);
+                    resumeContinuousListening(); // Error case resume
                 }
             } catch (err) {
                 const loadingMsg = document.getElementById(botMsgId);
                 if (loadingMsg) loadingMsg.remove();
                 appendAiMessage('bot', "Network error: " + err.message);
+                resumeContinuousListening(); // Error case resume
             }
+            // FINALLY BLOCK REMOVED to prevent race condition with TTS
         }
 
         function appendAiMessage(sender, text, id = null, options = null) {
@@ -2521,26 +2667,37 @@
                     btn.textContent = opt.label || opt;
                     btn.onclick = () => {
                         if (opt.email) {
-                            // Automatically open chat for this email
-                            const visitors = document.querySelectorAll('.visitor-item');
-                            let found = false;
-                            visitors.forEach(v => {
-                                if (v.innerText.toLowerCase().includes(opt.email.toLowerCase())) {
-                                    v.click();
-                                    found = true;
+                            if (opt.purpose === 'email') {
+                                // INTENT: EMAIL -> Open Global Composer
+                                ActionBridge.composeNew(opt.email);
+                                appendAiMessage('user', `Selected for email: ${opt.label}`);
+                            } else if (opt.purpose === 'summary') {
+                                // INTENT: SUMMARY -> Trigger Summarization
+                                aiInput.value = `Summarize conversation with ${opt.email}`;
+                                sendAiCommand();
+                            } else {
+                                // INTENT: CHAT -> Open Sidebar Chat
+                                const visitors = document.querySelectorAll('.visitor-item');
+                                let found = false;
+                                visitors.forEach(v => {
+                                    if (v.innerText.toLowerCase().includes(opt.email.toLowerCase())) {
+                                        v.click();
+                                        found = true;
+                                    }
+                                });
+                                if (!found) {
+                                    renderChat(opt.email, "");
                                 }
-                            });
-                            if (!found) {
-                                // If not in sidebar list (filtered or below fold), call renderChat directly
-                                renderChat(opt.email, "");
+                                appendAiMessage('user', `Selected for chat: ${opt.label}`);
                             }
-                            appendAiMessage('user', `Selected: ${opt.label || opt.email}`);
-                            // Follow up prompt to AI to continue the flow
-                            aiInput.value = `I picked ${opt.email}. Please continue with the draft.`;
-                            sendAiCommand();
                         }
                         else {
-                            aiInput.value = opt.label || opt;
+                            // New Email / New Chat
+                            if (opt.purpose === 'email') {
+                                aiInput.value = "I want to send an email to a new address";
+                            } else {
+                                aiInput.value = "I want to open a chat with a new user";
+                            }
                             sendAiCommand();
                         }
                     };
@@ -2662,6 +2819,68 @@
                 appendAiMessage('bot', `📍 Switched view to account: ${targetVal}`);
             },
 
+            async composeNew(to, subject, body) {
+                this.log(`Opening global composer for: ${to}`);
+                // 1. Open the global composer modal
+                openGlobalComposer();
+
+                // 2. Wait for modal transition
+                await this.wait(300);
+
+                // 3. Fill fields
+                const toInput = document.getElementById('global-to-input');
+                const subInput = document.getElementById('global-subject-input');
+                const msgInput = document.getElementById('global-message-text');
+
+                if (toInput) toInput.value = to || "";
+                if (subInput) subInput.value = subject || "";
+                if (msgInput) msgInput.value = body || "";
+
+                appendAiMessage('bot', `📝 I've opened the composer and drafted your email to ${to}. Please review and click Send.`);
+            },
+
+            async applyFilters(query, start, end) {
+                this.log(`Applying filters: Query="${query}", Start="${start}", End="${end}"`);
+
+                // 1. Update UI Inputs & Globals
+                if (query) {
+                    const searchInput = document.getElementById('search-input');
+                    const keywordsInput = document.getElementById('filter-keywords');
+                    if (searchInput) searchInput.value = query;
+                    if (keywordsInput) keywordsInput.value = query;
+                    searchFilter = query;
+                    localSearchTerm = query;
+
+                    // Update local search box if exists
+                    const localSearchInput = document.getElementById('chat-keyword-search');
+                    if (localSearchInput) localSearchInput.value = query;
+                }
+
+                if (start || end) {
+                    const startEl = document.getElementById('filter-start-date');
+                    const endEl = document.getElementById('filter-end-date');
+                    const advToggle = document.getElementById('adv-search-toggle');
+
+                    if (start && startEl) { startEl.value = start; filterStartDate = start; }
+                    if (end && endEl) { endEl.value = end; filterEndDate = end; }
+
+                    if (advToggle) {
+                        advToggle.style.color = 'var(--primary-color)';
+                        advToggle.style.background = '#ecfdf5';
+                    }
+                }
+
+                // 2. Trigger Fetch
+                await fetchMessages(searchFilter);
+
+                // 3. Update Chat View if open
+                if (currentConversationEmail) {
+                    renderChat(currentConversationEmail, searchFilter);
+                }
+
+                appendAiMessage('bot', `🔍 I've applied the filters.`);
+            },
+
             async searchInChat(query) {
                 this.log(`Searching in current chat for: "${query}"`);
                 const localSearch = document.getElementById('chat-keyword-search');
@@ -2673,8 +2892,75 @@
             }
         };
 
-        async function handleAiActions(actions, botResponse) {
+        async function handleAiActions(actions, responseText) {
             console.log("[AI Assistant] Received actions:", actions);
+
+            // --- CONCISE VOICE OUTPUT LOGIC (HEADERS ONLY) ---
+            let spokenText = "";
+            let actionFound = false;
+
+            if (actions && actions.length > 0) {
+                // Priority 1: Check for specific tools and give a header
+                if (actions.some(a => a.action === 'draft_reply' || a.action === 'generate_groq_email' || a.action === 'compose_new_tool')) {
+                    spokenText = "I have drafted the email.";
+                    actionFound = true;
+                } else if (actions.some(a => a.action === 'search_customers')) {
+                    const count = actions.find(a => a.action === 'search_customers').results?.length || 0;
+                    spokenText = `Found ${count} customers.`;
+                    actionFound = true;
+                } else if (actions.some(a => a.action === 'get_emails' || a.action === 'get_latest_emails')) {
+                    spokenText = "Here are the emails.";
+                    actionFound = true;
+                } else if (actions.some(a => a.action === 'summarize_conversation')) {
+                    spokenText = "Here is the summary.";
+                    actionFound = true;
+                } else if (actions.some(a => a.action === 'open_chat' || a.action === 'open_chat_tool')) {
+                    spokenText = "Opening chat.";
+                    actionFound = true;
+                }
+            }
+
+            // Priority 2: If no specific action, use a very short text summary
+            if (!spokenText && responseText) {
+                // Truncate strictly to the first minimal sentence or snippet
+                let snippet = responseText.split(/[.!?\n]/, 1)[0];
+                if (snippet.length > 60) snippet = snippet.substring(0, 50) + "...";
+                spokenText = snippet;
+            }
+
+            console.log("TTS Speaking:", spokenText);
+
+            let didSpeak = false;
+
+            if (isTtsEnabled && spokenText) {
+                // Cancel any ongoing speech first
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+                // STOP RECORDING SAFETY CHECK (Just in case)
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    stopRecording();
+                }
+
+                const utterance = new SpeechSynthesisUtterance(spokenText);
+                utterance.onend = () => {
+                    console.log("TTS Finished.");
+                    resumeContinuousListening(); // RESUME AFTER SPEECH
+                };
+                utterance.onerror = () => {
+                    console.error("TTS Error");
+                    resumeContinuousListening(); // RESUME ON ERROR
+                };
+
+                window.speechSynthesis.speak(utterance);
+                didSpeak = true;
+            }
+
+            // If we didn't speak, we must resume immediately
+            if (!didSpeak) {
+                resumeContinuousListening();
+            }
+
+            // --- Existing Action Handling ---
             if (!actions || actions.length === 0) return;
             // Process actions sequentially
             for (const act of actions) {
@@ -2687,8 +2973,8 @@
                         await ActionBridge.syncEmails();
                     } else if (act.action === 'wait') {
                         await ActionBridge.wait(act.ms || 500);
-                    } else if (act.action === 'update_search') {
-                        await ActionBridge.updateSearch(act.query);
+                    } else if (act.action === 'apply_filters') {
+                        await ActionBridge.applyFilters(act.query, act.start, act.end);
                     } else if (act.action === 'fetch_emails') {
                         if (act.filter && act.filter.query) {
                             await ActionBridge.updateSearch(act.filter.query);
@@ -2698,19 +2984,36 @@
                     } else if (act.action === 'search_in_chat') {
                         await ActionBridge.searchInChat(act.query);
                     } else if (act.action === 'search_customers' || act.action === 'fetch_customers') {
+                        let options = [];
+                        const purpose = act.purpose || 'chat'; // default to chat
                         if (act.results && act.results.length > 0) {
-                            const options = act.results.map(r => ({
-                                label: `${r.name} (${r.email})`,
-                                email: r.email
+                            options = act.results.map((r, index) => ({
+                                label: `${index + 1}. ${r.name} (${r.email})`,
+                                email: r.email,
+                                purpose: purpose
                             }));
-                            appendAiMessage('bot', "I found these matches. Which one did you mean?", null, options);
                         }
-                    } else if (act.action === 'open_chat') {
-                        await ActionBridge.openChat(act.email);
-                    } else if (act.action === 'draft_reply') {
-                        await ActionBridge.draftReply(act.body, act.email);
+                        // Always add 'New Email'/New Contact option UNLESS it's for 'summary'
+                        if (purpose !== 'summary') {
+                            options.push({
+                                label: purpose === 'email' ? "New Email" : "New Chat",
+                                email: null,
+                                purpose: purpose
+                            });
+                        }
+
+                        appendAiMessage('bot', act.results && act.results.length > 0 ?
+                            "I found these matches. Which one should I use?" :
+                            (purpose === 'summary' ? "I couldn't find any conversation with that name to summarize." : "No customers found."),
+                            null, options);
                     } else if (act.action === 'navigate') {
                         await ActionBridge.navigate(act.target);
+                    } else if (act.action === 'compose_new') {
+                        await ActionBridge.composeNew(act.to, act.subject, act.body);
+                    } else if (act.action === 'open_chat') {
+                        if (act.email) await ActionBridge.openChat(act.email);
+                    } else if (act.action === 'draft_reply') {
+                        await ActionBridge.draftReply(act.body, act.email);
                     } else if (act.action === 'clear_filters') {
                         const clearBtn = document.getElementById('adv-clear-btn');
                         if (clearBtn) clearBtn.click();
@@ -2725,7 +3028,6 @@
                     } else if (act.action === 'export_chat') {
                         const email = act.email || currentConversationEmail;
                         if (email) window.location.href = `/api/export?email=${encodeURIComponent(email)}`;
-                    } else if (act.action === 'compose_new') {
                         currentConversationEmail = act.to;
                         document.getElementById('reply-bar').style.display = 'none';
                         document.getElementById('email-composer').style.display = 'flex';
@@ -2739,7 +3041,7 @@
             }
 
             // Text-to-Speech
-            if (botResponse && ('speechSynthesis' in window)) {
+            if (botResponse && ('speechSynthesis' in window) && isTtsEnabled) {
                 const utterance = new SpeechSynthesisUtterance(botResponse);
                 utterance.rate = 1.0;
                 utterance.pitch = 1.0;
@@ -2747,96 +3049,272 @@
             }
         }
 
-        // Voice Recognition
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
+        // --- Deepgram Voice Recognition (Real-time) ---
+        let mediaRecorder;
+        let transcriptionSocket;
+        let audioContext;
+        let analyser;
+        let silenceStartTime = null;
+        const SILENCE_THRESHOLD = 0.015;
+        const SILENCE_TIMEOUT = 1800; // 1.8 seconds
 
-            let recordingTimer = null;
-            let countdownInterval = null;
-            let originalPlaceholder = aiInput.placeholder;
-            let finalTranscript = '';
+        let originalPlaceholder = aiInput.placeholder;
+        const statusEl = document.getElementById('ai-status');
+        let shouldAutoSend = false; // Flag for auto-send
+        let autoSendTimer = null; // Timer for 20s max duration
 
-            const statusEl = document.getElementById('ai-status');
+        // --- WAKE WORD STATE ---
+        let isWakeWordMode = false;
+        let isAssistantActive = false;
+        const wakeWordBtn = document.getElementById('wake-word-btn');
 
-            recognition.onstart = () => {
-                finalTranscript = '';
-                voiceBtn.classList.add('recording');
-                if (statusEl) statusEl.style.display = 'block';
-                aiInput.placeholder = "Listening... Speak now.";
-                let secondsLeft = 10;
-                voiceBtn.title = `Listening... (${secondsLeft}s)`;
+        // Live Transcription helpers
+        let initialText = "";
+        let sessionFinals = "";
 
-                if (countdownInterval) clearInterval(countdownInterval);
-                countdownInterval = setInterval(() => {
-                    secondsLeft--;
-                    voiceBtn.title = `Listening... (${secondsLeft}s)`;
-                    if (secondsLeft <= 0) clearInterval(countdownInterval);
-                }, 1000);
+        // Toggle Wake Word Mode
+        if (wakeWordBtn) {
+            wakeWordBtn.addEventListener('click', () => {
+                isWakeWordMode = !isWakeWordMode;
+                wakeWordBtn.style.opacity = isWakeWordMode ? '1' : '0.4';
+                wakeWordBtn.style.background = isWakeWordMode ? '#dbeafe' : '';
 
-                if (recordingTimer) clearTimeout(recordingTimer);
-                recordingTimer = setTimeout(() => {
-                    recognition.stop();
-                }, 10000);
-            };
-
-            recognition.onresult = (event) => {
-                let interimTranscript = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    const transcript = event.results[i][0].transcript;
-                    if (event.results[i].isFinal) {
-                        finalTranscript += transcript;
-                    } else {
-                        interimTranscript += transcript;
-                    }
-                }
-                const full = finalTranscript + interimTranscript;
-                aiInput.value = full;
-                console.log("Voice captured:", full);
-            };
-
-            recognition.onerror = (event) => {
-                console.error("Speech Recognition Error:", event.error);
-                if (event.error !== 'no-speech') {
+                // If turning ON, start listening immediately
+                if (isWakeWordMode && (!mediaRecorder || mediaRecorder.state === 'inactive')) {
+                    startRecording();
+                } else if (!isWakeWordMode && mediaRecorder && mediaRecorder.state !== 'inactive') {
                     stopRecording();
                 }
-            };
-
-            recognition.onend = () => {
-                stopRecording();
-                const text = aiInput.value.trim();
-                if (text) {
-                    sendAiCommand();
-                }
-            };
-
-            function stopRecording() {
-                voiceBtn.classList.remove('recording');
-                if (statusEl) statusEl.style.display = 'none';
-                voiceBtn.title = "Start Voice Command";
-                aiInput.placeholder = originalPlaceholder;
-                if (recordingTimer) clearTimeout(recordingTimer);
-                if (countdownInterval) clearInterval(countdownInterval);
-            }
-
-            voiceBtn.addEventListener('click', () => {
-                if (voiceBtn.classList.contains('recording')) {
-                    recognition.stop();
-                } else {
-                    try {
-                        aiInput.value = '';
-                        recognition.start();
-                    } catch (e) {
-                        console.error("Failed to start voice:", e);
-                    }
-                }
             });
-        } else {
-            voiceBtn.style.display = 'none';
         }
+
+        async function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                // 1. Get microphone access
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                // 2. Setup AudioContext for Silence Detection (SAFE MODE)
+                try {
+                    await initAudioContext();
+                    const analysisStream = stream.clone();
+                    const source = audioContext.createMediaStreamSource(analysisStream);
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 256;
+                    source.connect(analyser);
+                } catch (e) {
+                    console.error("Audio analysis setup failed:", e);
+                }
+
+                // 3. Open WebSocket to backend
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}/api/ai/transcribe-live`;
+                console.log('Connecting to WebSocket:', wsUrl);
+
+                transcriptionSocket = new WebSocket(wsUrl);
+                transcriptionSocket.binaryType = "arraybuffer";
+
+                transcriptionSocket.onopen = () => {
+                    console.log('WebSocket connected!');
+
+                    // 3. Create MediaRecorder
+                    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                        ? 'audio/webm;codecs=opus'
+                        : 'audio/webm';
+
+                    mediaRecorder = new MediaRecorder(stream, { mimeType });
+
+                    mediaRecorder.ondataavailable = async (e) => {
+                        if (e.data && e.data.size > 0 && transcriptionSocket.readyState === WebSocket.OPEN) {
+                            const buffer = await e.data.arrayBuffer();
+                            transcriptionSocket.send(buffer);
+                        }
+                    };
+
+                    mediaRecorder.start(250);
+
+                    // 6. UI updates
+                    voiceBtn.classList.add('recording');
+                    if (statusEl) statusEl.style.display = 'block';
+
+                    if (isWakeWordMode) {
+                        isAssistantActive = true; // Always active in Continuous Mode
+                        aiInput.placeholder = "Continuous Mode: Speak now...";
+                        statusEl.innerHTML = "● Continuous Listening...";
+                        statusEl.style.color = "#ef4444"; // Red
+                    } else {
+                        aiInput.placeholder = "Listening live...";
+                        statusEl.innerHTML = "● Listening...";
+                        statusEl.style.color = "#ef4444"; // Red
+                    }
+
+                    // Reset texts
+                    initialText = aiInput.value;
+                    sessionFinals = "";
+
+                    // 7. Max Duration Timer logic
+                    if (autoSendTimer) clearTimeout(autoSendTimer);
+
+                    // In Wake Word mode, we don't auto-stop initially. Only after activation.
+                    if (!isWakeWordMode) {
+                        autoSendTimer = setTimeout(() => {
+                            console.log("Max duration reached.");
+                            shouldAutoSend = true;
+                            stopRecording();
+                        }, 20000);
+                    }
+                };
+
+                // 7. Receive transcript messages
+                transcriptionSocket.onmessage = (e) => {
+                    const data = JSON.parse(e.data);
+
+                    if (data.type === 'transcript') {
+                        // --- CONTINUOUS MODE LOGIC (Implicit) ---
+                        // If isWakeWordMode (Classic "Ear") is ON, we treat everything as a command.
+                        // We use silence/timeout to trigger the send.
+                        // The wake word block is REMOVED.
+
+                        if (data.is_final) {
+                            sessionFinals += (sessionFinals || initialText ? " " : "") + data.text;
+                        }
+
+                        const currentPartial = data.is_final ? "" : (" " + data.text);
+                        aiInput.value = (initialText + " " + sessionFinals + currentPartial).trim();
+                        aiInput.scrollTop = aiInput.scrollHeight;
+
+                        if (data.is_final) {
+                            aiInput.placeholder = "Listening live...";
+                        }
+
+                        // Detect Silence for Auto-Send (If Continuous Mode is ON)
+                        if (isWakeWordMode && data.is_final) {
+                            // Simple heuristic: If we got a final sentence, and there's a pause, we could send?
+                            // Better: Rely on the silence detector or the existing timer. 
+                            // But deepgram gives us 'is_final'. 
+                            // Let's use a short debounce timer after 'is_final' to send.
+
+                            if (autoSendTimer) clearTimeout(autoSendTimer);
+                            autoSendTimer = setTimeout(() => {
+                                console.log("Pause detected in Continuous Mode. Sending...");
+                                shouldAutoSend = true;
+                                stopRecording();
+                            }, 2500); // 2.5s pause trigger
+                        }
+                    } else if (data.type === 'error') {
+                        console.error("Deepgram Error:", data.message);
+                    }
+                };
+
+                // 8. Handle close / error
+                transcriptionSocket.onclose = (e) => {
+                    console.log('WebSocket closed:', e.code, e.reason);
+
+                    // AUTO SEND LOGIC
+                    // We wait for socket close to ensure we have the final transcript
+                    if (shouldAutoSend) {
+                        const finalMsg = aiInput.value.trim();
+                        if (finalMsg) {
+                            console.log("Auto-sending message:", finalMsg);
+                            sendAiCommand();
+                        }
+                        shouldAutoSend = false;
+                    } else if (isWakeWordMode) {
+                        // Connection closed without sending (Timeout/Error/Manual Stop)
+                        // If we are in Wake Word mode, we should persist unless explicitly disabled.
+                        console.log("Connection closed in Wake Word mode. Restarting...");
+                        setTimeout(() => {
+                            if (isWakeWordMode && (!mediaRecorder || mediaRecorder.state === 'inactive')) {
+                                startRecording();
+                            }
+                        }, 1000);
+                    }
+
+                    stopRecording();
+                };
+
+                transcriptionSocket.onerror = (e) => {
+                    console.error('WebSocket error:', e);
+                    stopRecording();
+                };
+
+            } catch (err) {
+                console.error("Microphone access error:", err);
+                alert("Could not access microphone.");
+            }
+        }
+
+        function monitorSilence() {
+            if (!voiceBtn.classList.contains('recording')) return;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteTimeDomainData(dataArray);
+
+            let sumSquares = 0.0;
+            for (const amplitude of dataArray) {
+                const normalized = (amplitude - 128) / 128;
+                sumSquares += normalized * normalized;
+            }
+            const rms = Math.sqrt(sumSquares / bufferLength);
+
+            // Volume visual feedback
+            const scale = Math.min(1 + rms * 3, 1.4);
+            voiceBtn.style.transform = `scale(${scale})`;
+
+            if (rms < SILENCE_THRESHOLD) {
+                if (!silenceStartTime) silenceStartTime = Date.now();
+                else if (Date.now() - silenceStartTime > SILENCE_TIMEOUT) {
+                    // Silence limit reached -> Auto Send
+                    // console.log("Silence detected. Auto-stopping...");
+                    // shouldAutoSend = true;
+                    // stopRecording();
+                    // return;
+
+                    // USER REQUEST CHANGE: DO NOT STOP ON SILENCE. 
+                    // ONLY STOP ON 20S TIMER.
+                }
+            } else {
+                silenceStartTime = null;
+            }
+            requestAnimationFrame(monitorSilence);
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            }
+            if (transcriptionSocket && transcriptionSocket.readyState === WebSocket.OPEN) {
+                transcriptionSocket.send(JSON.stringify({ type: 'stop' }));
+                // Do NOT close immediately. Wait for backend to send final result and close.
+            }
+            if (autoSendTimer) {
+                clearTimeout(autoSendTimer);
+                autoSendTimer = null;
+            }
+            voiceBtn.classList.remove('recording');
+            voiceBtn.style.transform = 'scale(1)';
+            if (statusEl) statusEl.style.display = 'none';
+            aiInput.placeholder = originalPlaceholder;
+            silenceStartTime = null;
+        }
+
+        voiceBtn.addEventListener('click', () => {
+            if (voiceBtn.classList.contains('recording')) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        });
 
         document.getElementById('ai-send-btn').addEventListener('click', sendAiCommand);
         aiInput.addEventListener('keypress', (e) => {
@@ -2939,7 +3417,7 @@
 
             try {
                 console.log("Fetching AI generation...");
-                const res = await fetch('/api/generate-email', {
+                const res = await fetch('/api/ai/generate-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: userInput })
@@ -2953,7 +3431,7 @@
                         alert("Error: Editor not ready. Please try refreshing.");
                         return;
                     }
-                    quillEditor.root.innerHTML = data.content;
+                    quillEditor.root.innerHTML = data.email_body;
                     console.log("Content inserted into Quill");
                 } else {
                     alert("AI Error: " + data.message);
@@ -3121,6 +3599,215 @@
         });
 
 
+    </script>
+
+    <!-- GLOBAL COMPOSER MODAL -->
+    <div id="global-composer-modal" style="
+        display:none; 
+        position:fixed; 
+        top:0; left:0; width:100%; height:100%; 
+        background:rgba(0,0,0,0.5); 
+        z-index:9999; 
+        align-items:center; 
+        justify-content:center;
+        backdrop-filter:blur(4px);
+    ">
+        <div style="
+            background:white; 
+            width:600px; 
+            max-width:90%; 
+            border-radius:12px; 
+            box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        ">
+            <div
+                style="padding:16px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
+                <h3 style="margin:0; font-size:1.1rem; color:#0f172a;">New Email</h3>
+                <button onclick="closeGlobalComposer()"
+                    style="border:none; background:none; font-size:1.5rem; cursor:pointer; color:#64748b;">&times;</button>
+            </div>
+            <div style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+                <!-- Sender Info -->
+                <div style="font-size:0.9rem; color:#64748b;">
+                    From: <span id="global-from-preview" style="font-weight:600; color:#0f172a;">--</span>
+                </div>
+
+                <!-- Recipient -->
+                <div>
+                    <input type="email" id="global-to-input" placeholder="To: recipient@example.com"
+                        style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:6px; font-family:inherit;">
+                </div>
+
+                <!-- Subject with Magic Button -->
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <input type="text" id="global-subject-input" placeholder="Subject"
+                        style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:6px; font-family:inherit; font-weight:500;">
+                    <button onclick="openGlobalAiAssist()" title="AI Assist"
+                        style="padding:8px 12px; border:none; background:linear-gradient(135deg, #0ea5e9, #10b981); color:white; border-radius:6px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:4px;">
+                        ✨ AI
+                    </button>
+                </div>
+
+                <!-- Body (Simple Textarea for now for robustness) -->
+                <div style="flex:1;">
+                    <textarea id="global-message-text" placeholder="Write your message here..."
+                        style="width:100%; height:200px; padding:10px; border:1px solid #e2e8f0; border-radius:6px; font-family:inherit; resize:vertical;"></textarea>
+                </div>
+
+                <!-- Attachments -->
+                <div>
+                    <input type="file" id="global-file-input" multiple style="display:none;">
+                    <button onclick="document.getElementById('global-file-input').click()"
+                        style="padding:8px 12px; border:1px solid #e2e8f0; background:white; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                        📎 Attach Files
+                    </button>
+                    <div id="global-file-previews" style="margin-top:8px; display:flex; flex-wrap:wrap; gap:8px;"></div>
+                </div>
+            </div>
+            <div
+                style="padding:16px; border-top:1px solid #e2e8f0; background:#f8fafc; display:flex; justify-content:flex-end; gap:12px;">
+                <button onclick="closeGlobalComposer()"
+                    style="padding:8px 16px; border:1px solid #cbd5e1; background:white; border-radius:6px; cursor:pointer;">Cancel</button>
+                <button onclick="sendGlobalEmail()" id="global-send-btn"
+                    style="padding:8px 20px; border:none; background:var(--primary-color); color:white; border-radius:6px; cursor:pointer; font-weight:600;">Send
+                    Email</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Composer Logic
+        let globalSelectedFiles = [];
+
+        function openGlobalComposer() {
+            const modal = document.getElementById('global-composer-modal');
+            const fromPreview = document.getElementById('global-from-preview');
+            if (modal) {
+                modal.style.display = 'flex';
+                if (fromPreview) fromPreview.textContent = currentSelectedAccount || "Default";
+            }
+        }
+
+        function closeGlobalComposer() {
+            const modal = document.getElementById('global-composer-modal');
+            if (modal) modal.style.display = 'none';
+            // Clear files
+            globalSelectedFiles = [];
+            renderGlobalFilePreviews();
+        }
+
+        // File handling for Global Composer
+        document.getElementById('global-file-input').addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            globalSelectedFiles.push(...files);
+            renderGlobalFilePreviews();
+            e.target.value = ''; // Reset input
+        });
+
+        function renderGlobalFilePreviews() {
+            const container = document.getElementById('global-file-previews');
+            container.innerHTML = '';
+            globalSelectedFiles.forEach((file, index) => {
+                const preview = document.createElement('div');
+                preview.style.cssText = 'display:flex; align-items:center; gap:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-size:0.85rem;';
+                preview.innerHTML = `
+                    <span>📄 ${file.name}</span>
+                    <button onclick="removeGlobalFile(${index})" style="border:none; background:none; cursor:pointer; color:#ef4444; font-weight:bold;">×</button>
+                `;
+                container.appendChild(preview);
+            });
+        }
+
+        function removeGlobalFile(index) {
+            globalSelectedFiles.splice(index, 1);
+            renderGlobalFilePreviews();
+        }
+
+        // AI Assist for Global Composer
+        async function openGlobalAiAssist() {
+            const prompt = window.prompt("What would you like me to write?");
+            if (!prompt) return;
+
+            const messageBox = document.getElementById('global-message-text');
+            const originalText = messageBox.value;
+            messageBox.value = "✨ Generating...";
+
+            try {
+                const res = await fetch('/api/ai/generate-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    messageBox.value = data.email_body;
+                } else {
+                    messageBox.value = originalText;
+                    alert("Failed to generate: " + (data.message || "Unknown error"));
+                }
+            } catch (e) {
+                messageBox.value = originalText;
+                alert("Network error generating email.");
+            }
+        }
+
+        async function sendGlobalEmail() {
+            const to = document.getElementById('global-to-input').value.trim();
+            const subject = document.getElementById('global-subject-input').value.trim();
+            const body = document.getElementById('global-message-text').value.trim();
+            const btn = document.getElementById('global-send-btn');
+
+            if (!to || !body) {
+                alert("Please fill in recipient and message body.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Sending...";
+
+            const formData = new FormData();
+            formData.append('visitor_email', to);      // was 'email'
+            formData.append('account_email', currentSelectedAccount); // was 'sender'
+            formData.append('subject', subject);
+            formData.append('text', body);             // was 'body'
+
+            // Append files
+            globalSelectedFiles.forEach(file => {
+                formData.append('files', file);
+            });
+
+            try {
+                const response = await fetch('/api/reply', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    closeGlobalComposer();
+                    alert("Email sent successfully!");
+                    // Clear fields
+                    document.getElementById('global-to-input').value = "";
+                    document.getElementById('global-subject-input').value = "";
+                    document.getElementById('global-message-text').value = "";
+                    globalSelectedFiles = [];
+                    renderGlobalFilePreviews();
+
+                    // Refresh if strictly necessary
+                    await fetchMessages(searchFilter);
+                } else {
+                    const d = await response.json();
+                    alert("Failed to send: " + (d.message || "Unknown error"));
+                }
+            } catch (e) {
+                console.error("Global send error:", e);
+                alert("Network error sending email.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Send Email";
+            }
+        }
     </script>
 </body>
 

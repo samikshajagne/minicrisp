@@ -1,0 +1,10 @@
+
+def apply_filter_tool(query: str = None, start_date: str = None, end_date: str = None):
+    """
+    Apply filters to the message list.
+    Args:
+        query: Keyword to search for.
+        start_date: Start date in YYYY-MM-DD format.
+        end_date: End date in YYYY-MM-DD format.
+    """
+    return {"action": "apply_filters", "query": query, "start": start_date, "end": end_date}

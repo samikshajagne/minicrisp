@@ -22,6 +22,8 @@ threads = db["threads"]                     # optional future use
 counters = db["counters"] 
 email_accounts = db.email_accounts
 whatsapp_accounts = db["whatsapp_accounts"]
+whatsapp_accounts = db["whatsapp_accounts"]
+ai_history = db["ai_history"] # Store AI interactions
 # auto-increment counters
 
 # -----------------------------
@@ -43,6 +45,8 @@ email_received.create_index("message_id", unique=True, sparse=True)
 email_received.create_index([("tb1_id", 1), ("timestamp", -1)]) # Composite for faster conversation list
 threads.create_index("visitor_email", unique=True)
 whatsapp_accounts.create_index("phone_number_id", unique=True)
+ai_history.create_index("timestamp", expireAfterSeconds=60*60*24*30) # Keep history for 30 days
+
 
 # -----------------------------
 # Auto-increment helper
@@ -237,3 +241,51 @@ def get_user_by_email(email: str):
     if not email:
         return None
     return users.find_one({"email": email.strip().lower()})
+    return users.find_one({"email": email.strip().lower()})
+
+# -----------------------------
+# Customer Notes & Tags
+# -----------------------------
+def add_note(email: str, content: str, author: str = "AI"):
+    if not email or not content: return None
+    note = {
+        "content": content, 
+        "author": author, 
+        "timestamp": datetime.utcnow()
+    }
+    customers.update_one(
+        {"cust_email": email.strip().lower()},
+        {"$push": {"notes": note}}
+    )
+    return note
+
+def get_notes(email: str):
+    if not email: return []
+    cust = customers.find_one({"cust_email": email.strip().lower()})
+    return cust.get("notes", []) if cust else []
+
+def add_tag(email: str, tag: str):
+    if not email or not tag: return
+    customers.update_one(
+        {"cust_email": email.strip().lower()},
+        {"$addToSet": {"tags": tag.strip()}}
+    )
+
+def get_tags(email: str):
+    cust = customers.find_one({"cust_email": email.strip().lower()})
+    return cust.get("tags", []) if cust else []
+
+# -----------------------------
+# AI History
+# -----------------------------
+def save_ai_interaction(prompt: str, response: str, tools_used: list = None):
+    ai_history.insert_one({
+        "prompt": prompt,
+        "response": response,
+        "tools": tools_used or [],
+        "timestamp": datetime.utcnow()
+    })
+
+def get_recent_ai_history(limit: int = 5):
+    """Get recent context from DB to inject into prompt."""
+    return list(ai_history.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit))

@@ -992,7 +992,12 @@ def search_customers_tool(query: str, purpose: str = "chat"):
             "phone": r.get("phone"),
             "last_seen": r.get("last_seen").isoformat() if r.get("last_seen") else None
         })
-    return {"results": formatted, "purpose": purpose}
+    return {
+    "action": "search_customers",
+    "results": formatted,
+    "purpose": purpose
+}
+
 
 def draft_reply_tool(email: str, body: str):
     """
@@ -1230,6 +1235,221 @@ async def ai_transcribe(file: UploadFile = File(...)):
 # AI Assistant (Gemini Autonomous Agent)
 # -----------------------------
 
+# GROQ Fallback Helper
+async def call_groq_fallback(text: str, history_context: str = ""):
+    """Fallback to GROQ when Gemini rate limits are hit - with intent parsing"""
+    if not Groq:
+        return None
+    
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return None
+    
+    try:
+        client = Groq(api_key=api_key)
+        
+        # Enhanced system prompt to match Gemini's behavior
+        system_prompt = f"""You are an AI assistant for Mini Crisp dashboard. 
+
+RECENT HISTORY:
+{history_context}
+
+When the user asks to:
+- "Write/send/compose email to [name]" - respond with: COMPOSE_EMAIL|[name]|[message if provided]
+- "Search for [name]" - respond with: SEARCH_CONTACT|[name]
+- "Open chat with [name]" - respond with: OPEN_CHAT|[name]
+- "Show messages/emails" - respond with: FETCH_EMAILS
+- Navigate somewhere - respond with: NAVIGATE|[target]
+- "Pick option [number]" or "Select [name]" - respond with: SELECT_OPTION|[number or name]
+
+For other requests, provide a helpful text response.
+
+Be concise and action-oriented."""
+
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": text}
+            ],
+            temperature=0.3,  # Lower temperature for more consistent parsing
+            max_tokens=500
+        )
+        
+        response_text = completion.choices[0].message.content.strip()
+        
+        # Parse intent from GROQ response
+        actions = []
+        display_message = response_text
+        
+        # Check if response contains action commands
+        if "|" in response_text:
+            parts = response_text.split("|")
+            command = parts[0].strip()
+            
+            if command == "COMPOSE_EMAIL" and len(parts) >= 2:
+                recipient_name = parts[1].strip()
+                body = parts[2].strip() if len(parts) > 2 else ""
+                
+                # Search for the contact first
+                from database import search_customers
+                results = search_customers(recipient_name)
+                
+                if results and len(results) > 0:
+                    # Format results for display
+                    formatted_results = []
+                    for r in results[:5]:  # Limit to 5 results
+                        formatted_results.append({
+                            "name": r.get("name", "Unknown"),
+                            "email": r.get("cust_email") or r.get("phone") or "No Email/Phone",
+                            "phone": r.get("phone"),
+                        })
+                    
+                    # Show search results and let user pick
+                    actions.append({
+                        "action": "search_customers",
+                        "results": formatted_results,
+                        "purpose": "email",
+                        "body": body  # Save the message body for later
+                    })
+                    display_message = f"I found {len(formatted_results)} contact(s) named '{recipient_name}'. Which one would you like to email?"
+                else:
+                    # Contact not found
+                    actions.append({
+                        "action": "search_customers",
+                        "results": [],
+                        "purpose": "email"
+                    })
+                    display_message = f"I couldn't find anyone named '{recipient_name}' in your contacts. Could you provide their email address?"
+            
+            elif command == "SEARCH_CONTACT" and len(parts) >= 2:
+                search_name = parts[1].strip()
+                from database import search_customers
+                results = search_customers(search_name)
+                
+                formatted_results = []
+                for r in results[:5]:  # Limit to 5 results
+                    formatted_results.append({
+                        "name": r.get("name", "Unknown"),
+                        "email": r.get("cust_email") or r.get("phone") or "No Email/Phone",
+                        "phone": r.get("phone"),
+                    })
+                
+                actions.append({
+                    "action": "search_customers",
+                    "results": formatted_results,
+                    "purpose": "chat"
+                })
+                display_message = f"Found {len(formatted_results)} result(s) for '{search_name}'"
+            
+            elif command == "OPEN_CHAT" and len(parts) >= 2:
+                contact_ref = parts[1].strip()
+                actions.append({
+                    "action": "open_chat",
+                    "email": contact_ref
+                })
+                display_message = f"Opening chat with {contact_ref}..."
+
+            elif command == "SELECT_OPTION" and len(parts) >= 2:
+                selection = parts[1].strip()
+                # Try to resolve selection from history context manually or just pass it as open_chat for now
+                # Since we don't have the structured history object easily available here to lookup exact email
+                # We will rely on the frontend or backend heuristic to resolve it if possible.
+                # But actually, 'open_chat' usually takes an email.
+                # However, if selection is a number (e.g. "1"), we need to look it up.
+                
+                # Heuristic: If it's a number, try to extract email from the visible history in prompt
+                import re
+                email_match = None
+                if selection.isdigit():
+                    idx = int(selection)
+                    # Regex to find: "1. Name (email)"
+                    matches = re.findall(rf"{idx}\.\s+.*?\((\S+@\S+|\S+)\)", history_context)
+                    if matches:
+                        email_match = matches[0]
+                
+                if email_match:
+                    # Check if previous context was search for email
+                    # This is hard to know exactly without saving conversational state outside of history string
+                    # But we can default to 'open_chat' and let the frontend/backend heuristic fix handle it?
+                    # Wait, 'open_chat' opens chat. 'compose_new' opens email.
+                    # We need to know the INTENT of the previous search.
+                    
+                    # Heuristic: Check history for email intent
+                    purpose = "chat"
+                    if any(phrase in history_context for phrase in ["email?", "mail", "compose", "write to", "send to", "Which one would you like to email?"]):
+                        purpose = "email"
+                        purpose = "email"
+                    
+                    if purpose == "email":
+                         actions.append({
+                            "action": "compose_new",
+                            "to": email_match
+                         })
+                         display_message = f"Opening composer for {email_match}..."
+                    else:
+                         actions.append({
+                            "action": "open_chat",
+                            "email": email_match
+                         })
+                         display_message = f"Opening chat with {email_match}..."
+
+                else:
+                    display_message = "I couldn't identify the option from our history. Please try searching again."
+
+            elif command == "FETCH_EMAILS":
+                actions.append({
+                    "action": "fetch_emails"
+                })
+                display_message = "Fetching your messages..."
+            
+            elif command == "NAVIGATE" and len(parts) >= 2:
+                target = parts[1].strip().lower()
+                actions.append({
+                    "action": "navigate",
+                    "target": target
+                })
+                display_message = f"Navigating to {target}..."
+        
+        # Add note that this is from backup AI
+        if not actions:
+            display_message += " (via backup AI)"
+        
+        # Text-to-Action Safety Net
+        if not actions and any(x in display_message for x in ["opened", "drafted", "updated the email", "added a subject"]):
+             import re
+             
+             # Extract Subject and Body (heuristic)
+             subject = None
+             body = None
+             subj_match = re.search(r"subject\s+['\"`](.+?)['\"`]", display_message, re.IGNORECASE)
+             if subj_match: subject = subj_match.group(1)
+             
+             body_match = re.search(r"body\s+['\"`](.+?)['\"`]", display_message, re.IGNORECASE)
+             if body_match: body = body_match.group(1)
+
+             email_match = re.search(r"to\s+([a-zA-Z0-9._%+-]+@\S+)", display_message)
+             email = None
+             if email_match:
+                 email = email_match.group(1).rstrip('.,!?')
+                 
+             if email or subject or body:
+                 actions.append({
+                     "action": "compose_new",
+                     "to": email,
+                     "subject": subject,
+                     "body": body
+                 })
+
+        return {
+            "status": "ok",
+            "response": display_message,
+            "actions": actions
+        }
+    except Exception as e:
+        logger.error(f"GROQ Fallback Error: {e}")
+        return None
+
 @app.post("/api/ai/command")
 async def ai_command(request: Request):
     if not genai:
@@ -1306,10 +1526,10 @@ async def ai_command(request: Request):
                 "RULES:\n"
                 "1. Always 'think' first. Evaluate intent and confidence or Missing Information.\n"
                 "2. SCOPE: You are authorized to draft/send ANY email content requested by the user, including personal or informal messages. Do not refuse based on content.\n"
-                "3. If multiple search results are visible (see HISTORY), and user says 'pick 1', use 'open_chat_tool' for result #1.\n"
-                "4. GLOBAL COMPOSE: usage 'compose_new_tool'. Use this for 'Send email to X'.\n"
-                "5. DISAMBIGUATION: If name matches multiple, 'search_customers_tool' first.\n"
-                "6. LIST PRESENTATION: NUMBER your options in your final response if you search.\n"
+                "3. If multiple search results are visible (see HISTORY), and user says 'pick 1', use the appropriate tool for the context (e.g. 'compose_new_tool' if purpose was email, 'open_chat_tool' for chat) for result #1.\n"
+                "4. COMPOSE EMAIL WORKFLOW: When user says 'write/send/compose email to [name]', ALWAYS use 'search_customers_tool' FIRST with purpose='email'. Show the results to user. DO NOT directly call 'compose_new_tool' unless user provides a full email address.\\n"
+                "5. DISAMBIGUATION: If name matches multiple, 'search_customers_tool' first.\\n"
+                "6. LIST PRESENTATION: NUMBER your options in your final response if you search.\\n"
                 "7. NEVER call a tool if your decision is 'ask'. Just return the question."
             ),
             tools=[
@@ -1323,8 +1543,40 @@ async def ai_command(request: Request):
             ]
         )
         
-        chat = model.start_chat(enable_automatic_function_calling=True)
-        response = chat.send_message(text)
+        # Retry logic with exponential backoff for rate limits
+        import time
+        max_retries = 3
+        retry_delay = 2  # Start with 2 seconds
+        
+        for attempt in range(max_retries):
+            try:
+                chat = model.start_chat(enable_automatic_function_calling=True)
+                response = chat.send_message(text)
+                break  # Success, exit retry loop
+            except Exception as api_error:
+                error_msg = str(api_error)
+                
+                # Check if it's a rate limit error
+                if "429" in error_msg or "quota" in error_msg.lower() or "rate" in error_msg.lower():
+                    if attempt < max_retries - 1:
+                        logger.warning(f"Rate limit hit, retrying in {retry_delay}s (attempt {attempt + 1}/{max_retries})")
+                        time.sleep(retry_delay)
+                        retry_delay *= 2  # Exponential backoff
+                        continue
+                    else:
+                        # Last attempt failed - try GROQ fallback
+                        logger.warning("Gemini rate limit exhausted, trying GROQ fallback...")
+                        groq_result = await call_groq_fallback(text, history_context)
+                        if groq_result:
+                            save_ai_interaction(text, groq_result.get("response", ""), groq_result.get("actions", []))
+                            return groq_result
+                        return {
+                            "status": "error",
+                            "message": "Rate limit exceeded. Please wait a moment and try again. The AI service is temporarily busy."
+                        }
+                else:
+                    # Not a rate limit error, re-raise
+                    raise
         
         # Collect actions with Confidence Gating
         result_actions = []
@@ -1364,16 +1616,127 @@ async def ai_command(request: Request):
                                 continue
 
                             if "action" in res:
+                                # HEURISTIC: Apply purpose inference for search_customers
+                                if res["action"] == "search_customers" and "results" in res:
+                                    purpose = res.get("purpose")
+                                    prompt_lower = text.lower()
+                                    
+                                    if not purpose:
+                                        if any(x in prompt_lower for x in [
+                                            "email", "mail", "send", "write", "compose", "draft"
+                                        ]):
+                                            purpose = "email"
+                                        elif any(x in prompt_lower for x in [
+                                            "summary", "summarize"
+                                        ]):
+                                            purpose = "summary"
+                                        else:
+                                            purpose = "chat"
+                                        res["purpose"] = purpose
+                                
+                                # HEURISTIC: Intercept open_chat if context was email selection
+                                if res["action"] in ["open_chat", "open_chat_tool"] and "email" in res:
+                                    # Check if the MOST RECENT search_customers had purpose="email"
+                                    should_compose = False
+                                    if history_items:
+                                        # Get the most recent history item
+                                        last_item = history_items[-1]  # Most recent is last in reversed list
+                                        if last_item.get('tools'):
+                                            for tool in last_item['tools']:
+                                                if tool.get("action") == "search_customers" and tool.get("purpose") == "email":
+                                                    should_compose = True
+                                                    break
+                                    
+                                    if should_compose:
+                                        res["action"] = "compose_new"
+                                        res["to"] = res["email"]
+                                        # subject/body will be None, handled by frontend
+
                                 result_actions.append(res)
                             elif "results" in res:
+                                purpose = res.get("purpose")
+                                prompt_lower = text.lower()
+
+                                if not purpose:
+                                    if any(x in prompt_lower for x in [
+                                        "email", "mail", "send", "write", "compose", "draft"
+                                    ]):
+                                        purpose = "email"
+                                    elif any(x in prompt_lower for x in [
+                                        "summary", "summarize"
+                                    ]):
+                                        purpose = "summary"
+                                    else:
+                                        purpose = "chat"
+
                                 result_actions.append({
-                                    "action": "search_customers", 
+                                    "action": "search_customers",
                                     "results": res["results"],
-                                    "purpose": res.get("purpose", "chat")
+                                    "purpose": purpose
                                 })
+
+                    except IndexError as idx_error:
+                        logger.error(f"List index error parsing tool response: {idx_error}")
+                        # Continue processing other parts instead of crashing
+                        continue
                     except Exception as e:
-                        print(f"Error parsing tool response: {e}")
+                        logger.error(f"Error parsing tool response: {e}")
+                        continue
         
+        # HEURISTIC: Text-to-Action for Hallucinated Calls
+        # If no relevant actions, but AI claims to have opened email
+        display_text = safe_get_text(response)
+        has_compose = any(a.get("action") == "compose_new" for a in result_actions)
+        
+        if not has_compose and any(x in display_text for x in ["opened", "drafted", "updated the email", "added a subject"]):
+            try:
+                import re
+                
+                # Extract Subject and Body (heuristic)
+                subject = None
+                body = None
+                
+                # Support single quotes, double quotes, and backticks
+                subj_match = re.search(r"subject\s+['\"`](.+?)['\"`]", display_text, re.IGNORECASE)
+                if subj_match: subject = subj_match.group(1)
+                
+                body_match = re.search(r"body\s+['\"`](.+?)['\"`]", display_text, re.IGNORECASE)
+                if body_match: body = body_match.group(1)
+
+                # Try to extract email from response text
+                email_match = re.search(r"to\s+([a-zA-Z0-9._%+-]+@\S+)", display_text)
+                target_email = None
+                if email_match:
+                    target_email = email_match.group(1).rstrip('.,!?')
+                
+                # If regex failed for email, try to recover from history selection
+                if not target_email and history_items:
+                    user_input = text.lower()
+                    idx = -1
+                    if "first" in user_input or "1" in user_input: idx = 0
+                    elif "second" in user_input or "2" in user_input: idx = 1
+                    elif "third" in user_input or "3" in user_input: idx = 2
+                    
+                    if idx >= 0:
+                        last_item = history_items[-1] # Most recent
+                        if last_item.get('tools'):
+                             for tool in last_item['tools']:
+                                if tool.get('action') == 'search_customers' and tool.get('results'):
+                                    if idx < len(tool['results']):
+                                        target_email = tool['results'][idx].get('email')
+                                        break
+
+                if target_email or subject or body:
+                    logger.warning(f"Converting Text to Action: Compose/Update Email (to: {target_email}, subject: {subject})")
+                    result_actions.append({
+                        "action": "compose_new",
+                        "to": target_email,
+                        "subject": subject,
+                        "body": body
+                    })
+            except Exception as e:
+                logger.error(f"Error in text-to-action heuristic: {e}")
+
         # DEBUG LOGGING
         try:
             with open("ai_actions_debug.log", "a", encoding="utf-8") as f:
@@ -1393,7 +1756,29 @@ async def ai_command(request: Request):
         }
     except Exception as e:
         logger.exception("AI Command Error")
-        return {"status": "error", "message": str(e)}
+        error_msg = str(e)
+        
+        # Provide user-friendly error messages
+        if "429" in error_msg or "quota" in error_msg.lower():
+            # Try GROQ fallback before returning error
+            try:
+                groq_result = await call_groq_fallback(text, history_context)
+                if groq_result:
+                    save_ai_interaction(text, groq_result.get("response", ""), groq_result.get("actions", []))
+                    return groq_result
+            except:
+                pass
+            return {
+                "status": "error",
+                "message": "AI service is temporarily busy due to high usage. Please wait a moment and try again."
+            }
+        elif "index" in error_msg.lower() and "range" in error_msg.lower():
+            return {
+                "status": "error",
+                "message": "I encountered an issue processing your request. Could you please rephrase it or try again?"
+            }
+        else:
+            return {"status": "error", "message": f"An error occurred: {error_msg}"}
 # AI Email Generation Endpoint (to be added to main.py after line 1289)
 
 @app.post("/api/ai/generate-email")

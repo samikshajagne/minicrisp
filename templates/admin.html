@@ -2666,9 +2666,11 @@
                     btn.style.fontSize = '0.8rem';
                     btn.textContent = opt.label || opt;
                     btn.onclick = () => {
+                        console.log('[DEBUG] Option clicked:', { email: opt.email, purpose: opt.purpose, label: opt.label });
                         if (opt.email) {
                             if (opt.purpose === 'email') {
                                 // INTENT: EMAIL -> Open Global Composer
+                                console.log('[DEBUG] Opening composer for email');
                                 ActionBridge.composeNew(opt.email);
                                 appendAiMessage('user', `Selected for email: ${opt.label}`);
                             } else if (opt.purpose === 'summary') {
@@ -2677,6 +2679,7 @@
                                 sendAiCommand();
                             } else {
                                 // INTENT: CHAT -> Open Sidebar Chat
+                                console.log('[DEBUG] Opening chat (purpose:', opt.purpose, ')');
                                 const visitors = document.querySelectorAll('.visitor-item');
                                 let found = false;
                                 visitors.forEach(v => {
@@ -2820,9 +2823,13 @@
             },
 
             async composeNew(to, subject, body) {
+                console.log('[DEBUG] composeNew called with:', { to, subject, body });
                 this.log(`Opening global composer for: ${to}`);
+
                 // 1. Open the global composer modal
+                console.log('[DEBUG] Calling openGlobalComposer...');
                 openGlobalComposer();
+                console.log('[DEBUG] openGlobalComposer called');
 
                 // 2. Wait for modal transition
                 await this.wait(300);
@@ -2832,12 +2839,16 @@
                 const subInput = document.getElementById('global-subject-input');
                 const msgInput = document.getElementById('global-message-text');
 
-                if (toInput) toInput.value = to || "";
-                if (subInput) subInput.value = subject || "";
-                if (msgInput) msgInput.value = body || "";
+                console.log('[DEBUG] Found elements:', { toInput: !!toInput, subInput: !!subInput, msgInput: !!msgInput });
 
-                appendAiMessage('bot', `📝 I've opened the composer and drafted your email to ${to}. Please review and click Send.`);
+                if (toInput && to) toInput.value = to;
+                if (subInput && subject) subInput.value = subject;
+                if (msgInput && body) msgInput.value = body;
+
+                const statusMsg = to ? `📝 I've opened the composer and drafted your email to ${to}.` : `📝 I've updated your draft.`;
+                appendAiMessage('bot', `${statusMsg} Please review and click Send.`);
             },
+
 
             async applyFilters(query, start, end) {
                 this.log(`Applying filters: Query="${query}", Start="${start}", End="${end}"`);
@@ -2901,7 +2912,8 @@
 
             if (actions && actions.length > 0) {
                 // Priority 1: Check for specific tools and give a header
-                if (actions.some(a => a.action === 'draft_reply' || a.action === 'generate_groq_email' || a.action === 'compose_new_tool')) {
+                if (actions.some(a => a.action === 'draft_reply' || a.action === 'generate_groq_email' || a.action === 'compose_new')) {
+
                     spokenText = "I have drafted the email.";
                     actionFound = true;
                 } else if (actions.some(a => a.action === 'search_customers')) {
@@ -2984,6 +2996,14 @@
                     } else if (act.action === 'search_in_chat') {
                         await ActionBridge.searchInChat(act.query);
                     } else if (act.action === 'search_customers' || act.action === 'fetch_customers') {
+                        if (!act.results || act.results.length === 0) {
+                            appendAiMessage(
+                                'bot',
+                                "I couldn't find anyone matching that. Try a full name or email."
+                            );
+                            continue;
+                        }
+
                         let options = [];
                         const purpose = act.purpose || 'chat'; // default to chat
                         if (act.results && act.results.length > 0) {
@@ -3027,25 +3047,19 @@
                         }
                     } else if (act.action === 'export_chat') {
                         const email = act.email || currentConversationEmail;
-                        if (email) window.location.href = `/api/export?email=${encodeURIComponent(email)}`;
-                        currentConversationEmail = act.to;
-                        document.getElementById('reply-bar').style.display = 'none';
-                        document.getElementById('email-composer').style.display = 'flex';
-                        document.getElementById('email-subject').value = act.subject || "";
-                        if (quillEditor) quillEditor.root.innerHTML = act.body || "";
-                        appendAiMessage('bot', `📝 Ready to email ${act.to}.`);
+
+                        if (!email) {
+                            appendAiMessage('bot', "No conversation selected to export.");
+                            continue;
+                        }
+
+                        window.location.href = `/api/export?email=${encodeURIComponent(email)}`;
+                        appendAiMessage('bot', "📁 Conversation exported successfully.");
                     }
+
                 } catch (e) {
                     console.error("Action Error:", e);
                 }
-            }
-
-            // Text-to-Speech
-            if (botResponse && ('speechSynthesis' in window) && isTtsEnabled) {
-                const utterance = new SpeechSynthesisUtterance(botResponse);
-                utterance.rate = 1.0;
-                utterance.pitch = 1.0;
-                window.speechSynthesis.speak(utterance);
             }
         }
 

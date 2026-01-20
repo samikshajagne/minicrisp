@@ -1820,3 +1820,239 @@ index: 0
 2026-01-14 18:59:17,775 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
 2026-01-14 18:59:40,638 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
 2026-01-14 19:26:58,474 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=51
+2026-01-19 18:11:58,302 - main - ERROR - AI Command Error
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 1327, in ai_command
+    response = chat.send_message(text)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\generativeai\generative_models.py", line 591, in send_message
+    self.history, content, response = self._handle_afc(
+                                      ^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\generativeai\generative_models.py", line 666, in _handle_afc
+    self._check_response(response=response, stream=stream)
+  File "C:\Users\yashj\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\generativeai\generative_models.py", line 611, in _check_response
+    if response.candidates[0].finish_reason not in (
+       ~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\yashj\AppData\Local\Programs\Python\Python311\Lib\site-packages\proto\marshal\collections\repeated.py", line 130, in __getitem__
+    return self._marshal.to_python(self._pb_type, self.pb[key])
+                                                  ~~~~~~~^^^^^
+IndexError: list index out of range
+2026-01-19 18:12:25,860 - main - ERROR - AI Command Error
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 1327, in ai_command
+    response = chat.send_message(text)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\generativeai\generative_models.py", line 591, in send_message
+    self.history, content, response = self._handle_afc(
+                                      ^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\generativeai\generative_models.py", line 666, in _handle_afc
+    self._check_response(response=response, stream=stream)
+  File "C:\Users\yashj\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\generativeai\generative_models.py", line 611, in _check_response
+    if response.candidates[0].finish_reason not in (
+       ~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\yashj\AppData\Local\Programs\Python\Python311\Lib\site-packages\proto\marshal\collections\repeated.py", line 130, in __getitem__
+    return self._marshal.to_python(self._pb_type, self.pb[key])
+                                                  ~~~~~~~^^^^^
+IndexError: list index out of range
+2026-01-20 11:45:54,193 - main - ERROR - AI Command Error
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 1327, in ai_command
+    response = chat.send_message(text)
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 578, in send_message
+    response = self.model.generate_content(
+        contents=history,
+    ...<5 lines>...
+        request_options=request_options,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 331, in generate_content
+    response = self._client.generate_content(
+        request,
+        **request_options,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\ai\generativelanguage_v1beta\services\generative_service\client.py", line 835, in generate_content
+    response = rpc(
+        request,
+    ...<2 lines>...
+        metadata=metadata,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\gapic_v1\method.py", line 131, in __call__
+    return wrapped_func(*args, **kwargs)
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\retry\retry_unary.py", line 294, in retry_wrapped_func
+    return retry_target(
+        target,
+    ...<3 lines>...
+        on_error=on_error,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\retry\retry_unary.py", line 156, in retry_target
+    next_sleep = _retry_error_helper(
+        exc,
+    ...<6 lines>...
+        timeout,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\retry\retry_base.py", line 214, in _retry_error_helper
+    raise final_exc from source_exc
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\retry\retry_unary.py", line 147, in retry_target
+    result = target()
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\timeout.py", line 130, in func_with_timeout
+    return func(*args, **kwargs)
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\grpc_helpers.py", line 77, in error_remapped_callable
+    raise exceptions.from_grpc_error(exc) from exc
+google.api_core.exceptions.InvalidArgument: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+2026-01-20 11:49:55,134 - main - INFO - api_reply called: visitor=sammikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=71
+2026-01-20 11:50:47,057 - main - ERROR - AI Command Error
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 1327, in ai_command
+    response = chat.send_message(text)
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 591, in send_message
+    self.history, content, response = self._handle_afc(
+                                      ~~~~~~~~~~~~~~~~^
+        response=response,
+        ^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        request_options=request_options,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 666, in _handle_afc
+    self._check_response(response=response, stream=stream)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 611, in _check_response
+    if response.candidates[0].finish_reason not in (
+       ~~~~~~~~~~~~~~~~~~~^^^
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\proto\marshal\collections\repeated.py", line 130, in __getitem__
+    return self._marshal.to_python(self._pb_type, self.pb[key])
+                                                  ~~~~~~~^^^^^
+IndexError: list index out of range
+2026-01-20 11:51:00,076 - main - ERROR - AI Command Error
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 1327, in ai_command
+    response = chat.send_message(text)
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 591, in send_message
+    self.history, content, response = self._handle_afc(
+                                      ~~~~~~~~~~~~~~~~^
+        response=response,
+        ^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        request_options=request_options,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 657, in _handle_afc
+    response = self.model.generate_content(
+        contents=history,
+    ...<4 lines>...
+        request_options=request_options,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 331, in generate_content
+    response = self._client.generate_content(
+        request,
+        **request_options,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\ai\generativelanguage_v1beta\services\generative_service\client.py", line 835, in generate_content
+    response = rpc(
+        request,
+    ...<2 lines>...
+        metadata=metadata,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\gapic_v1\method.py", line 131, in __call__
+    return wrapped_func(*args, **kwargs)
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\retry\retry_unary.py", line 294, in retry_wrapped_func
+    return retry_target(
+        target,
+    ...<3 lines>...
+        on_error=on_error,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\retry\retry_unary.py", line 156, in retry_target
+    next_sleep = _retry_error_helper(
+        exc,
+    ...<6 lines>...
+        timeout,
+    )
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\retry\retry_base.py", line 214, in _retry_error_helper
+    raise final_exc from source_exc
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\retry\retry_unary.py", line 147, in retry_target
+    result = target()
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\timeout.py", line 130, in func_with_timeout
+    return func(*args, **kwargs)
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\api_core\grpc_helpers.py", line 77, in error_remapped_callable
+    raise exceptions.from_grpc_error(exc) from exc
+google.api_core.exceptions.ResourceExhausted: 429 You exceeded your current quota. Please migrate to Gemini 2.5 Flash Image (models/gemini-2.5-flash-image) for higher quota limits. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_requests_per_model"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 10
+}
+, retry_delay {
+  seconds: 59
+}
+]
+2026-01-20 11:57:08,219 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 11:57:10,343 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 11:58:49,847 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 11:58:51,959 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 11:58:56,085 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 11:59:06,934 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 11:59:09,054 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 11:59:13,162 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 11:59:30,753 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 11:59:32,883 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 11:59:37,002 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:01:29,369 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 12:01:31,485 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 12:01:35,601 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:02:26,719 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 12:02:28,834 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 12:02:32,956 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:02:45,348 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 12:02:47,470 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 12:02:51,580 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:05:59,365 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 12:06:01,473 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 12:06:05,578 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:06:13,579 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 12:06:15,695 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 12:06:19,812 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:06:36,841 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 12:06:38,961 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 12:06:43,086 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:06:46,999 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 12:06:49,114 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 12:06:53,232 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:07:03,718 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 12:07:05,837 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 12:07:09,964 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:07:30,153 - main - WARNING - Rate limit hit, retrying in 2s (attempt 1/3)
+2026-01-20 12:07:32,272 - main - WARNING - Rate limit hit, retrying in 4s (attempt 2/3)
+2026-01-20 12:07:36,385 - main - WARNING - Gemini rate limit exhausted, trying GROQ fallback...
+2026-01-20 12:13:56,433 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=ai.intern@cetl.in, text_len=15
+2026-01-20 12:17:44,981 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=ai.intern@cetl.in, text_len=3
+2026-01-20 12:22:50,122 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+2026-01-20 12:23:02,222 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-01-20 12:24:49,497 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=ai.intern@cetl.in, text_len=5
+2026-01-20 12:56:51,086 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-20 12:59:24,398 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=432
+2026-01-20 14:36:01,304 - main - WARNING - Converting Text Hallucination to Real Action: Compose Email to samikshajagne2@gmail.com
+2026-01-20 14:45:37,959 - main - WARNING - Converting Text Hallucination to Real Action: Compose Email to samikshajagne2@gmail.com
+2026-01-20 14:52:07,254 - main - WARNING - Converting Text to Action: Compose/Update Email (to: samikshajagne2@gmail.com, subject: None)
+2026-01-20 14:52:43,086 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=4
+2026-01-20 14:59:20,321 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=3
+2026-01-20 15:05:51,450 - main - INFO - api_reply called: visitor=varun.gupt@rmc.in, account=ai.intern@cetl.in, text_len=4

@@ -2056,3 +2056,97 @@ google.api_core.exceptions.ResourceExhausted: 429 You exceeded your current quot
 2026-01-20 14:52:43,086 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=4
 2026-01-20 14:59:20,321 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=3
 2026-01-20 15:05:51,450 - main - INFO - api_reply called: visitor=varun.gupt@rmc.in, account=ai.intern@cetl.in, text_len=4
+2026-01-20 15:26:53,734 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+2026-01-20 15:27:17,023 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-01-20 16:01:49,749 - main - INFO - api_reply called: visitor=nehatarmale123@gmail.com, account=planetofstories98@gmail.com, text_len=5
+2026-01-20 16:02:05,969 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-01-20 16:02:35,118 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+2026-01-20 16:48:17,114 - main - WARNING - Converting Text to Action: Compose/Update Email (to: varun.gupt@rmc.in, subject: None)
+2026-01-20 16:50:18,815 - main - WARNING - Converting Text to Action: Compose/Update Email (to: varun.gupt@rmc.in, subject: None)
+2026-01-20 16:55:33,085 - main - INFO - api_reply called: visitor=samit shah, account=planetofstories98@gmail.com, text_len=4
+2026-01-20 16:55:33,100 - main - ERROR - Could not find business_number_id for WhatsApp reply to samit shah
+2026-01-20 17:09:50,855 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=516
+2026-01-20 17:14:31,276 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+2026-01-20 17:14:43,379 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-01-20 17:21:49,166 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+2026-01-20 17:22:01,167 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-01-20 17:30:29,011 - main - ERROR - Deepgram WebSocket Error: [Errno 11001] getaddrinfo failed
+2026-01-20 17:39:01,369 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=4
+2026-01-20 17:41:59,016 - main - WARNING - Converting Text to Action: Compose/Update Email (to: samikshajagne2@gmail.com, subject: None)
+2026-01-20 17:59:23,802 - main - WARNING - Converting Text to Action: Compose/Update Email (to: samikshajagne2@gmail.com, subject: None)
+2026-01-20 18:00:06,462 - main - WARNING - Converting Text to Action: Compose/Update Email (to: nehatarmale123@gmail.com, subject: None)
+2026-01-20 18:00:17,638 - main - INFO - api_reply called: visitor=nehatarmale123@gmail.com, account=ai.intern@cetl.in, text_len=2
+2026-01-20 18:00:35,683 - main - ERROR - AI Command Error
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 1554, in ai_command
+    response = chat.send_message(text)
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 588, in send_message
+    self._check_response(response=response, stream=stream)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 616, in _check_response
+    raise generation_types.StopCandidateException(response.candidates[0])
+google.generativeai.types.generation_types.StopCandidateException: finish_reason: MALFORMED_FUNCTION_CALL
+index: 0
+
+2026-01-20 18:01:48,479 - main - WARNING - Converting Text to Action: Compose/Update Email (to: tashifkapoor05@gmail.com, subject: None)
+2026-01-20 18:15:36,892 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=purchase.it@rmc.in, text_len=2
+2026-01-20 18:16:32,026 - main - INFO - api_reply called: visitor=tashifkapoor05@gmail.com, account=purchase.it@rmc.in, text_len=2
+2026-01-20 18:22:22,109 - main - WARNING - Converting Text to Action: Compose/Update Email (to: tashifkapoor05@gmail.com, subject: None)
+2026-01-21 11:42:01,162 - main - ERROR - AI Command Error
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 1410, in ai_command
+    intent_result = classify_intent(text, history_context)
+  File "D:\anticrisp\main.py", line 1321, in classify_intent
+    return json.loads(response.text)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\yashj\anaconda3\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\json\decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+2026-01-21 11:45:20,173 - main - ERROR - AI Command Error
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 1410, in ai_command
+    intent_result = classify_intent(text, history_context)
+  File "D:\anticrisp\main.py", line 1321, in classify_intent
+    return json.loads(response.text)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\yashj\anaconda3\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\json\decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+2026-01-21 11:50:28,596 - main - WARNING - Intent classification JSON parse error: Expecting value: line 1 column 1 (char 0). Response: ```json
+{
+  "intent": "unknown",
+  "confidence": 0.1,
+  "missing_info": []
+}
+```
+2026-01-21 11:50:51,961 - main - WARNING - Intent classification JSON parse error: Expecting value: line 1 column 1 (char 0). Response: ```json
+{
+  "intent": "compose",
+  "confidence": 1.0,
+  "missing_info": [
+    "subject",
+    "body"
+  ]
+}
+```
+2026-01-21 11:54:59,538 - main - WARNING - Gemini blocked/malformed response: finish_reason: 12
+index: 0
+
+2026-01-21 12:03:42,151 - main - INFO - api_reply called: visitor=samiksha, account=planetofstories98@gmail.com, text_len=7
+2026-01-21 12:03:42,163 - main - ERROR - Could not find business_number_id for WhatsApp reply to samiksha
+2026-01-21 12:19:39,058 - main - INFO - api_reply called: visitor=varun, account=planetofstories98@gmail.com, text_len=5
+2026-01-21 12:19:39,065 - main - ERROR - Could not find business_number_id for WhatsApp reply to varun
+2026-01-21 13:33:21,373 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=77
+2026-01-21 13:34:54,958 - main - INFO - api_reply called: visitor=varun.gupt@rmc.in, account=planetofstories98@gmail.com, text_len=77

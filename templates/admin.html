@@ -1362,7 +1362,7 @@
                 align-items:center;
                 gap:6px;
             ">
-                <span>🤖</span><span>AI Assistant</span>
+                <span>🤖</span><span>DISCAAT KID</span>
             </button>
             <button id="resync-btn" style="
                 background:rgba(248,250,252,0.95);
@@ -1688,15 +1688,17 @@
         <div class="ai-header">
             <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:1.2rem;">🤖</span>
-                <span style="font-weight:700;">AI Assistant</span>
+                <span style="font-weight:700;">DISCAAT KID</span>
             </div>
             <button onclick="toggleAiBox()"
                 style="background:none; border:none; color:white; cursor:pointer; font-size:1.2rem;">×</button>
         </div>
         <div class="ai-messages" id="ai-messages">
             <div class="ai-message bot">
-                Hello! I'm your AI assistant. You can give me voice commands or type here. Try "Show me emails from
-                today" or "Switch to account [email]".
+                Hello, I am <b>DISCAAT KID</b>. I can send emails, manage customers, and navigate the dashboard for you.
+                What
+                should
+                we do next?
             </div>
         </div>
         <div id="ai-status"
@@ -2576,33 +2578,25 @@
             const prompt = aiInput.value.trim();
             if (!prompt) return;
 
-            // ... (rest of send logic) ...
-            // Check if user said "send" - trigger appropriate send button
-            if (prompt.toLowerCase().includes('send')) {
-                // ... (existing send logic for composers) ...
-                // Note: If sending email, we probably want to resume listening too?
-                // But typically sending closes the loop or composer. 
-                // Let's assume sending handles its own state or we fall through.
-                // Actually the existing code returns early here. 
-                // We should probably resume here too if we want "Continuous" to persist.
-            }
+            // Direct heuristic for "send" commands to bypass backend for speed
+            const lowerPrompt = prompt.toLowerCase();
+            const isSend = lowerPrompt === 'send' || lowerPrompt === 'send it' || lowerPrompt === 'confirm and send';
 
-            if (prompt.toLowerCase().includes('send')) {
-                // Check which composer is open
+            if (isSend) {
                 const mainComposer = document.getElementById('email-composer');
                 const globalComposer = document.getElementById('global-composer-modal');
 
-                if (mainComposer && mainComposer.style.display !== 'none') {
-                    document.getElementById('send-email-btn').click();
-                    appendAiMessage('bot', '📧 Sending email...');
-                    aiInput.value = '';
-                    resumeContinuousListening(); // RESUME HERE
-                    return;
-                } else if (globalComposer && globalComposer.style.display === 'flex') {
+                if (globalComposer && globalComposer.style.display === 'flex') {
                     document.getElementById('global-send-btn').click();
-                    appendAiMessage('bot', '📧 Sending email...');
+                    appendAiMessage('bot', '📧 Sending email via global composer...');
                     aiInput.value = '';
-                    resumeContinuousListening(); // RESUME HERE
+                    resumeContinuousListening();
+                    return;
+                } else if (mainComposer && mainComposer.style.display !== 'none') {
+                    document.getElementById('send-email-btn').click();
+                    appendAiMessage('bot', '📧 Sending reply...');
+                    aiInput.value = '';
+                    resumeContinuousListening();
                     return;
                 }
             }
@@ -2697,11 +2691,13 @@
                         else {
                             // New Email / New Chat
                             if (opt.purpose === 'email') {
-                                aiInput.value = "I want to send an email to a new address";
+                                // Directly open global composer for new email
+                                ActionBridge.composeNew("", "", "");
+                                appendAiMessage('bot', "I've opened the global composer for you.");
                             } else {
                                 aiInput.value = "I want to open a chat with a new user";
+                                sendAiCommand();
                             }
-                            sendAiCommand();
                         }
                     };
                     optionsDiv.appendChild(btn);
@@ -2753,6 +2749,15 @@
 
             async sendEmail() {
                 this.log("Clicking Send Email button");
+                const globalComposer = document.getElementById('global-composer-modal');
+                if (globalComposer && globalComposer.style.display === 'flex') {
+                    const globalSendBtn = document.getElementById('global-send-btn');
+                    if (globalSendBtn) {
+                        this.log("Sending from Global Composer");
+                        globalSendBtn.click();
+                        return;
+                    }
+                }
                 const sendBtn = document.getElementById('send-email-btn');
                 if (sendBtn) sendBtn.click();
             },

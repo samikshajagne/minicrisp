@@ -25,6 +25,8 @@ from fastapi.security import OAuth2PasswordBearer
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
+
+
 from database import (
     mark_customer_read, create_user, get_user_by_email, ensure_customer, 
     email_received, fs, whatsapp_accounts, get_email_accounts, add_email_account,
@@ -47,6 +49,9 @@ try:
     import google.generativeai as genai
 except ImportError:
     genai = None
+api_key = os.environ.get("GEMINI_API_KEY")
+if api_key and genai:
+    genai.configure(api_key=api_key)
 try:
     from openai import OpenAI
     import httpx
@@ -841,67 +846,6 @@ async def websocket_handler(
     finally:
         CONNECTIONS[key].discard(ws)
 
-# -----------------------------
-# AI Email Generation
-# -----------------------------
-@app.post("/api/generate-email")
-async def generate_email(request: Request):
-    try:
-        data = await request.json()
-        prompt_text = data.get("prompt")
-        if not prompt_text:
-            raise HTTPException(status_code=400, detail="Prompt required")
-
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key:
-             return {"status": "error", "message": "GEMINI_API_KEY missing. Please set it in .env"}
-        
-        if not genai:
-             return {"status": "error", "message": "google-generativeai library not installed."}
-        
-        genai.configure(api_key=api_key)
-        model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-1.5-flash")
-        model = genai.GenerativeModel(model_name)
-        
-        system_instr = "You are a professional email assistant. Return ONLY the HTML body of the email (using p, br, ul tags). No <html> or <body> tags. No subject line. Just the body."
-        
-        response = model.generate_content(f"{system_instr}\n\nUser request: {prompt_text}")
-        
-        content = response.text.replace("```html", "").replace("```", "").strip()
-        return {"status": "ok", "content": content}
-    except Exception as e:
-        logger.error(f"Gemini Generation Error: {e}")
-        return {"status": "error", "message": str(e)}
-
-# -----------------------------
-# AI Agent (Gemini Tool Calling)
-# -----------------------------
-
-# Configure Gemini
-api_key = os.environ.get("GEMINI_API_KEY")
-if api_key and genai:
-    genai.configure(api_key=api_key)
-
-
-def think_protocol(intent: str, confidence: float, decision: str, chosen_action: str = "none", reasoning: str = "", verification_required: bool = False):
-    """
-    INTERNAL THOUGHT PROCESS. MUST BE CALLED FIRST.
-    Args:
-        intent: One of [reply, compose, select_contact, search, resync, navigate, unknown]
-        confidence: 0.0 to 1.0 (Float).
-        decision: One of [act, ask, explain, no_action]
-        chosen_action: The tool you plan to call next (e.g. 'open_chat_tool') or 'none'.
-        reasoning: Short explanation of why you made this decision.
-        verification_required: If you need to verify the result of the action.
-    """
-    return {
-        "action": "think",
-        "intent": intent,
-        "confidence": confidence,
-        "decision": decision,
-        "chosen_action": chosen_action,
-        "reasoning": reasoning
-    }
 
 def get_emails_tool(query: str = None, start_date: str = None, end_date: str = None, account: str = None):
     """
@@ -963,17 +907,6 @@ def open_chat_tool(email: str):
     """
     return {"action": "open_chat", "email": email}
 
-def send_email_tool(to: str, subject: str, body: str):
-    """Send an email to a recipient."""
-    # We'll use the first active account if none specified or we can ask for context
-    # For now, we'll just trigger the send logic
-    try:
-        send_reply_from_admin_to_customer(to, body, subject=subject)
-        insert_message("admin", body, to, subject=subject, origin="ai_agent")
-        return {"status": "success", "message": f"Email sent to {to}"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
 def search_customers_tool(query: str, purpose: str = "chat"):
     """
     Search for customers. 
@@ -1028,8 +961,8 @@ def summarize_conversation_tool(email: str):
         summary_data.append(f"{m['sender']}: {m['content'][:100]}")
     return "\n".join(summary_data)
 
-def compose_new_tool(to: str, subject: str = "", body: str = ""):
-    """Open the composer for a new recipient (global email)."""
+def compose_new_tool(to: str = None, subject: str = None, body: str = None):
+    """Open or update the global email composer."""
     return {"action": "compose_new", "to": to, "subject": subject, "body": body}
 
 def confirm_and_send_action_tool():
@@ -1096,103 +1029,13 @@ def apply_filter_tool(query: str = None, start_date: str = None, end_date: str =
     """
     return {"action": "apply_filters", "query": query, "start": start_date, "end": end_date}
 
-def wait_tool(ms: int = 500):
-    """Wait for a specified number of milliseconds."""
-    return {"action": "wait", "ms": ms}
-
 @app.post("/api/ai/agent")
 async def ai_agent(request: Request):
-    if not genai:
-        return {"status": "error", "message": "google-generativeai not installed"}
-    
-    data = await request.json()
-    prompt = data.get("prompt")
-    if not prompt:
-        return {"status": "error", "message": "Prompt required"}
+    return {
+        "status": "error",
+        "message": "This endpoint is deprecated. Use /api/ai/command instead."
+    }
 
-    try:
-        def safe_get_text(resp):
-            try:
-                if resp.candidates and resp.candidates[0].content.parts:
-                    for p in resp.candidates[0].content.parts:
-                        if p.text: return p.text
-            except: pass
-            return "I've processed your request and performed the necessary actions on your dashboard."
-    
-        # Grounding: Get available accounts to inject into system prompt
-        from database import get_email_accounts
-        accounts_data = get_email_accounts()
-        env_email = os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in").lower()
-        if not any(a["email"] == env_email for a in accounts_data):
-            accounts_data.append({"email": env_email})
-        account_list_str = ", ".join([a["email"] for a in accounts_data])
-
-        model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-1.5-flash")
-        model = genai.GenerativeModel(
-            model_name=model_name,
-            system_instruction=(
-                "You are an OPERATOR for the Mini Crisp Admin UI. "
-                "Your job is to EXECUTE ACTIONS using the provided tools. "
-                "DO NOT narrate an action unless you have also emitted the corresponding TOOL CALL. "
-                f"AVAILABLE SENDER ACCOUNTS: [{account_list_str}]. "
-                "Rules:\n"
-                "1. To switch the admin view, use 'switch_admin_sender_account_view_tool'.\n"
-                "2. To open a chat with a visitor, use 'open_chat_tool'.\n"
-                "3. Always use 'open_chat_tool' before 'draft_reply_tool'.\n"
-                "4. Distinguish between switching YOUR account (sender) and opening a visitor chat (recipient).\n"
-                "5. GLOBAL COMPOSE: usage 'compose_new_tool'. When user says 'Send email to X saying Y', ALWAYS use 'compose_new_tool' first to draft it. DO NOT use 'send_email_tool' directly unless explicitly asked to 'send immediately'."
-            ),
-            tools=[
-                get_emails_tool, switch_admin_sender_account_view_tool, send_email_tool,
-                search_customers_tool, get_inbox_stats_tool, summarize_conversation_tool,
-                compose_new_tool, navigate_tool, clear_filters_tool,
-                mark_read_tool, export_chat_tool, draft_reply_tool,
-                confirm_and_send_action_tool, open_chat_tool,
-                sync_emails_tool, wait_tool, apply_filter_tool
-            ]
-        )
-        
-        chat = model.start_chat(enable_automatic_function_calling=True)
-        response = chat.send_message(prompt)
-        
-        # Check tool results for actions
-        final_actions = []
-        for msg in chat.history:
-            for part in msg.parts:
-                if part.function_response:
-                    # Robust extraction for Gemini's complex protobuf-like objects
-                    try:
-                        # Convert MapComposite/RepeatedComposite to dict/list
-                        def recursive_to_dict(obj):
-                            if hasattr(obj, 'items'):
-                                return {k: recursive_to_dict(v) for k, v in obj.items()}
-                            elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
-                                return [recursive_to_dict(x) for x in obj]
-                            else:
-                                return obj
-                                
-                        res = recursive_to_dict(part.function_response.response)
-                        
-                        # Handle potential 'result' wrapper
-                        if "result" in res:
-                            res = res["result"]
-
-                        if isinstance(res, dict):
-                            if "action" in res:
-                                final_actions.append(res)
-                            elif "results" in res:
-                                final_actions.append({"action": "search_customers", "results": res["results"]})
-                    except Exception as e:
-                        print(f"Error parsing tool response: {e}")
-
-        return {
-            "status": "ok",
-            "response": safe_get_text(response),
-            "actions": final_actions
-        }
-    except Exception as e:
-        logger.exception("AI Agent Error")
-        return {"status": "error", "message": str(e)}
 
 # -----------------------------
 # Deepgram Transcription
@@ -1449,362 +1292,350 @@ Be concise and action-oriented."""
     except Exception as e:
         logger.error(f"GROQ Fallback Error: {e}")
         return None
+    
+def classify_intent(prompt: str, history: str = ""):
+    """Robust 3-stage intent classification: Gemini -> GROQ -> Keywords"""
+    prompt_lower = prompt.lower().strip()
+    
+    # --- 1. PRIMARY: Gemini Intent Classification ---
+    try:
+        intent_model = genai.GenerativeModel(
+            model_name=os.environ.get("GEMINI_MODEL_NAME", "gemini-2.5-flash"),
+            system_instruction="""
+You are an AI assistant for Mini Crisp dashboard. Your role is "Mini Crisp Admin Assistant – intent classification only".
+Analyze user input and return valid JSON with intent, confidence (0.0 to 1.0), and missing_info list.
+
+Intents:
+- compose: write, send, or draft a new email
+- reply: respond to an existing student/customer
+- search: find customers, messages, or search history
+- navigate: go to specific pages (whatsapp, inbox, dashboard)
+- resync: sync or refresh emails
+- select_contact: pick a specific person from a list (e.g., "first one", "second one", "this one")
+- note: add or view customer notes
+- export: download conversation transcripts
+- mark_read: mark a message as read
+
+Schema:
+{
+  "intent": "compose|reply|search|navigate|resync|select_contact|note|export|mark_read|unknown",
+  "confidence": 0.0,
+  "missing_info": []
+}"""
+        )
+        
+        # Generation config moved inside generate_content for better reliability
+        response = intent_model.generate_content(
+            f"User input: {prompt}\nRecent history:\n{history}",
+            generation_config={"temperature": 0.0}
+        )
+        
+        if response and hasattr(response, 'text'):
+            res_text = response.text.strip()
+            # Clean markdown code blocks
+            if res_text.startswith("```"):
+                res_text = res_text.strip("`").replace("json", "", 1).strip()
+            
+            result = json.loads(res_text)
+            if "intent" in result:
+                # Normalize 'unknown' intent
+                if result["intent"] == "unknown":
+                    result["intent"] = "chat"
+                    result["confidence"] = max(result.get("confidence", 0.0), 0.51)
+                return result
+
+    except Exception as e:
+        err_str = str(e).lower()
+        # Log specifically for 429s/Quota
+        if "429" in err_str or "quota" in err_str or "exhausted" in err_str:
+            logger.warning(f"Gemini Intent Classification Rate Limited: {e}")
+        else:
+            logger.error(f"Gemini Intent Error: {e}")
+
+    # --- 2. SECONDARY: GROQ Intent Classification ---
+    if Groq and os.environ.get("GROQ_API_KEY"):
+        try:
+            client = Groq(api_key=os.environ["GROQ_API_KEY"])
+            groq_prompt = f"""
+You are an AI assistant for Mini Crisp dashboard. Your role is "Mini Crisp Admin Assistant – intent classification only".
+Available intents: compose, reply, search, navigate, resync, select_contact, note, export, mark_read, unknown.
+
+User Input: {prompt}
+History: {history}
+
+Return ONLY valid JSON matching this schema:
+{{
+  "intent": "intent_label",
+  "confidence": 0.6,
+  "missing_info": []
+}}"""
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": groq_prompt}],
+                temperature=0.0,
+                response_format={"type": "json_object"}
+            )
+            
+            result = json.loads(completion.choices[0].message.content.strip())
+            if "intent" in result:
+                # Map back to known labels if GROQ hallucinates (extra safety)
+                valid_intents = ["compose", "reply", "search", "navigate", "resync", "select_contact", "note", "export", "mark_read", "unknown"]
+                if result["intent"] not in valid_intents:
+                    result["intent"] = "unknown"
+                
+                if result["intent"] == "unknown":
+                    result["intent"] = "chat"
+                    result["confidence"] = max(result.get("confidence", 0.0), 0.51)
+                return result
+        except Exception as ge:
+            logger.error(f"GROQ Intent Fallback Error: {ge}")
+
+    # --- 3. TERTIARY: Keyword Heuristic Fallback ---
+    # Final safety net to prevent loop
+    intent = "chat" # Default internal fallback
+    confidence = 0.51
+
+    keywords = {
+        "compose": ["send", "write", "compose", "mail", "tell"],
+        "reply": ["reply", "respond", "answer"],
+        "search": ["find", "search", "look for", "show me"],
+        "navigate": ["go to", "open", "navigate", "switch"],
+        "resync": ["sync", "refresh", "resync"],
+        "note": ["note", "profile"],
+        "export": ["download", "export", "transcript"]
+    }
+
+    # High priority keyword matches for selection
+    if any(word in prompt_lower for word in ["first", "second", "third", "number 1", "number 2", "1st", "2nd"]):
+        return {"intent": "select_contact", "confidence": 0.95, "missing_info": []}
+
+    for label, words in keywords.items():
+        if any(word in prompt_lower for word in words):
+            intent = label
+            confidence = 0.8
+            break
+
+    return {
+        "intent": intent, 
+        "confidence": confidence, 
+        "missing_info": []
+    }
+TOOLS_BY_INTENT = {
+    "compose": [
+        search_customers_tool,
+        compose_new_tool,
+        confirm_and_send_action_tool
+    ],
+    "reply": [
+        open_chat_tool,
+        draft_reply_tool,
+        confirm_and_send_action_tool
+    ],
+    "search": [
+        search_customers_tool,
+        get_emails_tool,
+        summarize_conversation_tool,
+        get_inbox_stats_tool
+    ],
+    "navigate": [
+        navigate_tool,
+        clear_filters_tool,
+        update_search_tool,
+        apply_filter_tool
+    ],
+    "resync": [
+        sync_emails_tool
+    ],
+    "select_contact": [
+        open_chat_tool,
+        compose_new_tool,
+        search_customers_tool
+    ],
+    "note": [
+        add_customer_note_tool,
+        get_customer_details_tool,
+        add_customer_tag_tool
+    ],
+    "export": [
+        export_chat_tool
+    ],
+    "mark_read": [
+        mark_read_tool
+    ]
+}
+
 
 @app.post("/api/ai/command")
 async def ai_command(request: Request):
-    if not genai:
-        return {"status": "error", "message": "google-generativeai not installed"}
-    
-    # Reload env to pick up latest API key
-    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        return {"status": "error", "message": "GEMINI_API_KEY missing in .env"}
-    
-    genai.configure(api_key=api_key)
-    
-    data = await request.json()
-    text = data.get("text")
-    if not text:
-        return {"status": "error", "message": "No command provided"}
-
+    """Execution endpoint with unified intent-based whitelisting and robust fallbacks."""
     try:
-        # Grounding: Get available accounts to inject into system prompt
+        data = await request.json()
+        text = data.get("text")
+        if not text:
+            return {"status": "error", "message": "No command provided", "actions": []}
+
+        # 1. Grounding context
         accounts_data = get_email_accounts()
         env_email = os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in").lower()
         if not any(a["email"] == env_email for a in accounts_data):
             accounts_data.append({"email": env_email})
-        account_list_str = ", ".join([a["email"] for a in accounts_data])
 
-        def safe_get_text(resp):
-            try:
-                if resp.candidates and resp.candidates[0].content.parts:
-                    for part in resp.candidates[0].content.parts:
-                        if part.text:
-                            return part.text
-            except: pass
-            return "Request handled. I've updated the dashboard according to your instructions."
-
-        # Fetch recent history for context
+        # 2. History context
         from database import get_recent_ai_history, save_ai_interaction
         history_items = get_recent_ai_history(5)
+        
+        # Format for textual instruction grounding (legacy but useful for intent)
         history_context_lines = []
+        # Format for Gemini Native Chat Session
+        gemini_history = []
+
         for h in reversed(history_items):
+             # Textual line for intent classification grounding
              line = f"User: {h['prompt']}\nAI: {h['response']}"
+             
+             # Reconstruct native history parts
+             model_parts = [h['response']]
+             
              if h.get('tools'):
                  for tool in h['tools']:
+                     # Add to textual grounding
                      if tool.get("action") in ["search_customers", "fetch_customers"] and tool.get("results"):
                          line += "\n[Visible Options:]"
                          for i, res in enumerate(tool["results"]):
                              line += f"\n{i+1}. {res.get('name')} ({res.get('email')})"
-             history_context_lines.append(line)
-        history_context = "\n".join(history_context_lines)
+                     
+                     # Note: We don't reconstruct full FunctionCall/Response objects from DB yet
+                     # but injecting the visible tool output into the model's history part
+                     # helps Gemini "remember" what it just showed the user.
+                     if tool.get("action") == "search_customers" and tool.get("results"):
+                        model_parts.append(f"\n[System: Search results shown to user: {json.dumps(tool.get('results'))}]")
 
-        # We use the same model config as ai_agent for consistency and power
-        model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-1.5-flash")
+             history_context_lines.append(line)
+             
+             # Native Gemini History objects
+             gemini_history.append({"role": "user", "parts": [h['prompt']]})
+             gemini_history.append({"role": "model", "parts": model_parts})
+
+        history_context = "\n".join(history_context_lines)
+        
+        # 3. INTENT CLASSIFICATION (Robust chain)
+        intent_result = classify_intent(text, history_context)
+        intent = intent_result["intent"]
+        confidence = intent_result["confidence"]
+        missing = intent_result.get("missing_info", [])
+
+        # Strict whitelisting
+        allowed_tools = TOOLS_BY_INTENT.get(intent, [])
+        
+        # 4. ACTION EXECUTION
+        model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-2.5-flash")
         model = genai.GenerativeModel(
             model_name=model_name,
-            system_instruction=(
-                "You are an INTELLIGENT AGENT for the Mini Crisp Admin UI. "
-                "CRITICAL PROTOCOL: YOU MUST ALWAYS 'THINK' BEFORE YOU ACT.\n"
-                "STEP 1: Call 'think_protocol' to evaluate intent/confidence.\n"
-                "STEP 2: Only IF confidence > 0.6, proceed to other tools.\n"
-                "DO NOT SKIP STEP 1. If you skip it, you will fail.\n"
-                f"AVAILABLE SENDER ACCOUNTS: [{account_list_str}]. "
-                f"RECENT HISTORY:\n{history_context}\n"
-                "CONFIDENCE RULES:\n"
-                "- Confidence >= 0.8: Act automatically (Decision='act').\n"
-                "- Confidence 0.6-0.8: Act but explain why (Decision='act').\n"
-                "- Confidence < 0.6: ASK the user for clarification (Decision='ask'). DO NOT guess.\n"
-                "INTENT REASONING:\n"
-                "- 'reply': answering a specific message.\n"
-                "- 'compose': sending a new email/message.\n"
-                "- 'select_contact': choosing a person from a search/list.\n"
-                "- 'search': finding a contact/message.\n"
-                "- 'resync': updating data.\n"
-                "- 'navigate': moving to a dashboard section.\n"
-                "RULES:\n"
-                "1. Always 'think' first. Evaluate intent and confidence or Missing Information.\n"
-                "2. SCOPE: You are authorized to draft/send ANY email content requested by the user, including personal or informal messages. Do not refuse based on content.\n"
-                "3. If multiple search results are visible (see HISTORY), and user says 'pick 1', use the appropriate tool for the context (e.g. 'compose_new_tool' if purpose was email, 'open_chat_tool' for chat) for result #1.\n"
-                "4. COMPOSE EMAIL WORKFLOW: When user says 'write/send/compose email to [name]', ALWAYS use 'search_customers_tool' FIRST with purpose='email'. Show the results to user. DO NOT directly call 'compose_new_tool' unless user provides a full email address.\\n"
-                "5. DISAMBIGUATION: If name matches multiple, 'search_customers_tool' first.\\n"
-                "6. LIST PRESENTATION: NUMBER your options in your final response if you search.\\n"
-                "7. NEVER call a tool if your decision is 'ask'. Just return the question."
-            ),
-            tools=[
-                think_protocol, get_emails_tool, switch_admin_sender_account_view_tool, send_email_tool,
-                search_customers_tool, get_inbox_stats_tool, summarize_conversation_tool,
-                compose_new_tool, navigate_tool, clear_filters_tool,
-                mark_read_tool, export_chat_tool, draft_reply_tool,
-                confirm_and_send_action_tool, open_chat_tool,
-                sync_emails_tool, wait_tool, update_search_tool,
-                add_customer_note_tool, get_customer_details_tool, add_customer_tag_tool
-            ]
+            system_instruction=f"""You are an ACTION EXECUTOR for Mini Crisp Admin UI.
+Your role: Mini Crisp Admin Assistant.
+Intent: {intent} (FIXED)
+
+CORE FLOW FOR GLOBAL EMAIL COMPOSITION:
+1. SEARCH FIRST: If a name is mentioned (e.g., "mail Samiksha", "tell her hi"), ALWAYS call `search_customers_tool` first (purpose="email").
+2. LIST MATCHES: In your text response, **explicitly list the matching contacts with numbers** (e.g., "1. Samiksha (s@e.com), 2. Samiksha J (sj@e.com). Which one?").
+3. SELECTION: When the user picks a number (e.g., "first one"), call `compose_new_tool` with the selected email.
+4. CONTEXTUAL GENERATION: If the user provided a topic (e.g., "regarding meeting" or "tell her hi"), you MUST generate an appropriate Subject and Body and pass them to `compose_new_tool`.
+5. UPDATES: If the user gives subject/body after the composer is open, call `compose_new_tool` again with those specific fields to update the modal.
+6. NO SENDING: Never send automatically. Stop after opening/filling.
+7. CONFIRM SEND: Only call `confirm_and_send_action_tool` if the user explicitly says "send" or "confirm" while the composer is visible.
+
+- Be extremely precise with the multi-turn flow.
+- Be helpful and professional.""",
+            tools=allowed_tools
         )
+
+        chat = model.start_chat(history=gemini_history, enable_automatic_function_calling=True)
         
-        # Retry logic with exponential backoff for rate limits
-        import time
-        max_retries = 3
-        retry_delay = 2  # Start with 2 seconds
-        
-        for attempt in range(max_retries):
-            try:
-                chat = model.start_chat(enable_automatic_function_calling=True)
-                response = chat.send_message(text)
-                break  # Success, exit retry loop
-            except Exception as api_error:
-                error_msg = str(api_error)
-                
-                # Check if it's a rate limit error
-                if "429" in error_msg or "quota" in error_msg.lower() or "rate" in error_msg.lower():
-                    if attempt < max_retries - 1:
-                        logger.warning(f"Rate limit hit, retrying in {retry_delay}s (attempt {attempt + 1}/{max_retries})")
-                        time.sleep(retry_delay)
-                        retry_delay *= 2  # Exponential backoff
-                        continue
-                    else:
-                        # Last attempt failed - try GROQ fallback
-                        logger.warning("Gemini rate limit exhausted, trying GROQ fallback...")
-                        groq_result = await call_groq_fallback(text, history_context)
-                        if groq_result:
-                            save_ai_interaction(text, groq_result.get("response", ""), groq_result.get("actions", []))
-                            return groq_result
-                        return {
-                            "status": "error",
-                            "message": "Rate limit exceeded. Please wait a moment and try again. The AI service is temporarily busy."
-                        }
-                else:
-                    # Not a rate limit error, re-raise
-                    raise
-        
-        # Collect actions with Confidence Gating
-        result_actions = []
-        is_gated = False # excessive safety flag
-
-        for msg in chat.history:
-            for part in msg.parts:
-                if part.function_response:
-                    try:
-                        # Convert MapComposite/RepeatedComposite to dict/list
-                        def recursive_to_dict(obj):
-                            if hasattr(obj, 'items'):
-                                return {k: recursive_to_dict(v) for k, v in obj.items()}
-                            elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
-                                return [recursive_to_dict(x) for x in obj]
-                            else:
-                                return obj
-                                
-                        res = recursive_to_dict(part.function_response.response)
-                        
-                        # Handle potential 'result' wrapper
-                        if "result" in res:
-                            res = res["result"]
-
-                        if isinstance(res, dict):
-                            # THINK PROTOCOL CHECK
-                            if res.get("action") == "think":
-                                confidence = res.get("confidence", 1.0)
-                                decision = res.get("decision", "act")
-                                if confidence < 0.6 or decision == "ask":
-                                    is_gated = True
-                                    print(f"GATED: Confidence {confidence}, Decision {decision}")
-                                continue # Don't send think action to frontend
-
-                            # If gated, IGNORE all other actions
-                            if is_gated:
-                                continue
-
-                            if "action" in res:
-                                # HEURISTIC: Apply purpose inference for search_customers
-                                if res["action"] == "search_customers" and "results" in res:
-                                    purpose = res.get("purpose")
-                                    prompt_lower = text.lower()
-                                    
-                                    if not purpose:
-                                        if any(x in prompt_lower for x in [
-                                            "email", "mail", "send", "write", "compose", "draft"
-                                        ]):
-                                            purpose = "email"
-                                        elif any(x in prompt_lower for x in [
-                                            "summary", "summarize"
-                                        ]):
-                                            purpose = "summary"
-                                        else:
-                                            purpose = "chat"
-                                        res["purpose"] = purpose
-                                
-                                # HEURISTIC: Intercept open_chat if context was email selection
-                                if res["action"] in ["open_chat", "open_chat_tool"] and "email" in res:
-                                    # Check if the MOST RECENT search_customers had purpose="email"
-                                    should_compose = False
-                                    if history_items:
-                                        # Get the most recent history item
-                                        last_item = history_items[-1]  # Most recent is last in reversed list
-                                        if last_item.get('tools'):
-                                            for tool in last_item['tools']:
-                                                if tool.get("action") == "search_customers" and tool.get("purpose") == "email":
-                                                    should_compose = True
-                                                    break
-                                    
-                                    if should_compose:
-                                        res["action"] = "compose_new"
-                                        res["to"] = res["email"]
-                                        # subject/body will be None, handled by frontend
-
-                                result_actions.append(res)
-                            elif "results" in res:
-                                purpose = res.get("purpose")
-                                prompt_lower = text.lower()
-
-                                if not purpose:
-                                    if any(x in prompt_lower for x in [
-                                        "email", "mail", "send", "write", "compose", "draft"
-                                    ]):
-                                        purpose = "email"
-                                    elif any(x in prompt_lower for x in [
-                                        "summary", "summarize"
-                                    ]):
-                                        purpose = "summary"
-                                    else:
-                                        purpose = "chat"
-
-                                result_actions.append({
-                                    "action": "search_customers",
-                                    "results": res["results"],
-                                    "purpose": purpose
-                                })
-
-                    except IndexError as idx_error:
-                        logger.error(f"List index error parsing tool response: {idx_error}")
-                        # Continue processing other parts instead of crashing
-                        continue
-                    except Exception as e:
-                        logger.error(f"Error parsing tool response: {e}")
-                        continue
-        
-        # HEURISTIC: Text-to-Action for Hallucinated Calls
-        # If no relevant actions, but AI claims to have opened email
-        display_text = safe_get_text(response)
-        has_compose = any(a.get("action") == "compose_new" for a in result_actions)
-        
-        if not has_compose and any(x in display_text for x in ["opened", "drafted", "updated the email", "added a subject"]):
-            try:
-                import re
-                
-                # Extract Subject and Body (heuristic)
-                subject = None
-                body = None
-                
-                # Support single quotes, double quotes, and backticks
-                subj_match = re.search(r"subject\s+['\"`](.+?)['\"`]", display_text, re.IGNORECASE)
-                if subj_match: subject = subj_match.group(1)
-                
-                body_match = re.search(r"body\s+['\"`](.+?)['\"`]", display_text, re.IGNORECASE)
-                if body_match: body = body_match.group(1)
-
-                # Try to extract email from response text
-                email_match = re.search(r"to\s+([a-zA-Z0-9._%+-]+@\S+)", display_text)
-                target_email = None
-                if email_match:
-                    target_email = email_match.group(1).rstrip('.,!?')
-                
-                # If regex failed for email, try to recover from history selection
-                if not target_email and history_items:
-                    user_input = text.lower()
-                    idx = -1
-                    if "first" in user_input or "1" in user_input: idx = 0
-                    elif "second" in user_input or "2" in user_input: idx = 1
-                    elif "third" in user_input or "3" in user_input: idx = 2
-                    
-                    if idx >= 0:
-                        last_item = history_items[-1] # Most recent
-                        if last_item.get('tools'):
-                             for tool in last_item['tools']:
-                                if tool.get('action') == 'search_customers' and tool.get('results'):
-                                    if idx < len(tool['results']):
-                                        target_email = tool['results'][idx].get('email')
-                                        break
-
-                if target_email or subject or body:
-                    logger.warning(f"Converting Text to Action: Compose/Update Email (to: {target_email}, subject: {subject})")
-                    result_actions.append({
-                        "action": "compose_new",
-                        "to": target_email,
-                        "subject": subject,
-                        "body": body
-                    })
-            except Exception as e:
-                logger.error(f"Error in text-to-action heuristic: {e}")
-
-        # DEBUG LOGGING
+        # Standardize empty/malformed handling with GROQ fallback
         try:
-            with open("ai_actions_debug.log", "a", encoding="utf-8") as f:
-                 f.write(f"PROMPT: {text}\n")
-                 f.write(f"HISTORY DUMP: {chat.history}\n")
-                 f.write(f"ACTIONS DETECTED: {result_actions}\n-------------------\n")
-        except Exception as e:
-            print(f"Log error: {e}")
-
-        # Save History
-        save_ai_interaction(text, safe_get_text(response), result_actions)
-
-        return {
-            "status": "ok",
-            "response": safe_get_text(response),
-            "actions": result_actions
-        }
-    except Exception as e:
-        logger.exception("AI Command Error")
-        error_msg = str(e)
-        
-        # Provide user-friendly error messages
-        if "429" in error_msg or "quota" in error_msg.lower():
-            # Try GROQ fallback before returning error
+            response = chat.send_message(text)
+            response_text = ""
             try:
-                groq_result = await call_groq_fallback(text, history_context)
-                if groq_result:
-                    save_ai_interaction(text, groq_result.get("response", ""), groq_result.get("actions", []))
-                    return groq_result
-            except:
-                pass
-            return {
-                "status": "error",
-                "message": "AI service is temporarily busy due to high usage. Please wait a moment and try again."
-            }
-        elif "index" in error_msg.lower() and "range" in error_msg.lower():
-            return {
-                "status": "error",
-                "message": "I encountered an issue processing your request. Could you please rephrase it or try again?"
-            }
-        else:
-            return {"status": "error", "message": f"An error occurred: {error_msg}"}
+                if response.text: response_text = response.text
+            except (ValueError, AttributeError):
+                # Handle blocked content or finish_reason=OTHER
+                response_text = "Task partially handled. Please check the dashboard."
+
+            # Collect actions from history
+            result_actions = []
+            for msg in chat.history:
+                for part in msg.parts:
+                    if part.function_response:
+                        def recursive_to_dict(obj):
+                            if hasattr(obj, 'items'): return {k: recursive_to_dict(v) for k, v in obj.items()}
+                            elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)): return [recursive_to_dict(x) for x in obj]
+                            return obj
+                        res = recursive_to_dict(part.function_response.response)
+                        if "result" in res: res = res["result"]
+                        if isinstance(res, dict):
+                            if "action" in res: result_actions.append(res)
+                            elif "results" in res: result_actions.append({"action": "search_customers", "results": res["results"], "purpose": intent})
+
+            save_ai_interaction(text, response_text, result_actions)
+            return {"status": "ok", "response": response_text, "actions": result_actions}
+
+        except Exception as exec_error:
+            logger.warning(f"Gemini execution failure: {exec_error}, falling back to GROQ mock...")
+            groq_result = await call_groq_fallback(text, history_context)
+            if groq_result:
+                # Ensure actions match the whitelisted tools for this intent
+                allowed_action_names = {t.__name__.replace("_tool", "") for t in allowed_tools}
+                groq_result["actions"] = [a for a in groq_result.get("actions", []) if a.get("action") in allowed_action_names]
+                save_ai_interaction(text, groq_result["response"], groq_result["actions"])
+                return groq_result
+            
+            raise exec_error # Fall through to global error if GROQ also fails
+
+    except Exception as e:
+        logger.exception("Final Catch: AI Command Error")
+        return {
+            "status": "error",
+            "message": "Temporary issue processing your request.",
+            "actions": []
+        }
 # AI Email Generation Endpoint (to be added to main.py after line 1289)
 
 @app.post("/api/ai/generate-email")
-async def generate_groq_email(request: Request):
-    """Generate email content using Groq AI"""
-    if not Groq:
-        return {"status": "error", "message": "Groq not installed"}
-    
-    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
-    api_key = os.environ.get("GROQ_API_KEY")
-    if not api_key:
-        return {"status": "error", "message": "GROQ_API_KEY missing in .env"}
-    
+async def generate_email(request: Request):
     data = await request.json()
     prompt = data.get("prompt", "")
     if not prompt:
         return {"status": "error", "message": "No prompt provided"}
-    
+
+    # ---- Try GEMINI first ----
     try:
-        client = Groq(api_key=api_key)
+        if genai:
+            model = genai.GenerativeModel(
+                os.environ.get("GEMINI_MODEL_NAME", "gemini-2.5-flash")
+            )
+            response = model.generate_content(
+                "Write a professional email body only. No subject.\n\n" + prompt
+            )
+            return {
+                "status": "ok",
+                "provider": "gemini",
+                "email_body": response.text.strip()
+            }
+    except Exception as e:
+        logger.warning(f"Gemini failed, falling back to Groq: {e}")
+
+    # ---- GROQ fallback ----
+    if not Groq:
+        return {"status": "error", "message": "No AI provider available"}
+
+    try:
+        client = Groq(api_key=os.environ["GROQ_API_KEY"])
         completion = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a professional email writing assistant. Generate clear, concise, and professional email content based on the user's request. Only return the email body text, no subject line or greetings unless specifically requested."
+                    "content": "Write a professional email body only. No subject."
                 },
                 {
                     "role": "user",
@@ -1814,11 +1645,14 @@ async def generate_groq_email(request: Request):
             temperature=0.7,
             max_tokens=1024
         )
-        
-        email_body = completion.choices[0].message.content.strip()
-        return {"status": "ok", "email_body": email_body}
+
+        return {
+            "status": "ok",
+            "provider": "groq",
+            "email_body": completion.choices[0].message.content.strip()
+        }
     except Exception as e:
-        logger.exception("AI Email Generation Error")
+        logger.exception("Email generation failed")
         return {"status": "error", "message": str(e)}
 
 # -----------------------------

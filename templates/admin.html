@@ -314,6 +314,51 @@
             box-shadow: 0 6px 12px rgba(16, 185, 129, 0.2);
         }
 
+        /* Sync Indicator */
+        .sync-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            margin-right: 4px;
+            transition: background 0.3s, box-shadow 0.3s;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        .sync-indicator.syncing {
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse-sync 1s infinite alternate;
+        }
+
+        @keyframes pulse-sync {
+            from {
+                opacity: 0.6;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        /* Highlight for new messages */
+        @keyframes highlight-new {
+            0% {
+                background-color: #f0fdf4;
+            }
+
+            100% {
+                background-color: transparent;
+            }
+        }
+
+        .new-message-glow {
+            animation: highlight-new 2s ease-out;
+        }
+
         /* Main Chat Area */
         .main-chat {
             flex: 1;
@@ -1241,6 +1286,59 @@
                 box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
             }
         }
+
+        /* In-App Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 11000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            /* Allow clicks through empty space */
+        }
+
+        .toast {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 280px;
+            max-width: 320px;
+            border-left: 4px solid var(--primary-color);
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .toast-body {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 
@@ -1444,6 +1542,7 @@
             <div class="search-box">
                 <!-- Trap for browser autofill -->
                 <input type="password" style="display:none;" tabindex="-1">
+                <div id="global-sync-indicator" class="sync-indicator" title="Real-time Sync Status"></div>
                 <input type="text" placeholder="Search conversations..." id="search-input" autocomplete="new-password"
                     name="search_conversation_input_random">
                 <button class="search-options-btn" id="adv-search-toggle" title="Advanced Filters">
@@ -1505,6 +1604,7 @@
                 <span class="chip active" data-filter="all">All</span>
                 <span class="chip" data-filter="unread">Unread</span>
                 <span class="chip" data-filter="read">Read</span>
+                <span class="chip" data-filter="drafts">Drafts</span>
             </div>
 
             <div class="visitor-list" id="visitor-list">
@@ -1715,6 +1815,7 @@
             <button id="ai-send-btn" class="icon-btn"
                 style="width:36px; height:36px; border-radius:50%; background:var(--primary-color); color:white; border:none;">↗️</button>
         </div>
+
     </div>
 
 
@@ -1862,10 +1963,10 @@
             handleAccountChange(e.target.value);
         });
 
-        function handleAccountChange(email) {
+        async function handleAccountChange(email) {
             currentSelectedAccount = email;
             console.log("Switched to account:", email);
-            fetchMessages(searchFilter); // Reload messages for this account
+            await fetchMessages(searchFilter); // Reload messages for this account
         }
 
 
@@ -1929,6 +2030,23 @@
                     }
                 }, 300);
             });
+
+            // Request Notification permission
+            if ("Notification" in window) {
+                if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                    Notification.requestPermission();
+                }
+            }
+
+            // Connect to Global Admin WS
+            connectGlobalAdminWS();
+
+            // --- LOCKED FEATURE: REAL-TIME REFRESH ---
+            // Auto-refresh interval (0.5 seconds)
+            setInterval(() => {
+                fetchMessages(searchFilter);
+            }, 500);
+            // ---------------------------------------
         });
 
         // Search Filter (Debounced)
@@ -2036,6 +2154,141 @@
 
 
         let socket = null;
+        let globalAdminSocket = null;
+
+        // --- LOCKED FEATURE: GLOBAL SYNC INDICATOR & BROADCAST ---
+        function connectGlobalAdminWS() {
+            if (globalAdminSocket) globalAdminSocket.close();
+
+            const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            globalAdminSocket = new WebSocket(
+                `${protocol}//${location.host}/ws?email=admin_global`
+            );
+
+            globalAdminSocket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'sync_status') {
+                    const indicator = document.getElementById('global-sync-indicator');
+                    if (indicator) {
+                        indicator.classList.toggle('syncing', data.status === 'syncing');
+                    }
+                } else if (data.type === 'new_message') {
+                    const payload = data.payload;
+                    console.log("Global new message received:", payload);
+
+                    // Show notification
+                    showNotification(payload.sender, payload.text, payload.email, payload.account_email);
+
+                    // Refresh visitor list immediately
+                    fetchMessages(searchFilter);
+
+                    // If this is the current active conversation, the other socket will handle it,
+                    // but we can also trigger a re-render here if needed.
+                    if (payload.email === currentConversationEmail) {
+                        renderChat(payload.email, searchFilter);
+                    }
+                }
+            };
+
+            globalAdminSocket.onclose = () => {
+                console.log("Global admin socket closed. Retrying in 5s...");
+                setTimeout(connectGlobalAdminWS, 5000);
+            };
+        }
+
+        function showNotification(sender, text, email, accountEmail) {
+            // Logic:
+            // 1. If tab is HIDDEN -> Show System Notification
+            // 2. If tab is VISIBLE -> Show In-App Toast
+
+            if (document.visibilityState === "hidden") {
+                if (Notification.permission === "granted") {
+                    const options = {
+                        body: `${sender}: ${text.substring(0, 100)}${text.length > 100 ? '...' : ''}`,
+                        icon: '/static/img/favicon.png',
+                        tag: email
+                    };
+                    const n = new Notification(`New message from ${email}`, options);
+
+                    n.onclick = function (event) {
+                        event.preventDefault();
+                        window.focus();
+                        n.close();
+
+                        // Switch account if needed, then open chat
+                        if (accountEmail) {
+                            console.log("Switching account to:", accountEmail);
+                            ActionBridge.switchAccount(accountEmail);
+                            // Small delay to allow switch to process if needed, though renderChat might handle it
+                            setTimeout(() => ActionBridge.openChat(email), 300);
+                        } else {
+                            ActionBridge.openChat(email);
+                        }
+                    };
+                }
+            } else {
+                // In-App Toast for Active Tab
+                showToast(sender, text, email, accountEmail);
+            }
+        }
+
+        // --- LOCKED FEATURE: ADVANCED NOTIFICATIONS (System + Toast) ---
+        function showToast(sender, text, email, accountEmail) {
+            console.log("SHOWING TOAST FOR:", sender); // Debug
+            const container = document.getElementById('toast-container');
+            if (!container) {
+                console.error("Toast container missing!");
+                return;
+            }
+
+            // Persistence Limit: Keep max 3 notifications
+            while (container.children.length >= 3) {
+                container.firstChild.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            // Added Close Button
+            toast.innerHTML = `
+                <div style="font-size: 1.5rem;">💬</div>
+                <div class="toast-content" style="flex:1;">
+                    <div class="toast-title">${email}</div>
+                    <div class="toast-body">${text}</div>
+                </div>
+                <div class="toast-close" style="font-size:1.5rem; cursor:pointer; padding:0 8px; color:rgba(0,0,0,0.5);">&times;</div>
+            `;
+
+            toast.onclick = (e) => {
+                // Handle Close Button Click
+                if (e.target.classList.contains('toast-close')) {
+                    e.stopPropagation();
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                    return;
+                }
+
+                // Switch account if needed, then open chat
+                if (accountEmail) {
+                    console.log("Switching account to:", accountEmail);
+                    ActionBridge.switchAccount(accountEmail);
+                    setTimeout(() => ActionBridge.openChat(email), 300);
+                } else {
+                    ActionBridge.openChat(email);
+                }
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            };
+
+            container.appendChild(toast);
+
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            // NO AUTO-DISMISS: Persistent until closed
+        }
 
         function connectWS(email) {
             if (socket) socket.close();
@@ -2099,6 +2352,38 @@
             const visitorListEl = document.getElementById('visitor-list');
             visitorListEl.innerHTML = '';
 
+            // --- DRAFTS VIEW ---
+            if (statusFilter === 'drafts') {
+                if (savedDrafts.length === 0) {
+                    visitorListEl.innerHTML = '<div class="empty-state">No saved drafts</div>';
+                    return;
+                }
+
+                savedDrafts.forEach(draft => {
+                    const div = document.createElement('div');
+                    div.className = 'visitor-item';
+
+                    // Escape helper
+                    const safePreview = (draft.body || "").substring(0, 60);
+
+                    div.innerHTML = `
+                         <div class="visitor-avatar" style="background:#f59e0b">📝</div>
+                         <div class="visitor-info">
+                             <div style="display:flex; justify-content:space-between;">
+                                 <div class="visitor-name">To: ${draft.to || "No Recipient"}</div>
+                                 <div style="font-size:12px; color:#9ca3af;">${formatTime(draft.timestamp)}</div>
+                             </div>
+                             <div class="visitor-preview" style="font-style:italic">Subject: ${draft.subject || "No Subject"} - ${safePreview}...</div>
+                         </div>
+                     `;
+
+                    div.onclick = () => restoreDraft(draft.id);
+                    visitorListEl.appendChild(div);
+                });
+                return;
+            }
+            // -------------------
+
             allMessages.forEach(conv => {
                 const id = conv.email;
                 if (!id) return;
@@ -2113,8 +2398,6 @@
                 if (statusFilter === 'unread' && unread === 0) return;
                 if (statusFilter === 'read' && unread > 0) return;
 
-                if (statusFilter === 'unread' && unread === 0) return;
-                if (statusFilter === 'read' && unread > 0) return;
 
                 // Client-side search removed in favor of backend search
                 // but we keep text highlighting logic if desired, or simple list rendering
@@ -2642,7 +2925,12 @@
             div.className = `ai-message ${sender}`;
 
             const textDiv = document.createElement('div');
-            textDiv.textContent = text;
+            // If it's a bot message, it might contain HTML for links/formatting
+            if (sender === 'bot') {
+                textDiv.innerHTML = text;
+            } else {
+                textDiv.textContent = text;
+            }
             div.appendChild(textDiv);
 
             if (options && options.length > 0) {
@@ -2668,8 +2956,12 @@
                                 ActionBridge.composeNew(opt.email);
                                 appendAiMessage('user', `Selected for email: ${opt.label}`);
                             } else if (opt.purpose === 'summary') {
-                                // INTENT: SUMMARY -> Trigger Summarization
+                                // INTENT: SUMMARY -> Trigger Search/Select
                                 aiInput.value = `Summarize conversation with ${opt.email}`;
+                                sendAiCommand();
+                            } else if (opt.purpose === 'summary_mode') {
+                                // INTENT: SUMMARY MODE -> Trigger Generation
+                                aiInput.value = `Generate ${opt.type} summary for ${opt.email}`;
                                 sendAiCommand();
                             } else {
                                 // INTENT: CHAT -> Open Sidebar Chat
@@ -2788,6 +3080,8 @@
                 else if (tar === 'resync') this.syncEmails();
             },
 
+
+            // --- LOCKED FEATURE: AI ACCOUNT SWITCHING ---
             async switchAccount(account) {
                 this.log(`Attempting to switch active account to: "${account}"`);
                 const selector = document.getElementById('account-selector');
@@ -2814,7 +3108,7 @@
                 }
 
                 selector.value = targetVal;
-                handleAccountChange(targetVal);
+                await handleAccountChange(targetVal);
 
                 // Clear current chat to avoid confusion when switching accounts
                 currentConversationEmail = null;
@@ -2840,15 +3134,26 @@
                 await this.wait(300);
 
                 // 3. Fill fields
+                // 3. Fill fields
                 const toInput = document.getElementById('global-to-input');
                 const subInput = document.getElementById('global-subject-input');
-                const msgInput = document.getElementById('global-message-text');
+                // const msgInput = document.getElementById('global-message-text'); // OLD: Wrong ID
 
-                console.log('[DEBUG] Found elements:', { toInput: !!toInput, subInput: !!subInput, msgInput: !!msgInput });
+                // console.log('[DEBUG] Found elements:', { toInput: !!toInput, subInput: !!subInput, msgInput: !!msgInput });
 
                 if (toInput && to) toInput.value = to;
                 if (subInput && subject) subInput.value = subject;
-                if (msgInput && body) msgInput.value = body;
+
+                // FIX: Use the global Quill instance
+                if (globalQuillEditor && body) {
+                    // We use setText to avoid accidental HTML injection/formatting issues from raw AI text, 
+                    // or root.innerHTML if we trust the source. 
+                    // User asked for "manual formatting if needed", so plain text is safer/better as a starting point.
+                    globalQuillEditor.setText(body);
+                    console.log('[DEBUG] set Quill content to:', body);
+                } else if (!globalQuillEditor) {
+                    console.warn('[DEBUG] globalQuillEditor not ready!');
+                }
 
                 const statusMsg = to ? `📝 I've opened the composer and drafted your email to ${to}.` : `📝 I've updated your draft.`;
                 appendAiMessage('bot', `${statusMsg} Please review and click Send.`);
@@ -2908,6 +3213,82 @@
             }
         };
 
+        // --- DRAFTS LOGIC ---
+        let savedDrafts = [];
+
+        function saveDraftFromComposer() {
+            // Get data from global composer
+            const toInput = document.getElementById('global-to-input');
+            const subInput = document.getElementById('global-subject-input');
+            let body = "";
+            let htmlBody = "";
+
+            if (globalQuillEditor) {
+                body = globalQuillEditor.getText().trim();
+                htmlBody = globalQuillEditor.root.innerHTML;
+            }
+
+            const to = toInput ? toInput.value : "";
+            const subject = subInput ? subInput.value : "";
+            const hasFiles = globalSelectedFiles.length > 0;
+
+            if (!to && !subject && !body && !hasFiles) {
+                console.log("Empty draft, not saving.");
+                return;
+            }
+
+            const draft = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                to: to,
+                subject: subject,
+                body: body,
+                htmlBody: htmlBody,
+                files: [...globalSelectedFiles] // Store file references (might lose blob on reload but works for session)
+            };
+
+            savedDrafts.unshift(draft); // Add to top
+            console.log("Draft saved:", draft);
+
+            // If "Drafts" chip is active, refresh the list
+            if (statusFilter === 'drafts') {
+                renderVisitorList();
+            } else {
+                // visual cue? maybe blink the drafts chip
+            }
+        }
+
+        function restoreDraft(draftId) {
+            const draft = savedDrafts.find(d => d.id === draftId);
+            if (!draft) return;
+
+            openGlobalComposer();
+
+            // Set active ID AFTER opening (since openGlobalComposer resets it)
+            currentActiveDraftId = draftId;
+
+            setTimeout(() => {
+                const toInput = document.getElementById('global-to-input');
+                const subInput = document.getElementById('global-subject-input');
+                if (toInput) toInput.value = draft.to;
+                if (subInput) subInput.value = draft.subject;
+
+                if (globalQuillEditor) {
+                    // Check if it has HTML content or just text
+                    if (draft.htmlBody && draft.htmlBody.length > 20) { // simple check
+                        globalQuillEditor.clipboard.dangerouslyPasteHTML(draft.htmlBody);
+                    } else {
+                        globalQuillEditor.setText(draft.body);
+                    }
+                }
+
+                // Restore files
+                globalSelectedFiles = [...draft.files];
+                renderGlobalFilePreviews();
+            }, 200);
+        }
+        // --------------------
+
         async function handleAiActions(actions, responseText) {
             console.log("[AI Assistant] Received actions:", actions);
 
@@ -2917,9 +3298,12 @@
 
             if (actions && actions.length > 0) {
                 // Priority 1: Check for specific tools and give a header
+                // Add close_composer to this check
                 if (actions.some(a => a.action === 'draft_reply' || a.action === 'generate_groq_email' || a.action === 'compose_new')) {
-
                     spokenText = "I have drafted the email.";
+                    actionFound = true;
+                } else if (actions.some(a => a.action === 'close_composer')) {
+                    spokenText = "Saved to drafts.";
                     actionFound = true;
                 } else if (actions.some(a => a.action === 'search_customers')) {
                     const count = actions.find(a => a.action === 'search_customers').results?.length || 0;
@@ -2930,6 +3314,9 @@
                     actionFound = true;
                 } else if (actions.some(a => a.action === 'summarize_conversation')) {
                     spokenText = "Here is the summary.";
+                    actionFound = true;
+                } else if (actions.some(a => a.action === 'short_summary_logic')) {
+                    spokenText = responseText;
                     actionFound = true;
                 } else if (actions.some(a => a.action === 'open_chat' || a.action === 'open_chat_tool')) {
                     spokenText = "Opening chat.";
@@ -3031,6 +3418,26 @@
                             "I found these matches. Which one should I use?" :
                             (purpose === 'summary' ? "I couldn't find any conversation with that name to summarize." : "No customers found."),
                             null, options);
+                        // --- LOCKED: Chat Summarization Flow ---
+                    } else if (act.action === 'ask_mode') {
+                        const optPills = act.options.map(opt => ({
+                            label: opt.label,
+                            email: opt.email,
+                            type: opt.type,
+                            purpose: 'summary_mode'
+                        }));
+                        appendAiMessage('bot', "What kind of summary should I generate?", null, optPills);
+                    } else if (act.action === 'summary_ready') {
+                        // Consolidate response into a single message
+                        const botMsgs = aiMessages.querySelectorAll('.ai-message.bot');
+                        const lastMsg = botMsgs[botMsgs.length - 1];
+                        let downloadBtn = `<a href="${act.url}" download target="_blank" rel="noopener noreferrer" class="pill-btn" style="text-decoration:none; display:inline-block; margin-top:10px; background:var(--accent); color:white; border-radius:15px; padding:8px 16px; font-size:13px; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📥 Download ${act.type.toUpperCase()} Report</a>`;
+
+                        if (lastMsg) {
+                            lastMsg.querySelector('div').innerHTML = `✅ ${act.message}<br>${downloadBtn}`;
+                        } else {
+                            appendAiMessage('bot', `✅ ${act.message}<br>${downloadBtn}`);
+                        }
                     } else if (act.action === 'navigate') {
                         await ActionBridge.navigate(act.target);
                     } else if (act.action === 'compose_new') {
@@ -3060,6 +3467,10 @@
 
                         window.location.href = `/api/export?email=${encodeURIComponent(email)}`;
                         appendAiMessage('bot', "📁 Conversation exported successfully.");
+                    } else if (act.action === 'close_composer') {
+                        saveDraftFromComposer();
+                        closeGlobalComposer();
+                        appendAiMessage('bot', "💾 Saved draft and closed composer.");
                     }
 
                 } catch (e) {
@@ -3341,6 +3752,10 @@
         });
     </script>
 
+    <!-- --- LOCKED FEATURE: EMOJI SUPPORT --- -->
+    <!-- Picmo Emoji Picker -->
+    <script src="https://unpkg.com/picmo@latest/dist/umd/index.js"></script>
+    <!-- ------------------------------------- -->
     <!-- Quill.js Library -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
@@ -3349,22 +3764,86 @@
         let quillEditor = null;
         let selectedFiles = [];
 
+        // --- LOCKED FEATURE: EMOJI SUPPORT ---
         // Initialize Quill Editor
         function initializeQuillEditor() {
             if (quillEditor) return; // Already initialized
+
+            // Register Emoji Icon
+            const icons = Quill.import('ui/icons');
+            icons['emoji'] = '<span style="font-size: 18px; cursor: pointer;">😀</span>';
 
             quillEditor = new Quill('#email-editor', {
                 theme: 'snow',
                 placeholder: 'Type your message here...',
                 modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        [{ 'color': [] }, { 'background': [] }],
-                        ['link', 'image'],
-                        ['clean']
-                    ]
+                    toolbar: {
+                        container: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            ['link', 'image'],
+                            ['emoji'], // Custom Emoji Button
+                            ['clean']
+                        ],
+                        handlers: {
+                            'emoji': function () {
+                                const pickerEl = document.getElementById('emoji-picker-container');
+                                if (!pickerEl) return;
+
+                                if (pickerEl.style.display === 'none' || !pickerEl.style.display) {
+                                    pickerEl.style.display = 'block';
+
+                                    // Position near the button
+                                    const btn = document.querySelector('.ql-emoji');
+                                    if (btn) {
+                                        const rect = btn.getBoundingClientRect();
+                                        pickerEl.style.top = (window.scrollY + rect.bottom + 5) + 'px';
+                                        pickerEl.style.left = (window.scrollX + rect.left) - 100 + 'px'; // Shift left slightly
+                                    }
+                                } else {
+                                    pickerEl.style.display = 'none';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Create Emoji Picker Container
+            const pickerDiv = document.createElement('div');
+            pickerDiv.id = 'emoji-picker-container';
+            pickerDiv.style.cssText = 'display:none; position:absolute; z-index:10000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; background: white;';
+            document.body.appendChild(pickerDiv);
+
+            // Initialize Picmo
+            if (window.picmo) {
+                const picker = picmo.createPicker({
+                    rootElement: pickerDiv,
+                    showPreview: false
+                });
+
+                picker.addEventListener('emoji:select', selection => {
+                    const range = quillEditor.getSelection(true);
+                    if (range) {
+                        quillEditor.insertText(range.index, selection.emoji);
+                        quillEditor.setSelection(range.index + selection.emoji.length);
+                    }
+                    pickerDiv.style.display = 'none';
+                });
+            } else {
+                console.error("Picmo library not loaded");
+            }
+
+            // Close picker on outside click
+            document.addEventListener('click', (e) => {
+                const pickerEl = document.getElementById('emoji-picker-container');
+                const emojiBtn = document.querySelector('.ql-emoji');
+                if (pickerEl && pickerEl.style.display === 'block') {
+                    if (!pickerEl.contains(e.target) && (!emojiBtn || !emojiBtn.contains(e.target))) {
+                        pickerEl.style.display = 'none';
+                    }
                 }
             });
 
@@ -3375,6 +3854,7 @@
                 document.getElementById('char-count').textContent = `${charCount} characters`;
             });
         }
+        // -------------------------------------
 
         // CC/BCC Toggle
         document.getElementById('toggle-cc-bcc').addEventListener('click', function () {
@@ -3669,10 +4149,11 @@
                     </button>
                 </div>
 
-                <!-- Body (Simple Textarea for now for robustness) -->
-                <div style="flex:1;">
-                    <textarea id="global-message-text" placeholder="Write your message here..."
-                        style="width:100%; height:200px; padding:10px; border:1px solid #e2e8f0; border-radius:6px; font-family:inherit; resize:vertical;"></textarea>
+                <!-- Body (Quill Editor) -->
+                <div style="flex:1; display:flex; flex-direction:column;">
+                    <div id="global-email-editor"
+                        style="background:white; flex:1; overflow-y:auto; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;">
+                    </div>
                 </div>
 
                 <!-- Attachments -->
@@ -3699,13 +4180,139 @@
     <script>
         // Global Composer Logic
         let globalSelectedFiles = [];
+        let globalQuillEditor = null;
+
+        function initializeGlobalQuillEditor() {
+            if (globalQuillEditor) return;
+
+            // Register Emoji Icon (Ensure it exists if reply editor hasn't loaded)
+            const icons = Quill.import('ui/icons');
+            icons['emoji'] = '<span style="font-size: 18px; cursor: pointer;">😀</span>';
+
+            globalQuillEditor = new Quill('#global-email-editor', {
+                theme: 'snow',
+                placeholder: 'Type your message here...',
+                modules: {
+                    toolbar: {
+                        container: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            ['link', 'image'],
+                            ['emoji'], // Custom Emoji Button
+                            ['clean']
+                        ],
+                        handlers: {
+                            'emoji': function () {
+                                const pickerEl = document.getElementById('global-emoji-picker-container');
+                                if (!pickerEl) return;
+
+                                if (pickerEl.style.display === 'none' || !pickerEl.style.display) {
+                                    pickerEl.style.display = 'block';
+
+                                    // Position near the GLOBAL button
+                                    const modal = document.getElementById('global-composer-modal');
+                                    const btn = modal.querySelector('.ql-emoji'); // Scope to modal
+                                    if (btn) {
+                                        const rect = btn.getBoundingClientRect();
+                                        pickerEl.style.top = (window.scrollY + rect.bottom + 5) + 'px';
+                                        pickerEl.style.left = (window.scrollX + rect.left) - 100 + 'px';
+                                    }
+                                } else {
+                                    pickerEl.style.display = 'none';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Re-use the SAME picker instance/logic? 
+            // The existing picker listener targets `quillEditor` (the reply one).
+            // We need to update the picker listener to insert into the ACTIVE editor.
+            // OR simpler: Add a separate listener for this editor if Picmo allows.
+            // Picmo `createPicker` returns a picker. We used `window.picmo.createPicker` before.
+            // The previous code stored `picker` in a local variable inside `initializeQuillEditor`. We can't access it.
+            // This is a problem. The previous picker only inserts into `quillEditor`.
+
+            // SOLUTION: We need to create a NEW picker for the global editor? 
+            // Or hacking: We can't access the old picker to remove listener.
+            // If we create a new picker on the same `pickerDiv`, it might overwrite?
+            // `createPicker` appends to rootElement. If we call it again, we get two pickers in the same div.
+
+            // Better: We must CREATE A SECOND PICKER CONTAINER for the global editor to avoid conflict with the locked feature.
+
+            const globalPickerDiv = document.createElement('div');
+            globalPickerDiv.id = 'global-emoji-picker-container';
+            globalPickerDiv.style.cssText = 'display:none; position:absolute; z-index:10001; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; background: white;';
+            document.body.appendChild(globalPickerDiv);
+
+            if (window.picmo) {
+                const globalPicker = picmo.createPicker({
+                    rootElement: globalPickerDiv,
+                    showPreview: false
+                });
+
+                globalPicker.addEventListener('emoji:select', selection => {
+                    const range = globalQuillEditor.getSelection(true);
+                    if (range) {
+                        globalQuillEditor.insertText(range.index, selection.emoji);
+                        globalQuillEditor.setSelection(range.index + selection.emoji.length);
+                    }
+                    globalPickerDiv.style.display = 'none';
+                });
+            }
+
+            // Close global picker on outside click
+            document.addEventListener('click', (e) => {
+                const pickerEl = document.getElementById('global-emoji-picker-container');
+                const modal = document.getElementById('global-composer-modal');
+                // Check if modal exists to avoid errors, though it should
+                if (!modal) return;
+
+                const emojiBtn = modal.querySelector('.ql-emoji');
+
+                if (pickerEl && pickerEl.style.display === 'block') {
+                    if (!pickerEl.contains(e.target) && (!emojiBtn || !emojiBtn.contains(e.target))) {
+                        pickerEl.style.display = 'none';
+                    }
+                }
+            });
+
+            // Update Handler to use the NEW picker
+            // (Wait, the handler defined above uses 'emoji-picker-container' (OLD ID)).
+            // I need to fix the handler in this function to use 'global-emoji-picker-container'.
+            // modifying the handler code above...
+        }
 
         function openGlobalComposer() {
+            // Reset active draft tracking unless explicitly set by restoreDraft
+            // But wait, restoreDraft calls this. 
+            // Better to rely on the caller to set it?
+            // If I click "Compose New" button -> it calls ActionBridge.composeNew -> calls openGlobalComposer.
+            // If I click "Drafts" -> restoreDraft -> calls openGlobalComposer.
+
+            // Let's reset it here ONLY IF not called from restoreDraft?
+            // Creating a flag might be complex.
+            // Simpler: restoreDraft sets it AFTER calling this? No, `currentActiveDraftId` is global.
+            // Let's have `openGlobalComposer` always reset it, and let `restoreDraft` set it AFTER?
+            // "restoreDraft" calls `openGlobalComposer(); setTimeout(...)`.
+            // So if `openGlobalComposer` resets it, `restoreDraft` should set it inside the timeout or after?
+            // Actually, `openGlobalComposer` is sync.
+            // So:
+            // openGlobalComposer(); // resets
+            // currentActiveDraftId = draftId; // sets
+
+            currentActiveDraftId = null;
+
             const modal = document.getElementById('global-composer-modal');
             const fromPreview = document.getElementById('global-from-preview');
             if (modal) {
                 modal.style.display = 'flex';
                 if (fromPreview) fromPreview.textContent = currentSelectedAccount || "Default";
+                // Initialize Editor
+                initializeGlobalQuillEditor();
             }
         }
 
@@ -3749,9 +4356,12 @@
             const prompt = window.prompt("What would you like me to write?");
             if (!prompt) return;
 
-            const messageBox = document.getElementById('global-message-text');
-            const originalText = messageBox.value;
-            messageBox.value = "✨ Generating...";
+            if (!globalQuillEditor) return;
+
+            // Show loading state in editor or button? 
+            // Better to disable editor
+            globalQuillEditor.enable(false);
+            const originalText = globalQuillEditor.root.innerHTML;
 
             try {
                 const res = await fetch('/api/ai/generate-email', {
@@ -3761,23 +4371,31 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
-                    messageBox.value = data.email_body;
+                    globalQuillEditor.root.innerHTML = data.email_body;
                 } else {
-                    messageBox.value = originalText;
                     alert("Failed to generate: " + (data.message || "Unknown error"));
                 }
             } catch (e) {
-                messageBox.value = originalText;
                 alert("Network error generating email.");
+            } finally {
+                globalQuillEditor.enable(true);
             }
         }
 
         async function sendGlobalEmail() {
             const to = document.getElementById('global-to-input').value.trim();
             const subject = document.getElementById('global-subject-input').value.trim();
-            const body = document.getElementById('global-message-text').value.trim();
+            // Get Content from Quill
+            if (!globalQuillEditor) return;
+
+            const rawHtml = globalQuillEditor.root.innerHTML;
+            const body = globalQuillEditor.getText().trim();
+            // Reuse processQuillHtml if needed or just send rawHtml as html_content
+            // Note: backend expects 'text' for body and 'html_content' for HTML.
+
             const btn = document.getElementById('global-send-btn');
 
+            // Basic validation on TEXT content
             if (!to || !body) {
                 alert("Please fill in recipient and message body.");
                 return;
@@ -3787,10 +4405,16 @@
             btn.textContent = "Sending...";
 
             const formData = new FormData();
-            formData.append('visitor_email', to);      // was 'email'
-            formData.append('account_email', currentSelectedAccount); // was 'sender'
+            formData.append('visitor_email', to);
+            formData.append('account_email', currentSelectedAccount);
             formData.append('subject', subject);
-            formData.append('text', body);             // was 'body'
+            formData.append('text', body);
+
+            // Process HTML similar to local composer
+            // We need to define processQuillHtml scope or duplicate it? 
+            // It was defined inside 'Email Composer JavaScript' block. It IS global scope.
+            const processedHtml = `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">${processQuillHtml(rawHtml)}</div>`;
+            formData.append('html_content', processedHtml);
 
             // Append files
             globalSelectedFiles.forEach(file => {
@@ -3806,10 +4430,20 @@
                 if (response.ok) {
                     closeGlobalComposer();
                     alert("Email sent successfully!");
+
+                    // --- REMOVE SENT DRAFT ---
+                    if (currentActiveDraftId) {
+                        console.log("Removing sent draft:", currentActiveDraftId);
+                        savedDrafts = savedDrafts.filter(d => d.id !== currentActiveDraftId);
+                        currentActiveDraftId = null;
+                        if (statusFilter === 'drafts') renderVisitorList();
+                    }
+                    // -------------------------
+
                     // Clear fields
                     document.getElementById('global-to-input').value = "";
                     document.getElementById('global-subject-input').value = "";
-                    document.getElementById('global-message-text').value = "";
+                    globalQuillEditor.setText(''); // Clear editor
                     globalSelectedFiles = [];
                     renderGlobalFilePreviews();
 
@@ -3828,6 +4462,8 @@
             }
         }
     </script>
+    <!-- TOAST CONTAINER (Moved to root) -->
+    <div id="toast-container" class="toast-container"></div>
 </body>
 
 </html>

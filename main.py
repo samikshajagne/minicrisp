@@ -29,7 +29,7 @@ from pymongo.errors import DuplicateKeyError
 
 from database import (
     mark_customer_read, create_user, get_user_by_email, ensure_customer, 
-    email_received, fs, whatsapp_accounts, get_email_accounts, add_email_account,
+    email_received, fs, whatsapp_accounts, get_email_accounts, get_whatsapp_accounts, add_email_account,
     search_customers, customers, add_note, get_notes, add_tag, get_tags, save_ai_interaction,
     get_recent_ai_history
 )
@@ -40,6 +40,7 @@ from email_service import (
     forward_visitor_message_to_admin
 )
 from gmail_reader import fetch_emails, test_credentials
+from summary_engine import generate_short_summary_txt, generate_detailed_summary_pdf
 
 try:
     from groq import Groq
@@ -159,7 +160,8 @@ async def whatsapp_webhook_receive(request: Request):
                 origin="whatsapp",
                 message_id=data["message_id"],
                 timestamp=data["timestamp"],
-                business_number_id=business_id
+                business_number_id=business_id,
+                account_email=business_id  # Pass business_id as account identifier
             )
             
         return {"status": "ok"}
@@ -218,10 +220,18 @@ MAIN_LOOP = None
 # WebSocket connections
 # -----------------------------
 CONNECTIONS = {}
+ADMIN_CONNECTIONS = set()
 
 def visitor_key(email, guest_id):
     return email or guest_id
 
+
+async def broadcast_to_admins(payload):
+    for ws in ADMIN_CONNECTIONS.copy():
+        try:
+            await ws.send_json(payload)
+        except:
+            ADMIN_CONNECTIONS.discard(ws)
 
 async def broadcast(email, guest_id, payload):
     key = visitor_key(email, guest_id)
@@ -233,6 +243,13 @@ async def broadcast(email, guest_id, payload):
             await ws.send_json(payload)
         except:
             CONNECTIONS[key].discard(ws)
+    
+    # Also notify global admins
+    for ws in ADMIN_CONNECTIONS.copy():
+        try:
+            await ws.send_json({"type": "new_message", "payload": payload})
+        except:
+            ADMIN_CONNECTIONS.discard(ws)
 
 # -----------------------------
 # Insert message (SINGLE SOURCE)
@@ -287,7 +304,8 @@ def insert_message(sender, text, visitor_email=None, guest_id=None, origin="chat
         "timestamp": now.isoformat(),
         "attachments": attachments or [],
         "html_content": html_content,
-        "source": origin
+        "source": origin,
+        "account_email": account_email
     }
 
     try:
@@ -816,7 +834,7 @@ async def mark_seen(payload: dict):
 
     email_received.update_many(
         {"email": email, "sender": "admin", "seen_at": None},
-        {"$set": {"seen_at": datetime.utcnow()}}
+        {"$set": {"seen_at": datetime.now(timezone.utc)}}
     )
     return {"status": "ok"}
 
@@ -830,6 +848,18 @@ async def websocket_handler(
     email: str | None = None,
     guest_id: str | None = None
 ):
+    if email == "admin_global":
+        await ws.accept()
+        ADMIN_CONNECTIONS.add(ws)
+        try:
+            while True:
+                await ws.receive_text()
+        except WebSocketDisconnect:
+            pass
+        finally:
+            ADMIN_CONNECTIONS.discard(ws)
+        return
+
     key = visitor_key(email, guest_id)
     if not key:
         await ws.close()
@@ -950,16 +980,43 @@ def get_inbox_stats_tool():
     stats["whatsapp_accounts"] = [a["display_phone_number"] for a in get_whatsapp_accounts()]
     return stats
 
-def summarize_conversation_tool(email: str):
-    """Fetch the last 10 messages for a conversation and return a summary."""
+# --- LOCKED FEATURE: CHAT SUMMARIZATION ---
+# DO NOT MODIFY THIS TOOL OR ITS LOGIC
+def summarize_conversation_tool(email: str, summary_type: str = "short"):
+    """
+    Generate a summary for a conversation.
+    'summary_type' must be:
+    - 'short': Summary of last 10 messages (TXT download).
+    - 'detailed': Full analysis report with visuals (PDF download).
+    """
     cust = ensure_customer(email=email)
-    if not cust: return "Customer not found."
-    msgs = list(email_received.find({"tb1_id": cust["tb1_id"]}).sort("timestamp", -1).limit(10))
-    if not msgs: return "No messages found."
-    summary_data = []
-    for m in reversed(msgs):
-        summary_data.append(f"{m['sender']}: {m['content'][:100]}")
-    return "\n".join(summary_data)
+    if not cust: return {"error": "Customer not found."}
+    
+    if summary_type == "detailed":
+        url, error = generate_detailed_summary_pdf(email)
+        if error: return {"error": error}
+        return {
+            "action": "summary_ready",
+            "type": "detailed",
+            "url": url,
+            "message": f"I've generated a detailed analytical report for your conversation with {email}."
+        }
+    else:
+        # Short Mode: Fetch last 20 messages for context
+        msgs = list(email_received.find({"tb1_id": cust["tb1_id"]}).sort("timestamp", -1).limit(20))
+        if not msgs: return {"error": "No messages found for this customer."}
+        
+        summary_data = []
+        for m in reversed(msgs):
+            summary_data.append(f"{m['sender']}: {m['content']}")
+        raw_context = "\n".join(summary_data)
+        
+        return {
+            "action": "short_summary_logic",
+            "email": email,
+            "context": raw_context,
+            "message": f"I'm analyzing the last 20 messages with {email} to provide a synthesized summary."
+        }
 
 def compose_new_tool(to: str = None, subject: str = None, body: str = None):
     """Open or update the global email composer."""
@@ -968,6 +1025,17 @@ def compose_new_tool(to: str = None, subject: str = None, body: str = None):
 def confirm_and_send_action_tool():
     """Execute the final send action on the dashboard after user confirmation."""
     return {"action": "send_email"}
+
+def ask_summary_type_tool(email: str):
+    """Present the user with a choice between Detailed (PDF) and Short (TXT) summary."""
+    return {
+        "action": "ask_mode",
+        "email": email,
+        "options": [
+            {"label": "📊 Detailed Summary (PDF)", "type": "detailed", "email": email},
+            {"label": "📝 Short Summary (TXT)", "type": "short", "email": email}
+        ]
+    }
 
 def sync_emails_tool():
     """Trigger a fresh manual resync of all email accounts to fetch latest messages."""
@@ -997,11 +1065,24 @@ def export_chat_tool(email: str):
     """Export the conversation with this email to a TXT file."""
     return {"action": "export_chat", "email": email}
 
+
 def add_customer_note_tool(email: str, note: str):
     """Add a permanent note to a customer's profile."""
     from database import add_note
     res = add_note(email, note)
     return f"Note added: {note}"
+
+
+# --- LOCKED FEATURE: AI ACCOUNT SWITCHING ---
+# DO NOT MODIFY THESE TOOLS
+def search_accounts_tool():
+    """Returns a list of all configured email accounts with their display names/emails."""
+    emails = [{"name": a.get("email"), "email": a.get("email"), "type": "email"} for a in get_email_accounts()]
+    return emails
+
+def switch_account_tool(account: str):
+    """Switch the dashboard view to a specific account (email or ID)."""
+    return {"action": "switch_account", "account": account}
 
 def get_customer_details_tool(email: str):
     """Get full details including ID, phone, notes, and tags for a customer."""
@@ -1246,13 +1327,17 @@ Be concise and action-oriented."""
                 })
                 display_message = "Fetching your messages..."
             
-            elif command == "NAVIGATE" and len(parts) >= 2:
                 target = parts[1].strip().lower()
                 actions.append({
                     "action": "navigate",
                     "target": target
                 })
                 display_message = f"Navigating to {target}..."
+            
+            elif command == "CANCEL":
+                 actions.append({"action": "close_composer"})
+                 display_message = "Cancelling and closing composer."
+
         
         # Add note that this is from backup AI
         if not actions:
@@ -1315,10 +1400,14 @@ Intents:
 - note: add or view customer notes
 - export: download conversation transcripts
 - mark_read: mark a message as read
+- summarize: provide a short or detailed summary of a conversation
+- switch_account: change the active account view (e.g., "switch to account X", "change account")
+- open_chat: open a specific conversation with a customer (e.g., "open chat with [name]", "see messages from [name]")
+- cancel: cancel or close the current UI modal (e.g., "close composer", "cancel email", "stop writing"). DO NOT use this for email content (e.g. "ask him to leave").
 
 Schema:
 {
-  "intent": "compose|reply|search|navigate|resync|select_contact|note|export|mark_read|unknown",
+  "intent": "compose|reply|search|navigate|resync|select_contact|note|export|mark_read|summarize|switch_account|open_chat|cancel|unknown",
   "confidence": 0.0,
   "missing_info": []
 }"""
@@ -1358,7 +1447,7 @@ Schema:
             client = Groq(api_key=os.environ["GROQ_API_KEY"])
             groq_prompt = f"""
 You are an AI assistant for Mini Crisp dashboard. Your role is "Mini Crisp Admin Assistant – intent classification only".
-Available intents: compose, reply, search, navigate, resync, select_contact, note, export, mark_read, unknown.
+Available intents: compose, reply, search, navigate, resync, select_contact, note, export, mark_read, summarize, switch_account, open_chat, unknown.
 
 User Input: {prompt}
 History: {history}
@@ -1379,7 +1468,7 @@ Return ONLY valid JSON matching this schema:
             result = json.loads(completion.choices[0].message.content.strip())
             if "intent" in result:
                 # Map back to known labels if GROQ hallucinates (extra safety)
-                valid_intents = ["compose", "reply", "search", "navigate", "resync", "select_contact", "note", "export", "mark_read", "unknown"]
+                valid_intents = ["compose", "reply", "search", "navigate", "resync", "select_contact", "note", "export", "mark_read", "summarize", "switch_account", "open_chat", "unknown"]
                 if result["intent"] not in valid_intents:
                     result["intent"] = "unknown"
                 
@@ -1396,13 +1485,17 @@ Return ONLY valid JSON matching this schema:
     confidence = 0.51
 
     keywords = {
+        "switch_account": ["account", "switch"],
         "compose": ["send", "write", "compose", "mail", "tell"],
         "reply": ["reply", "respond", "answer"],
         "search": ["find", "search", "look for", "show me"],
-        "navigate": ["go to", "open", "navigate", "switch"],
+        "navigate": ["go to", "open", "navigate"],
         "resync": ["sync", "refresh", "resync"],
         "note": ["note", "profile"],
-        "export": ["download", "export", "transcript"]
+        "export": ["download", "export", "transcript"],
+        "summarize": ["summarize", "summary", "report", "analysis"],
+        "open_chat": ["open chat", "view chat", "show messages", "see messages", "conversation with"],
+        "cancel": ["cancel", "close composer", "stop writing", "close email"]
     }
 
     # High priority keyword matches for selection
@@ -1434,7 +1527,9 @@ TOOLS_BY_INTENT = {
     "search": [
         search_customers_tool,
         get_emails_tool,
+        open_chat_tool,
         summarize_conversation_tool,
+        ask_summary_type_tool,
         get_inbox_stats_tool
     ],
     "navigate": [
@@ -1449,7 +1544,9 @@ TOOLS_BY_INTENT = {
     "select_contact": [
         open_chat_tool,
         compose_new_tool,
-        search_customers_tool
+        search_customers_tool,
+        summarize_conversation_tool,
+        ask_summary_type_tool
     ],
     "note": [
         add_customer_note_tool,
@@ -1461,6 +1558,19 @@ TOOLS_BY_INTENT = {
     ],
     "mark_read": [
         mark_read_tool
+    ],
+    "summarize": [
+        search_customers_tool,
+        summarize_conversation_tool,
+        ask_summary_type_tool
+    ],
+    "switch_account": [
+        search_accounts_tool,
+        switch_account_tool
+    ],
+    "open_chat": [
+        search_customers_tool,
+        open_chat_tool
     ]
 }
 
@@ -1508,7 +1618,7 @@ async def ai_command(request: Request):
                      # but injecting the visible tool output into the model's history part
                      # helps Gemini "remember" what it just showed the user.
                      if tool.get("action") == "search_customers" and tool.get("results"):
-                        model_parts.append(f"\n[System: Search results shown to user: {json.dumps(tool.get('results'))}]")
+                        model_parts.append(f"SEARCH_RESULTS: {json.dumps(tool.get('results'))}")
 
              history_context_lines.append(line)
              
@@ -1526,13 +1636,14 @@ async def ai_command(request: Request):
 
         # Strict whitelisting
         allowed_tools = TOOLS_BY_INTENT.get(intent, [])
+        logger.debug(f"AI command intent: {intent} (conf: {confidence}), tools: {len(allowed_tools)}")
         
         # 4. ACTION EXECUTION
         model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-2.5-flash")
         model = genai.GenerativeModel(
             model_name=model_name,
             system_instruction=f"""You are an ACTION EXECUTOR for Mini Crisp Admin UI.
-Your role: Mini Crisp Admin Assistant.
+Your role: DISCAAT KID an AI assistant for SCPL.
 Intent: {intent} (FIXED)
 
 CORE FLOW FOR GLOBAL EMAIL COMPOSITION:
@@ -1544,7 +1655,38 @@ CORE FLOW FOR GLOBAL EMAIL COMPOSITION:
 6. NO SENDING: Never send automatically. Stop after opening/filling.
 7. CONFIRM SEND: Only call `confirm_and_send_action_tool` if the user explicitly says "send" or "confirm" while the composer is visible.
 
-- Be extremely precise with the multi-turn flow.
+GENERAL RULES:
+- **Identity**: If the user asks who you are or what your name is, ALWAYS respond with: "hi i am DISCAAT KID an AI assistant for SCPL."
+- **No Intermediate Thoughts**: DO NOT say "Searching for...", "Let me look that up", "Checking our records", or similar. 
+- **Wait for Tools**: Call your tools, wait for the result, and ONLY provide the final response to the user.
+- **No Hallucinated Logs**: Never output text like "[System: ...]" or simulate background logs.
+- **Numbered Lists**: For any search result, always provide a numbered list (1, 2, 3...) in your text.
+
+# --- LOCKED FLOW: CHAT SUMMARIZATION ---
+# CORE FLOW FOR CHAT SUMMARIZATION:
+1. IDENTIFY: If the user asks for a summary and the email is NOT in the prompt, ALWAYS call `search_customers_tool` first (purpose="summary"). If the email IS provided, proceed directly to stage 3.
+2. LIST MATCHES: After the tool result, **explicitly list the matching contacts with numbers** in your final text response (e.g., "1. Samiksha (s@e.com), 2. Samiksha J (sj@e.com). Which one?").
+3. SELECTION & MODE: Once a contact is selected, call `ask_summary_type_tool` to present the "Detailed" vs "Short" options.
+4. MODE TRIGGER: 
+   - If they pick "Short", call `summarize_conversation_tool` with `summary_type="short"`.
+   - If they pick "Detailed", call `summarize_conversation_tool` with `summary_type="detailed"`.
+5. PRESENT RESULTS: 
+   - For "Detailed" mode: Present the download link return by the tool.
+   - For "Short" mode: The tool returns raw message context. You MUST read this context and provide a **concise narrative synthesis** of the conversation (key topics, recent status, pending items). **DO NOT just list the history**. Respond like a helpful assistant explaining the state of the chat.
+
+# --- LOCKED FLOW: AI ACCOUNT SWITCHING ---
+CORE FLOW FOR ACCOUNT SWITCHING (Gmail Only):
+1. DISCOVER: Even if a name is provided (e.g., "switch to ai intern"), ALWAYS call `search_accounts_tool` first to see which GMAIL accounts are available.
+2. MATCH: Look through the tool results. If a result matches (or is PHONETICALLY similar to, e.g. "ai in turn" vs "ai intern") the user's requested email/name, call `switch_account_tool` with that email.
+3. FALLBACK: If NO match is found for the requested name, tell the user: "I couldn't find a Gmail account named '[name]'. Available Gmail accounts are: [list from tool result]".
+
+CORE FLOW FOR OPENING CHATS:
+1. SEARCH FIRST: If a user asks to "open chat with [name]" or "see messages from [name]", call `search_customers_tool` first (purpose="chat").
+2. LIST MATCHES: In your text response, **explicitly list the matching contacts with numbers** (e.g., "1. Samiksha (s@e.com), 2. Samiksha J (sj@e.com). Which one?").
+3. SELECTION: When the user picks a number (e.g., "first one"), call `open_chat_tool` with the selected email.
+4. NOT FOUND: If no matches are returned by the search tool, inform the user: "I couldn't find any customers matching '[name]'."
+
+- Be extremely precise with these multi-turn flows.
 - Be helpful and professional.""",
             tools=allowed_tools
         )
@@ -1572,9 +1714,17 @@ CORE FLOW FOR GLOBAL EMAIL COMPOSITION:
                             return obj
                         res = recursive_to_dict(part.function_response.response)
                         if "result" in res: res = res["result"]
+                        
                         if isinstance(res, dict):
                             if "action" in res: result_actions.append(res)
                             elif "results" in res: result_actions.append({"action": "search_customers", "results": res["results"], "purpose": intent})
+                            # Handle generic list results (like search_accounts) as potential options
+                            result_actions.append({"action": "search_results_list", "results": res, "purpose": intent})
+
+            # --- FORCED ACTIONS BY INTENT ---
+            if intent == "cancel":
+                 if not any(a.get("action") == "close_composer" for a in result_actions):
+                     result_actions.append({"action": "close_composer"})
 
             save_ai_interaction(text, response_text, result_actions)
             return {"status": "ok", "response": response_text, "actions": result_actions}
@@ -1742,6 +1892,13 @@ def gmail_sync_loop():
 
     while True:
         try:
+            # Broadcast syncing status
+            if MAIN_LOOP:
+                asyncio.run_coroutine_threadsafe(
+                    broadcast_to_admins({"type": "sync_status", "status": "syncing"}), 
+                    MAIN_LOOP
+                )
+
             # 2. Continuous sync (fetch UNSEEN)
             replies = fetch_emails(criteria="UNSEEN")
 
@@ -1758,10 +1915,17 @@ def gmail_sync_loop():
                 else:
                     send_reply_from_admin_to_customer(email, body)
 
+            # Broadcast idle status
+            if MAIN_LOOP:
+                asyncio.run_coroutine_threadsafe(
+                    broadcast_to_admins({"type": "sync_status", "status": "idle"}), 
+                    MAIN_LOOP
+                )
+
         except Exception as e:
             logger.error(f"Gmail sync error: {e}")
 
-        time.sleep(1)
+        time.sleep(10) # 10 seconds as per plan
 
 if __name__ == "__main__":
     import uvicorn

@@ -2,13 +2,13 @@
 from pymongo import MongoClient, ReturnDocument
 from gridfs import GridFS
 from pymongo.errors import DuplicateKeyError
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DB_NAME = os.environ.get("MONGO_DB", "mini_crisp_db")
 
-client = MongoClient(MONGO_URI)
+client = MongoClient(MONGO_URI, tz_aware=True)
 db = client[DB_NAME]
 fs = GridFS(db)
 
@@ -75,7 +75,7 @@ def ensure_customer(email: str | None = None, name: str | None = None, phone: st
         raise ValueError("email or phone required")
 
     email = email.strip().lower() if email else None
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     # Try finding by email
     doc = None
@@ -144,7 +144,7 @@ def add_whatsapp_account(phone_number_id: str, access_token: str, display_phone_
             "access_token": access_token,
             "display_phone_number": display_phone_number,
             "active": True,
-            "created_at": datetime.utcnow()
+            "created_at": datetime.now(timezone.utc)
         }},
         upsert=True
     )
@@ -166,8 +166,40 @@ def search_customers(query: str) -> list:
             {"cust_email": regex},
             {"phone": regex}
         ]
-    }).limit(5) # Limit to 5 results for AI summary
+    }).limit(5)
     return list(curr)
+
+def get_all_messages_for_customer(email: str) -> list:
+    """Fetch all messages (received and sent) for a specific customer."""
+    cust = get_customer_by_email(email)
+    if not cust:
+        return []
+    
+    # Received messages (from visitor)
+    received = list(email_received.find({"tb1_id": cust["tb1_id"]}).sort("timestamp", 1))
+    
+    # Sent messages (from admin)
+    sent = list(email_sent.find({"cust_email": email.strip().lower()}).sort("timestamp", 1))
+    
+    # Combine and sort by timestamp
+    all_msgs = []
+    for m in received:
+        all_msgs.append({
+            "sender": "visitor",
+            "content": m.get("content", ""),
+            "timestamp": m.get("timestamp"),
+            "subject": m.get("subject", "")
+        })
+    for m in sent:
+        all_msgs.append({
+            "sender": "admin",
+            "content": m.get("content", ""),
+            "timestamp": m.get("timestamp"),
+            "subject": m.get("subject", "")
+        })
+    
+    all_msgs.sort(key=lambda x: x["timestamp"] if x["timestamp"] else datetime.min.replace(tzinfo=timezone.utc))
+    return all_msgs
 
 # -----------------------------
 # Unread helpers (NEW)
@@ -189,7 +221,7 @@ def add_email_account(data):
         "username": data["username"],
         "app_password": data["app_password"],
         "active": True,
-        "created_at": datetime.utcnow()
+        "created_at": datetime.now(timezone.utc)
     })
 
 def mark_customer_read(email: str):
@@ -199,7 +231,7 @@ def mark_customer_read(email: str):
 
     customers.update_one(
         {"cust_email": email.strip().lower()},
-        {"$set": {"last_read_at": datetime.utcnow()}}
+        {"$set": {"last_read_at": datetime.now(timezone.utc)}}
     )
 
 def get_unread_count(tb1_id: int) -> int:
@@ -233,7 +265,7 @@ def create_user(email: str, password_hash: str):
     users.insert_one({
         "email": email.strip().lower(),
         "password_hash": password_hash,
-        "created_at": datetime.utcnow()
+        "created_at": datetime.now(timezone.utc)
     })
 
 def get_user_by_email(email: str):
@@ -251,7 +283,7 @@ def add_note(email: str, content: str, author: str = "AI"):
     note = {
         "content": content, 
         "author": author, 
-        "timestamp": datetime.utcnow()
+        "timestamp": datetime.now(timezone.utc)
     }
     customers.update_one(
         {"cust_email": email.strip().lower()},
@@ -283,7 +315,7 @@ def save_ai_interaction(prompt: str, response: str, tools_used: list = None):
         "prompt": prompt,
         "response": response,
         "tools": tools_used or [],
-        "timestamp": datetime.utcnow()
+        "timestamp": datetime.now(timezone.utc)
     })
 
 def get_recent_ai_history(limit: int = 5):

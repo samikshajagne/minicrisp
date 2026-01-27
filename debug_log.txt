@@ -2210,3 +2210,38 @@ UnboundLocalError: cannot access local variable 'allowed_tools' where it is not 
 2026-01-23 16:22:40,026 - main - INFO - GUARDRAIL: Enforcing SUMMARIZE tools due to previous summary context.
 2026-01-23 16:22:50,122 - main - INFO - GUARDRAIL: Enforcing SUMMARIZE tools due to previous summary context.
 2026-01-23 16:22:51,956 - main - WARNING - Gemini execution failure: 'compose_new_tool', falling back to GROQ mock...
+2026-01-24 21:13:42,769 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:13:50,294 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:14:03,661 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:14:15,978 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:14:29,233 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:14:41,844 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:14:54,358 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:15:01,692 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:15:13,028 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:15:20,059 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:15:23,570 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:15:35,185 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-24 21:17:36,065 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+2026-01-27 12:41:36,640 - main - WARNING - Gemini execution failure: 'switch_account', falling back to GROQ mock...
+2026-01-27 12:41:53,680 - main - WARNING - Gemini execution failure: 'switch_account', falling back to GROQ mock...
+2026-01-27 12:46:21,612 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-27 12:46:43,936 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-27 12:46:54,617 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-27 12:47:19,304 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-27 14:53:33,491 - main - INFO - api_reply called: visitor=varun.gupt@rmc.in, account=purchase.it@rmc.in, text_len=2
+2026-01-27 14:54:35,702 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-27 14:57:30,079 - main - WARNING - Gemini execution failure: finish_reason: 12
+index: 0
+, falling back to GROQ mock...
+2026-01-27 15:06:39,596 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+2026-01-27 15:06:51,687 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-01-27 15:09:29,566 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=87
+2026-01-27 15:47:20,961 - main - ERROR - Gmail sync error: Event loop is closed
+2026-01-27 16:08:29,933 - main - WARNING - Gemini execution failure: finish_reason: 12
+index: 0
+, falling back to GROQ mock...
+2026-01-27 16:15:18,574 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-27 16:16:25,883 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-27 16:16:36,282 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=106
+2026-01-27 16:17:09,527 - main - ERROR - Transcript receiver error: 

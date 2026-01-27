@@ -982,40 +982,77 @@ def get_inbox_stats_tool():
 
 # --- LOCKED FEATURE: CHAT SUMMARIZATION ---
 # DO NOT MODIFY THIS TOOL OR ITS LOGIC
-def summarize_conversation_tool(email: str, summary_type: str = "short"):
+def summarize_conversation_tool(email: str, summary_type: str = "short", start_date: str = None, end_date: str = None):
     """
     Generate a summary for a conversation.
-    'summary_type' must be:
-    - 'short': Summary of last 10 messages (TXT download).
-    - 'detailed': Full analysis report with visuals (PDF download).
+    'summary_type': 'short' (TXT) or 'detailed' (PDF).
+    'start_date', 'end_date': Optional ISO-8601 date strings (YYYY-MM-DD).
     """
     cust = ensure_customer(email=email)
     if not cust: return {"error": "Customer not found."}
     
     if summary_type == "detailed":
-        url, error = generate_detailed_summary_pdf(email)
+        url, error = generate_detailed_summary_pdf(email, start_date, end_date)
         if error: return {"error": error}
+        msg = f"I've generated a detailed analytical report for your conversation with {email}"
+        if start_date: msg += f" from {start_date}"
+        if end_date: msg += f" to {end_date}"
+        msg += "."
+        
         return {
             "action": "summary_ready",
             "type": "detailed",
             "url": url,
-            "message": f"I've generated a detailed analytical report for your conversation with {email}."
+            "message": msg
         }
     else:
-        # Short Mode: Fetch last 20 messages for context
-        msgs = list(email_received.find({"tb1_id": cust["tb1_id"]}).sort("timestamp", -1).limit(20))
-        if not msgs: return {"error": "No messages found for this customer."}
+        # Short Mode: Use date filters if provided, else last 20 messages
+        query = {"tb1_id": cust["tb1_id"]}
         
+        date_filter = {}
+        if start_date:
+            try:
+                sd = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+                date_filter["$gte"] = sd
+            except: pass
+        
+        if end_date:
+            try:
+                ed = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)
+                date_filter["$lte"] = ed
+            except: pass
+            
+        if date_filter:
+            query["timestamp"] = date_filter
+            limit = 0 # No limit if specific date range asked
+            msgs = list(email_received.find(query).sort("timestamp", 1)) # Chronological for range
+            
+            # If no messages in range
+            if not msgs:
+                return {"error": f"No messages found between {start_date} and {end_date}."}
+                
+        else:
+            limit = 20
+            # Last 20 messages
+            msgs = list(email_received.find(query).sort("timestamp", -1).limit(limit))
+            msgs.reverse() # Chronological for summary
+
         summary_data = []
-        for m in reversed(msgs):
-            summary_data.append(f"{m['sender']}: {m['content']}")
+        for m in msgs:
+            ts = m["timestamp"].strftime("%Y-%m-%d")
+            summary_data.append(f"[{ts}] {m['sender']}: {m['content']}")
         raw_context = "\n".join(summary_data)
+        
+        msg = f"I'm analyzing the conversation with {email}"
+        if start_date or end_date: msg += " for the selected dates"
+        else: msg += " (recent messages)"
+        msg += " to provide a synthesized summary."
         
         return {
             "action": "short_summary_logic",
             "email": email,
             "context": raw_context,
-            "message": f"I'm analyzing the last 20 messages with {email} to provide a synthesized summary."
+            "message": msg
         }
 
 def compose_new_tool(to: str = None, subject: str = None, body: str = None):
@@ -1100,6 +1137,7 @@ def add_customer_tag_tool(email: str, tag: str):
 
 
 
+# --- LOCKED FEATURE: MESSAGE FILTERING ---
 def apply_filter_tool(query: str = None, start_date: str = None, end_date: str = None):
     """
     Apply filters to the message list.
@@ -1530,7 +1568,8 @@ TOOLS_BY_INTENT = {
         open_chat_tool,
         summarize_conversation_tool,
         ask_summary_type_tool,
-        get_inbox_stats_tool
+        get_inbox_stats_tool,
+        apply_filter_tool
     ],
     "navigate": [
         navigate_tool,
@@ -1644,6 +1683,7 @@ async def ai_command(request: Request):
             model_name=model_name,
             system_instruction=f"""You are an ACTION EXECUTOR for Mini Crisp Admin UI.
 Your role: DISCAAT KID an AI assistant for SCPL.
+Today's Date: {datetime.now().strftime('%Y-%m-%d')}
 Intent: {intent} (FIXED)
 
 CORE FLOW FOR GLOBAL EMAIL COMPOSITION:
@@ -1665,14 +1705,16 @@ GENERAL RULES:
 # --- LOCKED FLOW: CHAT SUMMARIZATION ---
 # CORE FLOW FOR CHAT SUMMARIZATION:
 1. IDENTIFY: If the user asks for a summary and the email is NOT in the prompt, ALWAYS call `search_customers_tool` first (purpose="summary"). If the email IS provided, proceed directly to stage 3.
-2. LIST MATCHES: After the tool result, **explicitly list the matching contacts with numbers** in your final text response (e.g., "1. Samiksha (s@e.com), 2. Samiksha J (sj@e.com). Which one?").
-3. SELECTION & MODE: Once a contact is selected, call `ask_summary_type_tool` to present the "Detailed" vs "Short" options.
-4. MODE TRIGGER: 
-   - If they pick "Short", call `summarize_conversation_tool` with `summary_type="short"`.
-   - If they pick "Detailed", call `summarize_conversation_tool` with `summary_type="detailed"`.
-5. PRESENT RESULTS: 
-   - For "Detailed" mode: Present the download link return by the tool.
-   - For "Short" mode: The tool returns raw message context. You MUST read this context and provide a **concise narrative synthesis** of the conversation (key topics, recent status, pending items). **DO NOT just list the history**. Respond like a helpful assistant explaining the state of the chat.
+2. LIST MATCHES: After the tool result, **explicitly list the matching contacts with numbers** in your final text response.
+3. SELECTION & ACTION: Once a contact is selected (or if specific email was provided):
+   - **DATE EXTRACTION**: Check if the user mentioned a date or range (e.g., "today", "last week").
+     - If "today": Set `start_date` and `end_date` to Today's Date.
+     - Convert all relative dates to `YYYY-MM-DD` using Today's Date as reference.
+   - **DEFAULT**: Call `summarize_conversation_tool` with `summary_type="short"` and any derived dates.
+   - **PDF/REPORT**: Only if requested, call `summarize_conversation_tool` with `summary_type="detailed"` and dates.
+4. PRESENT RESULTS: 
+   - For "Detailed" mode: Present the download link.
+   - For "Short" mode: The tool returns the raw messages for that period. **Synthesize them into a clear narrative.** If no messages found, report that.
 
 # --- LOCKED FLOW: AI ACCOUNT SWITCHING ---
 CORE FLOW FOR ACCOUNT SWITCHING (Gmail Only):
@@ -1687,7 +1729,16 @@ CORE FLOW FOR OPENING CHATS:
 4. NOT FOUND: If no matches are returned by the search tool, inform the user: "I couldn't find any customers matching '[name]'."
 
 - Be extremely precise with these multi-turn flows.
-- Be helpful and professional.""",
+- Be helpful and professional.
+
+CORE FLOW FOR FILTERING / LISTING EMAILS (LOCKED FLOW):
+1. IDENTIFY: If the user asks to "show", "list", or "see" emails/messages from a specific date or time period.
+2. EXTRACT DATE: Convert relative dates (like "today") to `YYYY-MM-DD` format.
+3. ACTION: **MANDATORY**: Call `apply_filter_tool` with `start_date` and `end_date` to update the UI Visitor List.
+   - If "today": Set both start and end to Today's Date.
+   - If "since [date]": Set `start_date`.
+4. OPTIONAL: You may ALSO call `get_emails_tool` if you want to provide a quick summary in chat, but `apply_filter_tool` is required.
+5. RESPONSE: Confirm the action, e.g., "I've updated the visitor list to show emails from [date].\"""",
             tools=allowed_tools
         )
 

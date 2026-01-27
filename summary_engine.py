@@ -34,14 +34,33 @@ def generate_short_summary_txt(email, summary_text):
     
     return f"/static/downloads/{filename}"
 
-def generate_detailed_summary_pdf(email):
-    """Generate a detailed PDF report with charts and analysis."""
+def generate_detailed_summary_pdf(email, start_date=None, end_date=None):
+    """
+    Generate a detailed PDF report with charts and analysis.
+    Optional: Filter by start_date and end_date (YYYY-MM-DD).
+    """
     messages = get_all_messages_for_customer(email)
     if not messages:
         return None, "No messages found for this customer."
 
     # Analysis
     df = pd.DataFrame(messages)
+    
+    # Filter by Date
+    if start_date:
+        try:
+            s_dt = datetime.datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
+            df = df[df['timestamp'] >= s_dt]
+        except ValueError: pass
+        
+    if end_date:
+        try:
+            e_dt = datetime.datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, tzinfo=datetime.timezone.utc)
+            df = df[df['timestamp'] <= e_dt]
+        except ValueError: pass
+        
+    if df.empty:
+        return None, f"No messages found in the selected date range ({start_date} to {end_date})."
     sent_count = len(df[df['sender'] == 'admin'])
     received_count = len(df[df['sender'] == 'visitor'])
     total_count = len(df)

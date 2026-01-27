@@ -97,6 +97,8 @@ function appendAiMessage(sender, text, id = null, options = null) {
                 if (opt.email) {
                     if (opt.purpose === 'email') ActionBridge.composeNew(opt.email);
                     else if (opt.purpose === 'summary') { aiInput.value = `Summarize conversation with ${opt.email}`; sendAiCommand(); }
+                    else if (opt.type === 'detailed') { aiInput.value = `Generate detailed PDF report for ${opt.email}`; sendAiCommand(); }
+                    else if (opt.type === 'short') { aiInput.value = `Summarize conversation with ${opt.email}`; sendAiCommand(); }
                     else ActionBridge.openChat(opt.email);
                 }
             };
@@ -171,6 +173,27 @@ async function handleAiActions(actions, responseText) {
             else if (act.action === 'navigate') await ActionBridge.navigate(act.target);
             else if (act.action === 'compose_new') await ActionBridge.composeNew(act.to, act.subject, act.body);
             else if (act.action === 'apply_filters') await ActionBridge.applyFilters(act.query, act.start, act.end);
+
+            // --- Unlock Summarization Flow ---
+            else if (act.action === 'ask_mode') {
+                appendAiMessage('bot', "How detailed should the summary be?", null, act.options);
+            }
+            else if (act.action === 'summary_ready') {
+                if (act.type === 'detailed') {
+                    // Create a clickable link for the PDF
+                    const linkId = 'pdf-' + Date.now();
+                    appendAiMessage('bot', `📄 Detailed Report Generated: `, linkId);
+                    const linkContainer = document.getElementById(linkId);
+                    if (linkContainer) {
+                        const a = document.createElement('a');
+                        a.href = act.url;
+                        a.textContent = "Download PDF Report";
+                        a.target = "_blank";
+                        a.style.cssText = "color: #4f46e5; text-decoration: underline; font-weight: bold; display: block; margin-top: 5px;";
+                        linkContainer.appendChild(a);
+                    }
+                }
+            }
         } catch (e) { console.error(e); }
     }
 }

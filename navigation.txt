@@ -30,7 +30,7 @@ Send Email Button: The final action to dispatch the email.
 
 5. AI Assistant Box (Floating Widget)
 Voice Mic (🎤): For one-off voice commands.
-Continuous Loop (🔁): For "Ok Discat" wake-word mode.
+Continous Loop (🔁): For "Ok Discat" wake-word mode.
 Chat Feed: History of your interactions with the assistant.
 Would you like to start refining the flow for one of these specifically (e.g., "The Email Composer flow")?
 Global Email Composer (Pop-Up Modal)

@@ -18,6 +18,7 @@ from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPExcept
 from fastapi.responses import PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
 from passlib.context import CryptContext
 from jose import jwt, JWTError
@@ -1228,14 +1229,16 @@ For other requests, provide a helpful text response.
 
 Be concise and action-oriented."""
 
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": text}
-            ],
-            temperature=0.3,  # Lower temperature for more consistent parsing
-            max_tokens=500
+        completion = await run_in_threadpool(
+            lambda: client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": text}
+                ],
+                temperature=0.3,
+                max_tokens=500
+            )
         )
         
         response_text = completion.choices[0].message.content.strip()
@@ -1442,10 +1445,11 @@ Intents:
 - switch_account: change the active account view (e.g., "switch to account X", "change account")
 - open_chat: open a specific conversation with a customer (e.g., "open chat with [name]", "see messages from [name]")
 - cancel: cancel or close the current UI modal (e.g., "close composer", "cancel email", "stop writing"). DO NOT use this for email content (e.g. "ask him to leave").
+- manage_filters: apply, update or clear search and date filters (e.g. "clear filter", "filter by date", "remove filter")
 
 Schema:
 {
-  "intent": "compose|reply|search|navigate|resync|select_contact|note|export|mark_read|summarize|switch_account|open_chat|cancel|unknown",
+  "intent": "compose|reply|search|navigate|resync|select_contact|note|export|mark_read|summarize|switch_account|open_chat|cancel|manage_filters|unknown",
   "confidence": 0.0,
   "missing_info": []
 }"""
@@ -1485,7 +1489,7 @@ Schema:
             client = Groq(api_key=os.environ["GROQ_API_KEY"])
             groq_prompt = f"""
 You are an AI assistant for Mini Crisp dashboard. Your role is "Mini Crisp Admin Assistant – intent classification only".
-Available intents: compose, reply, search, navigate, resync, select_contact, note, export, mark_read, summarize, switch_account, open_chat, unknown.
+Available intents: compose, reply, search, navigate, resync, select_contact, note, export, mark_read, summarize, switch_account, open_chat, manage_filters, unknown.
 
 User Input: {prompt}
 History: {history}
@@ -1506,7 +1510,7 @@ Return ONLY valid JSON matching this schema:
             result = json.loads(completion.choices[0].message.content.strip())
             if "intent" in result:
                 # Map back to known labels if GROQ hallucinates (extra safety)
-                valid_intents = ["compose", "reply", "search", "navigate", "resync", "select_contact", "note", "export", "mark_read", "summarize", "switch_account", "open_chat", "unknown"]
+                valid_intents = ["compose", "reply", "search", "navigate", "resync", "select_contact", "note", "export", "mark_read", "summarize", "switch_account", "open_chat", "manage_filters", "unknown"]
                 if result["intent"] not in valid_intents:
                     result["intent"] = "unknown"
                 
@@ -1533,7 +1537,8 @@ Return ONLY valid JSON matching this schema:
         "export": ["download", "export", "transcript"],
         "summarize": ["summarize", "summary", "report", "analysis"],
         "open_chat": ["open chat", "view chat", "show messages", "see messages", "conversation with"],
-        "cancel": ["cancel", "close composer", "stop writing", "close email"]
+        "cancel": ["cancel", "close composer", "stop writing", "close email"],
+        "manage_filters": ["filter", "clear filter", "remove filter", "date range", "keyword"]
     }
 
     # High priority keyword matches for selection
@@ -1610,6 +1615,10 @@ TOOLS_BY_INTENT = {
     "open_chat": [
         search_customers_tool,
         open_chat_tool
+    ],
+    "manage_filters": [
+        clear_filters_tool,
+        apply_filter_tool
     ]
 }
 
@@ -1668,7 +1677,7 @@ async def ai_command(request: Request):
         history_context = "\n".join(history_context_lines)
         
         # 3. INTENT CLASSIFICATION (Robust chain)
-        intent_result = classify_intent(text, history_context)
+        intent_result = await run_in_threadpool(classify_intent, text, history_context)
         intent = intent_result["intent"]
         confidence = intent_result["confidence"]
         missing = intent_result.get("missing_info", [])
@@ -1746,7 +1755,7 @@ CORE FLOW FOR FILTERING / LISTING EMAILS (LOCKED FLOW):
         
         # Standardize empty/malformed handling with GROQ fallback
         try:
-            response = chat.send_message(text)
+            response = await run_in_threadpool(chat.send_message, text)
             response_text = ""
             try:
                 if response.text: response_text = response.text

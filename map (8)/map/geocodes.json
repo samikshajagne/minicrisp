@@ -1,0 +1,29 @@
+[
+  {
+    "lat": 28.6139,
+    "lon": 77.209,
+    "properties": {
+      "name": "Delhi",
+      "country": "India",
+      "type": "Sample Location"
+    }
+  },
+  {
+    "lat": 19.076,
+    "lon": 72.8777,
+    "properties": {
+      "name": "Mumbai",
+      "country": "India",
+      "type": "Sample Location"
+    }
+  },
+  {
+    "lat": 13.0827,
+    "lon": 80.2707,
+    "properties": {
+      "name": "Chennai",
+      "country": "India",
+      "type": "Sample Location"
+    }
+  }
+]

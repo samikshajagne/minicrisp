@@ -42,6 +42,7 @@ from email_service import (
 )
 from gmail_reader import fetch_emails, test_credentials
 from summary_engine import generate_short_summary_txt, generate_detailed_summary_pdf
+import map_router
 
 try:
     from groq import Groq
@@ -106,6 +107,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+app.include_router(map_router.router)
 
 # -----------------------------
 # WhatsApp Webhook
@@ -416,6 +419,10 @@ async def admin(request: Request, user: str = Depends(login_required)):
 @app.get("/whatsapp")
 async def whatsapp_dashboard(request: Request, user: str = Depends(login_required)):
     return templates.TemplateResponse("whatsapp.html", {"request": request, "user": user})
+
+@app.get("/map-dashboard")
+async def map_dashboard_view(request: Request):
+    return templates.TemplateResponse("map_dashboard.html", {"request": request})
 
 # -----------------------------
 # ✅ ADMIN INBOX (CUSTOMERS ONLY)
@@ -1756,30 +1763,39 @@ CORE FLOW FOR FILTERING / LISTING EMAILS (LOCKED FLOW):
         # Standardize empty/malformed handling with GROQ fallback
         try:
             response = await run_in_threadpool(chat.send_message, text)
+            # Collect actions from history FIRST
+            result_actions = []
+            if getattr(chat, 'history', None):
+                for msg in chat.history:
+                    if hasattr(msg, 'parts'):
+                        for part in msg.parts:
+                            if hasattr(part, 'function_response') and part.function_response:
+                                def recursive_to_dict(obj):
+                                    if hasattr(obj, 'items'): return {k: recursive_to_dict(v) for k, v in obj.items()}
+                                    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)): return [recursive_to_dict(x) for x in obj]
+                                    return obj
+                                res = recursive_to_dict(part.function_response.response)
+                                if isinstance(res, dict) and "result" in res: res = res["result"]
+                                
+                                if isinstance(res, dict):
+                                    if "action" in res: result_actions.append(res)
+                                    elif "results" in res: result_actions.append({"action": "search_customers", "results": res["results"], "purpose": intent})
+                                    # Handle generic list results
+                                    result_actions.append({"action": "search_results_list", "results": res, "purpose": intent})
+
             response_text = ""
             try:
                 if response.text: response_text = response.text
             except (ValueError, AttributeError):
                 # Handle blocked content or finish_reason=OTHER
-                response_text = "Task partially handled. Please check the dashboard."
-
-            # Collect actions from history
-            result_actions = []
-            for msg in chat.history:
-                for part in msg.parts:
-                    if part.function_response:
-                        def recursive_to_dict(obj):
-                            if hasattr(obj, 'items'): return {k: recursive_to_dict(v) for k, v in obj.items()}
-                            elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)): return [recursive_to_dict(x) for x in obj]
-                            return obj
-                        res = recursive_to_dict(part.function_response.response)
-                        if "result" in res: res = res["result"]
-                        
-                        if isinstance(res, dict):
-                            if "action" in res: result_actions.append(res)
-                            elif "results" in res: result_actions.append({"action": "search_customers", "results": res["results"], "purpose": intent})
-                            # Handle generic list results (like search_accounts) as potential options
-                            result_actions.append({"action": "search_results_list", "results": res, "purpose": intent})
+                if hasattr(response, 'prompt_feedback'):
+                    logger.warning(f"Gemini Blocked: {response.prompt_feedback}")
+                
+                # If we have valid actions, don't show an error message
+                if result_actions:
+                    response_text = f"Action processed successfully ({len(result_actions)} updates applied)."
+                else:
+                    response_text = "I processed your request, but my text response was blocked by safety filters. Please check the dashboard for updates."
 
             # --- FORCED ACTIONS BY INTENT ---
             if intent == "cancel":

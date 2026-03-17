@@ -31,16 +31,18 @@ from pymongo.errors import DuplicateKeyError
 from database import (
     mark_customer_read, create_user, get_user_by_email, ensure_customer, 
     email_received, fs, whatsapp_accounts, get_email_accounts, get_whatsapp_accounts, add_email_account,
+    get_social_accounts, add_social_account,
     search_customers, customers, add_note, get_notes, add_tag, get_tags, save_ai_interaction,
     get_recent_ai_history
 )
-from whatsapp_service import verify_webhook, process_whatsapp_payload, send_whatsapp_text
+from whatsapp_service import verify_webhook, process_whatsapp_payload, send_whatsapp_text, upload_media, send_whatsapp_media, download_media_bytes
+import social_service
 from email_service import (
     send_admin_and_customer_notifications,
     send_reply_from_admin_to_customer,
     forward_visitor_message_to_admin
 )
-from gmail_reader import fetch_emails, test_credentials
+from gmail_reader import fetch_emails, test_credentials, _strip_quoted_text
 from summary_engine import generate_short_summary_txt, generate_detailed_summary_pdf
 import map_router
 
@@ -128,16 +130,19 @@ async def whatsapp_webhook_verify(request: Request):
     return Response(content="Verification failed", status_code=403)
 
 @app.post("/webhook/whatsapp")
-async def whatsapp_webhook_receive(request: Request):
-    """WhatsApp message receiver endpoint with Automated Discovery."""
+async def meta_webhook_receive(request: Request):
+    """Generic Meta message receiver (WhatsApp, Facebook, Instagram)."""
     try:
         payload = await request.json()
-        # Log raw payload pretty-printed for senior-level debugging
-        logger.info("--- Incoming WhatsApp Webhook ---")
+        logger.info("--- Incoming Meta Webhook ---")
         logger.info(json.dumps(payload, indent=2))
         
+        # 1. Try WhatsApp
         data = process_whatsapp_payload(payload)
         if data:
+            # WhatsApp Logic
+            business_id = data["business_number_id"]
+            display_num = data["display_phone_number"]
             # --- Automated Discovery Logic ---
             # Capture phone_number_id and display_phone_number ONLY from webhook
             business_id = data["business_number_id"]
@@ -157,6 +162,23 @@ async def whatsapp_webhook_receive(request: Request):
                 )
             # ----------------------------------
 
+            attachments_metadata = []
+            if data.get("attachments_info"):
+                 # Fetch token to download media
+                 wa_acc = whatsapp_accounts.find_one({"phone_number_id": business_id})
+                 if wa_acc and wa_acc.get("access_token"):
+                     for att in data["attachments_info"]:
+                         content, mime = await download_media_bytes(att["whatsapp_id"], wa_acc["access_token"])
+                         if content:
+                             f_id = fs.put(content, filename=att["filename"], content_type=mime)
+                             attachments_metadata.append({
+                                 "id": str(f_id),
+                                 "url": f"/api/attachments/{f_id}",
+                                 "filename": att["filename"],
+                                 "content_type": mime,
+                                 "size": len(content)
+                             })
+
             insert_message(
                 sender="visitor",
                 text=data["text"],
@@ -165,8 +187,22 @@ async def whatsapp_webhook_receive(request: Request):
                 message_id=data["message_id"],
                 timestamp=data["timestamp"],
                 business_number_id=business_id,
-                account_email=business_id  # Pass business_id as account identifier
+                account_email=business_id,  # Pass business_id as account identifier
+                attachments=attachments_metadata
             )
+        else:
+            # 2. Try Facebook/Instagram
+            data = social_service.process_social_payload(payload)
+            if data:
+                insert_message(
+                    sender="visitor",
+                    text=data["text"],
+                    visitor_email=data["sender_id"], # Store sender_id as email/identifier
+                    origin=data["platform"],
+                    message_id=data["message_id"],
+                    timestamp=data["timestamp"],
+                    account_email=data["account_id"]
+                )
             
         return {"status": "ok"}
     except Exception as e:
@@ -255,12 +291,52 @@ async def broadcast(email, guest_id, payload):
         except:
             ADMIN_CONNECTIONS.discard(ws)
 
+def process_email_background_task(
+    visitor_email, text, account_email, html_content, subject, cc, bcc, attachments, custom_message_id
+):
+    """
+    Wrapper to run sync SMTP safely and update status on completion.
+    """
+    try:
+        # Run the sync function (it might block, so we are in a threadpool via BackgroundTasks)
+        res = send_reply_from_admin_to_customer(
+            visitor_email, text, account_email, html_content, subject, cc, bcc, attachments, custom_message_id
+        )
+        
+        success = res.get("success") if isinstance(res, dict) else res
+        new_status = "sent" if success else "failed"
+        
+        # Update DB
+        if custom_message_id:
+            msg_id = custom_message_id.strip("<>")
+            email_received.update_one(
+                {"message_id": msg_id},
+                {"$set": {"status": new_status}}
+            )
+            
+            # Broadcast Status Update
+            if MAIN_LOOP and MAIN_LOOP.is_running():
+                 asyncio.run_coroutine_threadsafe(
+                     broadcast_to_admins({"type": "message_status", "id": msg_id, "status": new_status}),
+                     MAIN_LOOP
+                 )
+
+    except Exception as e:
+        logger.error(f"Background Email Task Failed: {e}")
+        # Mark as failed
+        if custom_message_id:
+             msg_id = custom_message_id.strip("<>")
+             email_received.update_one(
+                {"message_id": msg_id},
+                {"$set": {"status": "failed"}}
+            )
+
 # -----------------------------
 # Insert message (SINGLE SOURCE)
 # -----------------------------
 
 
-def insert_message(sender, text, visitor_email=None, guest_id=None, origin="chat", message_id=None, timestamp=None, attachments=None, account_email=None, html_content=None, subject=None, cc=None, bcc=None, visitor_phone=None, business_number_id=None):
+def insert_message(sender, text, visitor_email=None, guest_id=None, origin="chat", message_id=None, timestamp=None, attachments=None, account_email=None, html_content=None, subject=None, cc=None, bcc=None, visitor_phone=None, business_number_id=None, in_reply_to=None, sender_name=None):
     if not visitor_email and not visitor_phone:
         return
 
@@ -280,7 +356,9 @@ def insert_message(sender, text, visitor_email=None, guest_id=None, origin="chat
         "tb1_id": tb1_id,
         "email": display_identifier, # Keep as 'email' field for dashboard compatibility, but can be phone
         "content": text,
+        "conversation_id": cust.get("conversation_id"), # Persistent ID
         "sender": sender,
+        "sender_name": sender_name,
         "source": origin,   # "chat", "email", "imap", "whatsapp"
         "timestamp": now,
         "seen_at": None,
@@ -291,25 +369,55 @@ def insert_message(sender, text, visitor_email=None, guest_id=None, origin="chat
         "cc": cc or [],
         "bcc": bcc or [],
         "visitor_phone": visitor_phone,
-        "business_number_id": business_number_id
+        "business_number_id": business_number_id,
+        "in_reply_to": in_reply_to
     }
     if message_id:
         doc["message_id"] = message_id
+    
+    # Status handling
+    doc["status"] = "sent" # Default
+    if origin == "email" and sender == "admin":
+        doc["status"] = "sending" # Initial state for admin emails
+
 
     try:
         email_received.insert_one(doc)
     except DuplicateKeyError:
-        return # Skip duplicates silently
+        # 1. Stop Future Duplicates: Enforce Idempotency
+        # 2. Lock Sender: Never update 'sender' or 'source' (origin)
+        # 3. Update Status/Metadata only
+        
+        update_fields = {}
+        if doc.get("status") == "sent": 
+             update_fields["status"] = "sent"  # IMAP confirmation updates 'sending' to 'sent'
+        
+        if doc.get("html_content"):
+             update_fields["html_content"] = doc["html_content"]
+             
+        if doc.get("timestamp"):
+             # Optional: Update timestamp if we prefer the latest sync time? 
+             # Usually keep first. Let's skip timestamp update to preserve ordering.
+             pass
+
+        if update_fields:
+            email_received.update_one(
+                {"message_id": message_id},
+                {"$set": update_fields}
+            )
+        return
 
     payload = {
         "sender": sender,
+        "sender_name": sender_name,
         "text": text,
         "email": display_identifier,
         "timestamp": now.isoformat(),
         "attachments": attachments or [],
         "html_content": html_content,
         "source": origin,
-        "account_email": account_email
+        "account_email": account_email,
+        "conversation_id": cust.get("conversation_id")
     }
 
     try:
@@ -435,7 +543,8 @@ async def api_admin_messages(
     start_date: str | None = None, 
     end_date: str | None = None, 
     has_attachments: bool = False, 
-    source: str | None = None
+    source: str | None = None,
+    since: str | None = None
 ):
     conversations = {}
 
@@ -460,7 +569,7 @@ async def api_admin_messages(
         
         # If no matches found, return empty early
         if not relevant_tb1_ids:
-            return {"messages": []}
+            return {"messages": [], "server_time": datetime.now(timezone.utc).isoformat()}
 
     # 2. Fetch latest message for each customer (standard logic)
     # Fetch ALL sources (chat, imap, email)
@@ -499,9 +608,58 @@ async def api_admin_messages(
         # Default for Email Dashboard: exclude whatsapp
         query["source"] = {"$ne": "whatsapp"}
         
-    # Limit search to avoid hanging if there are thousands of messages
-    # We still fetch ALL unique conversations eventually, but we sort by newest first
-    cursor = email_received.find(query).sort("timestamp", -1)
+    # Ensure customers collection is available
+    from database import customers
+
+    # --- INCREMENTAL SYNC LOGIC ---
+    if since:
+        try:
+            since_dt = datetime.fromisoformat(since.replace('Z', '+00:00'))
+            # Logic: We need conversations where:
+            # A) A new message arrived > since
+            # OR
+            # B) Customer metadata (tags) updated > since
+            
+            # Find updated customers
+            updated_customers = list(customers.find({"updated_at": {"$gt": since_dt}}, {"tb1_id": 1}))
+            updated_tb1_ids = [c["tb1_id"] for c in updated_customers]
+            
+            # Add timestamp condition to message query OR match updated customers
+            # Complex query: (OriginalQuery AND MessageTimestamp > Since) OR (OriginalQuery AND tb1_id IN updated_ids)
+            
+            # Simpler approach: Fetch messages > since with original filters
+            incremental_query = query.copy()
+            incremental_query["timestamp"] = {"$gt": since_dt}
+            # Note: If date_filter was set, we intersect.
+            if date_filter:
+                incremental_query["timestamp"] = {"$gt": since_dt, **date_filter}
+                
+            # Fetch messages
+            cursor_msgs = list(email_received.find(incremental_query).sort("timestamp", -1))
+            
+            # Also fetch LATEST message for any customer whose tags updated, even if message is old
+            if updated_tb1_ids:
+                # We need the latest message for these customers to return the conversation object
+                # But we must respect original filters (like account, source)
+                meta_query = query.copy()
+                meta_query["tb1_id"] = {"$in": updated_tb1_ids}
+                cursor_meta = list(email_received.find(meta_query).sort("timestamp", -1))
+                
+                # Merge cursors (deduplicate by message_id or processed logic)
+                # We feed 'cursor' to the loop below. 
+                # Let's verify we don't process duplicates in 'conversations' dict logic
+                cursor = cursor_msgs + cursor_meta
+            else:
+                cursor = cursor_msgs
+            
+        except ValueError:
+            # Fallback to full sync if invalid date
+            cursor = email_received.find(query).sort("timestamp", -1)
+    else:
+        # Full Sync
+        # Limit search to avoid hanging if there are thousands of messages
+        # We still fetch ALL unique conversations eventually, but we sort by newest first
+        cursor = email_received.find(query).sort("timestamp", -1)
 
     for m in cursor:
         tb1_id = m["tb1_id"]
@@ -524,15 +682,22 @@ async def api_admin_messages(
             })
 
             conversations[tb1_id] = {
+                "conversation_id": customer.get("conversation_id"), # Persistent ID for frontend key
                 "email": m["email"],
-                "last_message": m["content"],
+                "name": customer.get("name") or m["email"], # Helpful for display
+                "last_message": _strip_quoted_text(m["content"]) if m.get("content") else "",
                 "timestamp": m["timestamp"].isoformat(),
                 "unread": unread,
                 "attachments": m.get("attachments", []),
-                "html_content": m.get("html_content")
+                "html_content": m.get("html_content"),
+                "source": m.get("source", "chat"),
+                "tags": customer.get("tags", [])
             }
 
-    return {"messages": list(conversations.values())}
+    return {
+        "messages": list(conversations.values()),
+        "server_time": datetime.now(timezone.utc).isoformat()
+    }
 
 @app.get("/api/admin/email-accounts")
 async def get_accounts():
@@ -540,7 +705,7 @@ async def get_accounts():
     
     # Legacy/Env Account Support (matches gmail_reader.py logic)
     import os
-    env_email = os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in").lower()
+    env_email = os.environ.get("BOT_EMAIL", os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in")).lower()
     
     # Check if already in DB
     if not any(a["email"] == env_email for a in accounts):
@@ -598,12 +763,35 @@ async def delete_whatsapp_account_api(phone_number_id: str, user: str = Depends(
     whatsapp_accounts.delete_one({"phone_number_id": phone_number_id})
     return {"status": "ok"}
 
+@app.get("/api/admin/social-accounts")
+async def get_social_accounts_api(user: str = Depends(login_required)):
+    return {"accounts": get_social_accounts()}
+
+@app.post("/api/admin/social-accounts")
+async def add_social_account_api(payload: dict, user: str = Depends(login_required)):
+    account_id = payload.get("account_id")
+    access_token = payload.get("access_token")
+    platform = payload.get("platform")
+    display_name = payload.get("display_name")
+    
+    if not account_id or not access_token or not platform:
+        raise HTTPException(status_code=400, detail="account_id, access_token and platform are required")
+        
+    add_social_account(account_id, access_token, platform, display_name or account_id)
+    return {"status": "ok"}
+
+@app.delete("/api/admin/social-accounts/{account_id}")
+async def delete_social_account_api(account_id: str, user: str = Depends(login_required)):
+    from database import social_accounts
+    social_accounts.delete_one({"account_id": account_id})
+    return {"status": "ok"}
+
 def run_full_sync():
     try:
         logging.info("Starting MANUAL full sync...")
         results = fetch_emails(criteria="ALL")
         for r in results:
-            insert_message(r["sender"], r["body"], r["visitor"], origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"))
+            insert_message(r["sender"], r["body"], r["visitor"], origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"), in_reply_to=r.get("in_reply_to"))
         logging.info("Manual full sync complete.")
     except Exception as e:
         logger.error(f"Manual sync error: {e}")
@@ -622,14 +810,68 @@ async def api_mark_read(payload: dict):
     return {"status": "ok"}
 
 
+@app.post("/api/admin/move-conversation")
+async def api_move_conversation(payload: dict, user: str = Depends(login_required)):
+    conversation_id = payload.get("conversation_id")
+    target = payload.get("target") # "inbox" or "notifications"
+    
+    if not conversation_id or not target:
+        return {"status": "error", "message": "Missing conversation_id or target"}
+    
+    # Logic: Toggle tags
+    # If target is "notifications", add "notifications" tag, remove "inbox" tag
+    # If target is "inbox", add "inbox" tag, remove "notifications" tag
+    
+    from database import customers
+    
+    # Audit Trail Entry
+    audit_entry = {
+         "action": "move_to_" + target,
+         "performed_by": user,
+         "timestamp": datetime.now(timezone.utc)
+    }
+    
+    # Use aggregation pipeline for atomic update to avoid $addToSet/$pull conflict on same field
+    pipeline = [
+        {"$set": {
+            "updated_at": datetime.now(timezone.utc),
+            "tag_history": {"$concatArrays": [{"$ifNull": ["$tag_history", []]}, [audit_entry]]}
+        }}
+    ]
+
+    if target == "notifications":
+        # Remove 'inbox', Add 'notifications'
+        pipeline.append({"$set": {"tags": {"$setDifference": [{"$ifNull": ["$tags", []]}, ["inbox"]]}}})
+        pipeline.append({"$set": {"tags": {"$setUnion": ["$tags", ["notifications"]]}}})
+    elif target == "inbox":
+        # Remove 'notifications', Add 'inbox'
+        pipeline.append({"$set": {"tags": {"$setDifference": [{"$ifNull": ["$tags", []]}, ["notifications"]]}}})
+        pipeline.append({"$set": {"tags": {"$setUnion": ["$tags", ["inbox"]]}}})
+
+    result = customers.update_one(
+        {"conversation_id": conversation_id},
+        pipeline
+    )
+    
+    if result.matched_count == 0:
+        # Fallback: Try identifying by email if conversation_id failed 
+        # (This handles race conditions where frontend might have old state)
+        # Note: We don't have email in payload currently, so we return error.
+        return {"status": "error", "message": "Conversation not found (invalid conversation_id)"}
+        
+    return {"status": "ok"}
+
+
 # -----------------------------
 # Chat sync (per customer)
 # -----------------------------
 @app.get("/api/sync")
-async def api_sync(email: str, start_date: str | None = None, end_date: str | None = None):
+async def api_sync(email: str, account: str | None = None, start_date: str | None = None, end_date: str | None = None):
     email = email.lower().strip()
 
     query = {"email": email}
+    if account:
+        query["account_email"] = account.lower().strip()
     
     # Date Filtering
     date_filter = {}
@@ -654,12 +896,27 @@ async def api_sync(email: str, start_date: str | None = None, end_date: str | No
 
     msgs = []
     for m in email_received.find(query):
+        # Referenced Message Lookup
+        referenced_msg = None
+        if m.get("in_reply_to"):
+            # Try to find the message this one replies to
+            # The In-Reply-To ID usually matches a 'message_id' in our DB
+            ref = email_received.find_one({"message_id": m["in_reply_to"]})
+            if ref:
+                referenced_msg = {
+                    "sender": ref.get("sender", "visitor"),
+                    "text": _strip_quoted_text(ref["content"])[:150] + "..." if ref.get("content") and len(ref["content"]) > 150 else _strip_quoted_text(ref.get("content", "")),
+                    "id": ref.get("message_id")
+                }
+
         msgs.append({
             "sender": m.get("sender", "visitor"),
-            "text": m["content"],
+            "text": _strip_quoted_text(m["content"]) if m.get("content") else "",
             "timestamp": m["timestamp"].isoformat(),
             "attachments": m.get("attachments", []),
-            "html_content": m.get("html_content")
+            "html_content": m.get("html_content"),
+            "status": m.get("status", "sent"),
+            "referenced_message": referenced_msg
         })
 
     msgs.sort(key=lambda x: x["timestamp"])
@@ -724,6 +981,35 @@ async def api_message(msg: Message):
 # -----------------------------
 # Admin replies
 # -----------------------------
+
+async def process_whatsapp_reply(business_id: str, to_phone: str, text: str, attachments: list):
+    """
+    Helper to send text and media sequentially to WhatsApp.
+    """
+    if text and text.strip():
+        await send_whatsapp_text(business_id, to_phone, text)
+    
+    for att in attachments:
+         mime = att["content_type"]
+         w_type = "document"
+         if mime.startswith("image/"): w_type = "image"
+         elif mime.startswith("video/"): w_type = "video"
+         elif mime.startswith("audio/"): w_type = "audio"
+         elif mime.startswith("application/pdf"): w_type = "document"
+         
+         # Upload
+         media_id = await upload_media(business_id, att["content"], mime, att["filename"])
+         if media_id:
+             # Send
+             await send_whatsapp_media(business_id, to_phone, w_type, media_id, caption=att["filename"])
+         else:
+             logger.error(f"Failed to upload media {att['filename']} for WhatsApp reply")
+
+
+async def process_social_reply(account_id: str, recipient_id: str, text: str, platform: str):
+    """Sends a social media message in the background."""
+    await social_service.send_social_message(account_id, recipient_id, text, platform)
+
 @app.post("/api/reply")
 async def api_reply(
     background_tasks: BackgroundTasks,
@@ -787,32 +1073,79 @@ async def api_reply(
                     "content_type": file.content_type
                 })
 
-        insert_message(
-            "admin", 
-            text, 
-            visitor_email if "@" in visitor_email else None,
-            visitor_phone=None if "@" in visitor_email else visitor_email,
-            account_email=account_email,
-            html_content=html_content,
-            subject=subject,
-            cc=cc_list,
-            bcc=bcc_list,
-            attachments=attachments_metadata,
-            origin="email" if "@" in visitor_email else "whatsapp"
-        )
-        
-        if "@" in visitor_email:
-            send_reply_from_admin_to_customer(
-                visitor_email, 
+        # --- DETERMINE CHANNEL ---
+        platform = "email"
+        if "@" not in visitor_email:
+            # Check if it's a social account
+            account = social_accounts.find_one({"account_id": account_email})
+            if account:
+                platform = account.get("platform", "facebook")
+            else:
+                platform = "whatsapp"
+
+        if platform == "email":
+            # --- EMAIL PATH (ASYNC SENDING + IMMEDIATE UI) ---
+            
+            # 1. Pre-generate Message-ID (RFC complient with brackets)
+            from email.utils import make_msgid
+            raw_msg_id = make_msgid(domain="mini-crisp")
+            
+            # 2. Prepare DB Message-ID (Clean without brackets for storage consistency)
+            db_msg_id = raw_msg_id
+            if db_msg_id.startswith("<") and db_msg_id.endswith(">"):
+                db_msg_id = db_msg_id[1:-1]
+
+            # 3. Insert into DB immediately (Authoritative Source of Truth)
+            insert_message(
+                "admin", 
                 text, 
+                visitor_email,
+                visitor_phone=None,
                 account_email=account_email,
                 html_content=html_content,
                 subject=subject,
                 cc=cc_list,
                 bcc=bcc_list,
-                attachments=attachments_for_email
+                attachments=attachments_metadata,
+                origin="email",
+                message_id=db_msg_id, # Stores clean ID
+                timestamp=datetime.now(timezone.utc),
+                sender_name="You"
             )
-        else:
+
+            # 4. Hand off SMTP sending to Background Task
+            # We pass the raw_msg_id so the sent email header matches exactly what we expect
+            background_tasks.add_task(
+                process_email_background_task,
+                visitor_email, 
+                text, 
+                account_email,
+                html_content,
+                subject,
+                cc_list,
+                bcc_list,
+                attachments_for_email,
+                raw_msg_id
+            )
+
+        elif platform == "whatsapp":
+            # --- WHATSAPP PATH ---
+            # Insert immediately (WhatsApp doesn't have the IMAP duplication issue)
+            insert_message(
+                "admin", 
+                text, 
+                None,
+                visitor_phone=visitor_email,
+                account_email=account_email,
+                html_content=html_content,
+                subject=subject,
+                cc=cc_list,
+                bcc=bcc_list,
+                attachments=attachments_metadata,
+                origin="whatsapp",
+                timestamp=datetime.now(timezone.utc)
+            )
+
             # Routing to WhatsApp
             # In this case, 'visitor_email' actually contains the phone number
             # We prioritize account_email (which will be business_number_id) if provided
@@ -824,9 +1157,19 @@ async def api_reply(
                 business_id = last_msg.get("business_number_id") if last_msg else None
             
             if business_id:
-                background_tasks.add_task(send_whatsapp_text, business_id, visitor_email, text)
+                background_tasks.add_task(process_whatsapp_reply, business_id, visitor_email, text, attachments_for_email)
             else:
                 logger.error(f"Could not find business_number_id for WhatsApp reply to {visitor_email}")
+        else:
+            # --- SOCIAL PATH (Facebook/Instagram) ---
+            insert_message(
+                "admin", text, visitor_email, # visitor_email holds sender_id
+                account_email=account_email,
+                attachments=attachments_metadata,
+                origin=platform,
+                timestamp=datetime.now(timezone.utc)
+            )
+            background_tasks.add_task(process_social_reply, account_email, visitor_email, text, platform)
 
         return {"status": "ok"}
     except Exception as e:
@@ -990,11 +1333,12 @@ def get_inbox_stats_tool():
 
 # --- LOCKED FEATURE: CHAT SUMMARIZATION ---
 # DO NOT MODIFY THIS TOOL OR ITS LOGIC
-def summarize_conversation_tool(email: str, summary_type: str = "short", start_date: str = None, end_date: str = None):
+def summarize_conversation_tool(email: str, summary_type: str = "short", start_date: str = None, end_date: str = None, last_n: int = None):
     """
     Generate a summary for a conversation.
     'summary_type': 'short' (TXT) or 'detailed' (PDF).
     'start_date', 'end_date': Optional ISO-8601 date strings (YYYY-MM-DD).
+    'last_n': Optional integer to fetch the last N messages (e.g. 1, 5).
     """
     cust = ensure_customer(email=email)
     if not cust: return {"error": "Customer not found."}
@@ -1014,36 +1358,47 @@ def summarize_conversation_tool(email: str, summary_type: str = "short", start_d
             "message": msg
         }
     else:
-        # Short Mode: Use date filters if provided, else last 20 messages
+        # Short Mode
         query = {"tb1_id": cust["tb1_id"]}
         
-        date_filter = {}
-        if start_date:
+        msgs = []
+        if last_n is not None:
             try:
-                sd = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-                date_filter["$gte"] = sd
-            except: pass
-        
-        if end_date:
-            try:
-                ed = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)
-                date_filter["$lte"] = ed
-            except: pass
+                last_n = int(last_n) # Force to int as Gemini often sends floats like 5.0
+            except:
+                last_n = 5 # Default fallback
             
-        if date_filter:
-            query["timestamp"] = date_filter
-            limit = 0 # No limit if specific date range asked
-            msgs = list(email_received.find(query).sort("timestamp", 1)) # Chronological for range
+        if last_n and last_n > 0:
+            # Last N messages
+            msgs = list(email_received.find(query).sort("timestamp", -1).limit(last_n))
+            msgs.reverse() # Chronological
             
-            # If no messages in range
-            if not msgs:
-                return {"error": f"No messages found between {start_date} and {end_date}."}
-                
         else:
-            limit = 20
-            # Last 20 messages
-            msgs = list(email_received.find(query).sort("timestamp", -1).limit(limit))
-            msgs.reverse() # Chronological for summary
+            date_filter = {}
+            if start_date:
+                try:
+                    sd = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+                    date_filter["$gte"] = sd
+                except: pass
+            
+            if end_date:
+                try:
+                    ed = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)
+                    date_filter["$lte"] = ed
+                except: pass
+                
+            if date_filter:
+                query["timestamp"] = date_filter
+                msgs = list(email_received.find(query).sort("timestamp", 1)) # Chronological for range
+                
+                # If no messages in range
+                if not msgs:
+                    return {"error": f"No messages found between {start_date} and {end_date}."}
+            else:
+                # Default: Fetch all messages for the entire conversation
+                msgs = list(email_received.find(query).sort("timestamp", 1))
+                if not msgs:
+                    return {"error": "No message history found for this contact."}
 
         summary_data = []
         for m in msgs:
@@ -1123,6 +1478,12 @@ def add_customer_note_tool(email: str, note: str):
 def search_accounts_tool():
     """Returns a list of all configured email accounts with their display names/emails."""
     emails = [{"name": a.get("email"), "email": a.get("email"), "type": "email"} for a in get_email_accounts()]
+    
+    # Also include the system-default BOT_EMAIL from environment
+    bot_email = os.environ.get("BOT_EMAIL", "ai.intern@cetl.in").lower()
+    if not any(e["email"] == bot_email for e in emails):
+        emails.append({"name": "AI Intern", "email": bot_email, "type": "email"})
+        
     return emails
 
 def switch_account_tool(account: str):
@@ -1229,12 +1590,13 @@ When the user asks to:
 - "Search for [name]" - respond with: SEARCH_CONTACT|[name]
 - "Open chat with [name]" - respond with: OPEN_CHAT|[name]
 - "Show messages/emails" - respond with: FETCH_EMAILS
+- "Summarize char/messages with [name]" - respond with: SUMMARIZE|[name]
 - Navigate somewhere - respond with: NAVIGATE|[target]
 - "Pick option [number]" or "Select [name]" - respond with: SELECT_OPTION|[number or name]
+- General Chat - respond with a helpful conversational sentence.
 
-For other requests, provide a helpful text response.
-
-Be concise and action-oriented."""
+CRITICAL: If you use a command like FETCH_EMAILS or SUMMARIZE, DO NOT include the command name in your final helpful sentence. Just say "I am fetching those for you" or "I am summarizing the chat with [name]".
+Be concise and action-oriented. Do not mention that you are a backup AI. """
 
         completion = await run_in_threadpool(
             lambda: client.chat.completions.create(
@@ -1388,7 +1750,7 @@ Be concise and action-oriented."""
 
         
         # Add note that this is from backup AI
-        if not actions:
+        if not actions and "(via backup AI)" not in display_message:
             display_message += " (via backup AI)"
         
         # Text-to-Action Safety Net
@@ -1434,12 +1796,18 @@ def classify_intent(prompt: str, history: str = ""):
     try:
         intent_model = genai.GenerativeModel(
             model_name=os.environ.get("GEMINI_MODEL_NAME", "gemini-2.5-flash"),
+            safety_settings=[
+                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+            ],
             system_instruction="""
 You are an AI assistant for Mini Crisp dashboard. Your role is "Mini Crisp Admin Assistant – intent classification only".
 Analyze user input and return valid JSON with intent, confidence (0.0 to 1.0), and missing_info list.
 
 Intents:
-- compose: write, send, or draft a new email
+- compose: write, send, or draft a new email. DO NOT use for summarization requests.
 - reply: respond to an existing student/customer
 - search: find customers, messages, or search history
 - navigate: go to specific pages (whatsapp, inbox, dashboard)
@@ -1448,7 +1816,7 @@ Intents:
 - note: add or view customer notes
 - export: download conversation transcripts
 - mark_read: mark a message as read
-- summarize: provide a short or detailed summary of a conversation
+- summarize: provide a short or detailed summary of a conversation (e.g. 'summarize last message', 'summarize chat')
 - switch_account: change the active account view (e.g., "switch to account X", "change account")
 - open_chat: open a specific conversation with a customer (e.g., "open chat with [name]", "see messages from [name]")
 - cancel: cancel or close the current UI modal (e.g., "close composer", "cancel email", "stop writing"). DO NOT use this for email content (e.g. "ask him to leave").
@@ -1496,7 +1864,21 @@ Schema:
             client = Groq(api_key=os.environ["GROQ_API_KEY"])
             groq_prompt = f"""
 You are an AI assistant for Mini Crisp dashboard. Your role is "Mini Crisp Admin Assistant – intent classification only".
-Available intents: compose, reply, search, navigate, resync, select_contact, note, export, mark_read, summarize, switch_account, open_chat, manage_filters, unknown.
+Available intents: 
+- compose (write/send email, DO NOT use for summarization)
+- reply (respond to customer)
+- search (find customers/messages)
+- navigate (go to pages)
+- resync (refresh)
+- select_contact (pick from list)
+- note (add note)
+- export (download transcript)
+- mark_read (mark read)
+- summarize (e.g. 'summarize last message', 'summarize chat')
+- switch_account (change view)
+- open_chat (view conversation)
+- manage_filters (date/keyword filters)
+- unknown
 
 User Input: {prompt}
 History: {history}
@@ -1641,7 +2023,7 @@ async def ai_command(request: Request):
 
         # 1. Grounding context
         accounts_data = get_email_accounts()
-        env_email = os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in").lower()
+        env_email = os.environ.get("BOT_EMAIL", os.environ.get("IMAP_EMAIL", "ai.intern@cetl.in")).lower()
         if not any(a["email"] == env_email for a in accounts_data):
             accounts_data.append({"email": env_email})
 
@@ -1695,8 +2077,18 @@ async def ai_command(request: Request):
         
         # 4. ACTION EXECUTION
         model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-2.5-flash")
+        
+        # Lower safety thresholds for administrative summarization/actions
+        safety_settings = [
+            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+        ]
+
         model = genai.GenerativeModel(
             model_name=model_name,
+            safety_settings=safety_settings,
             system_instruction=f"""You are an ACTION EXECUTOR for Mini Crisp Admin UI.
 Your role: DISCAAT KID an AI assistant for SCPL.
 Today's Date: {datetime.now().strftime('%Y-%m-%d')}
@@ -1720,13 +2112,13 @@ GENERAL RULES:
 
 # --- LOCKED FLOW: CHAT SUMMARIZATION ---
 # CORE FLOW FOR CHAT SUMMARIZATION:
-1. IDENTIFY: If the user asks for a summary and the email is NOT in the prompt, ALWAYS call `search_customers_tool` first (purpose="summary"). If the email IS provided, proceed directly to stage 3.
+1. IDENTIFY: Even if an email or full name is provided, ALWAYS call `search_customers_tool` first (purpose="summary") to verify and list the contact. Proceed to stage 3 only after confirming the selection.
 2. LIST MATCHES: After the tool result, **explicitly list the matching contacts with numbers** in your final text response.
 3. SELECTION & ACTION: Once a contact is selected (or if specific email was provided):
-   - **DATE EXTRACTION**: Check if the user mentioned a date or range (e.g., "today", "last week").
-     - If "today": Set `start_date` and `end_date` to Today's Date.
-     - Convert all relative dates to `YYYY-MM-DD` using Today's Date as reference.
-   - **DEFAULT**: Call `summarize_conversation_tool` with `summary_type="short"` and any derived dates.
+   - **DATE/QUANTITY EXTRACTION**:
+     - If user says "last N messages" (e.g., "last 5", "last message", "previous 10"), pass `last_n=N` (integer).
+     - If user mentions ranges (e.g., "today", "last week"), set `start_date`/`end_date` (YYYY-MM-DD).
+   - **DEFAULT**: Call `summarize_conversation_tool` with `summary_type="short"` and EITHER `last_n` OR dates.
    - **PDF/REPORT**: Only if requested, call `summarize_conversation_tool` with `summary_type="detailed"` and dates.
 4. PRESENT RESULTS: 
    - For "Detailed" mode: Present the download link.
@@ -1889,7 +2281,8 @@ async def transcribe_live(websocket: WebSocket):
     await websocket.accept()
     logger.info("🎙️ Client connected for STREAMING transcription")
 
-    dg_api_key = os.environ["DEEPGRAM_API_KEY"]
+    dg_api_key = os.environ["DEEPGRAM_API_KEY"].strip()
+    logger.info(f"🔑 Deepgram key length={len(dg_api_key)}, preview={dg_api_key[:4]}...{dg_api_key[-4:]}")
     dg_url = "wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&encoding=linear16&sample_rate=48000"
     # NOTE: encoding=linear16&sample_rate=48000 might need adjustment based on browser input. 
     # Browser usually sends WebM/Opus. Deepgram manages container formats automatically if not specified, 
@@ -1898,14 +2291,16 @@ async def transcribe_live(websocket: WebSocket):
     # or use the minimal URL if we send WebM container.
     
     # Correction: Browser MediaRecorder sends WebM. Deepgram supports WebM streaming natively.
-    # Added keywords boosting for Wake Word "Ok Discat"
-    dg_url = "wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&keywords=Discat:20&keywords=Ok:10"
+    # Added interim_results=true to stream partials back down, and endpointing=false to avert 1000 closures
+    dg_url = "wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false"
 
+    logger.info(f"Connecting to Deepgram: {dg_url}")
     try:
         async with websockets.connect(
             dg_url, 
             additional_headers={"Authorization": f"Token {dg_api_key}"}
         ) as dg_socket:
+            logger.info("Connected to Deepgram successfully!")
             
             async def receive_audio():
                 try:
@@ -1916,10 +2311,13 @@ async def transcribe_live(websocket: WebSocket):
                         elif "text" in data:
                             msg = json.loads(data["text"])
                             if msg.get("type") == "stop":
+                                logger.info("Received stop command from client.")
                                 await dg_socket.send(json.dumps({"type": "CloseStream"}))
                                 break
+                except WebSocketDisconnect:
+                    logger.info("Client disconnected from audio stream.")
                 except Exception as e:
-                    logger.error(f"Audio receiver error: {e}")
+                    logger.error(f"Audio receiver error: {e}", exc_info=True)
 
             async def receive_transcript():
                 try:
@@ -1928,19 +2326,26 @@ async def transcribe_live(websocket: WebSocket):
                         if "channel" in res:
                             transcript = res["channel"]["alternatives"][0]["transcript"]
                             if transcript:
+                                logger.debug(f"Deepgram Transcript: {transcript}")
                                 await websocket.send_json({
                                     "type": "transcript", 
                                     "text": transcript, 
-                                    "is_final": res["is_final"]
+                                    "is_final": res.get("is_final", False)
                                 })
                 except Exception as e:
-                    logger.error(f"Transcript receiver error: {e}")
+                    logger.error(f"Transcript receiver error: {e}", exc_info=True)
 
             # Run bidirectional streams
             await asyncio.gather(receive_audio(), receive_transcript())
 
     except Exception as e:
-        logger.error(f"Deepgram WebSocket Error: {e}")
+        if "401" in str(e):
+            logger.error("🛑 DEEPGRAM AUTHENTICATION FAILED (401). Please check your DEEPGRAM_API_KEY in .env!")
+            try:
+                await websocket.send_json({"type": "error", "message": "Deepgram Authentication Failed (401). Check API Key."})
+            except: pass
+        else:
+            logger.error(f"Deepgram WebSocket Connection/Loop Error: {e}", exc_info=True)
     finally:
         try:
             await websocket.close()
@@ -1953,6 +2358,8 @@ async def transcribe_live(websocket: WebSocket):
 def gmail_sync_loop():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
+    
+    sync_counter = 0
 
     # 1. Backfill history (fetch ALL) - run once on startup
     try:
@@ -1961,7 +2368,7 @@ def gmail_sync_loop():
         seven_days_ago = (datetime.now() - timedelta(days=7)).strftime("%d-%b-%Y")
         initial_emails = fetch_emails(criteria=f'(SINCE "{seven_days_ago}")')
         for r in initial_emails:
-            insert_message(r["sender"], r["body"], r["visitor"], origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"))
+            insert_message(r["sender"], r["body"], r["visitor"], origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"), in_reply_to=r.get("in_reply_to"), sender_name=r.get("sender_name"))
         logging.info("Initial backfill complete.")
     except Exception as e:
         logger.error(f"Backfill error: {e}")
@@ -1976,7 +2383,11 @@ def gmail_sync_loop():
                 )
 
             # 2. Continuous sync (fetch UNSEEN)
-            replies = fetch_emails(criteria="UNSEEN")
+            # Scan Sent folder only every 6th iteration (approx 60s) to reduce load
+            should_scan_sent = (sync_counter % 6 == 0)
+            replies = fetch_emails(criteria="UNSEEN", scan_sent_folder=should_scan_sent)
+            
+            sync_counter += 1
 
             for r in replies:
                 sender = r["sender"]
@@ -1984,12 +2395,12 @@ def gmail_sync_loop():
                 email = r["visitor"]
 
                 # Gmail replies ALSO mapped to customer
-                insert_message(sender, body, email, origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"))
+                insert_message(sender, body, email, origin=r["source"], message_id=r.get("message_id"), timestamp=r.get("timestamp"), attachments=r.get("attachments"), account_email=r.get("account_email"), html_content=r.get("html_content"), in_reply_to=r.get("in_reply_to"), sender_name=r.get("sender_name"))
 
-                if sender == "visitor":
-                    forward_visitor_message_to_admin(email, body)
-                else:
-                    send_reply_from_admin_to_customer(email, body)
+                # if sender == "visitor":
+                #    forward_visitor_message_to_admin(email, body)
+                # else:
+                #    send_reply_from_admin_to_customer(email, body)
 
             # Broadcast idle status
             if MAIN_LOOP:

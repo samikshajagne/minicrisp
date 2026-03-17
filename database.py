@@ -4,6 +4,7 @@ from gridfs import GridFS
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime, timezone
 import os
+import uuid
 
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DB_NAME = os.environ.get("MONGO_DB", "mini_crisp_db")
@@ -22,7 +23,7 @@ threads = db["threads"]                     # optional future use
 counters = db["counters"] 
 email_accounts = db.email_accounts
 whatsapp_accounts = db["whatsapp_accounts"]
-whatsapp_accounts = db["whatsapp_accounts"]
+social_accounts = db["social_accounts"]
 ai_history = db["ai_history"] # Store AI interactions
 # auto-increment counters
 
@@ -45,6 +46,7 @@ email_received.create_index("message_id", unique=True, sparse=True)
 email_received.create_index([("tb1_id", 1), ("timestamp", -1)]) # Composite for faster conversation list
 threads.create_index("visitor_email", unique=True)
 whatsapp_accounts.create_index("phone_number_id", unique=True)
+social_accounts.create_index("account_id", unique=True)
 ai_history.create_index("timestamp", expireAfterSeconds=60*60*24*30) # Keep history for 30 days
 
 
@@ -102,6 +104,14 @@ def ensure_customer(email: str | None = None, name: str | None = None, phone: st
             )
             doc["last_read_at"] = None
 
+        if "conversation_id" not in doc:
+             new_conv_id = str(uuid.uuid4())
+             customers.update_one(
+                 {"_id": doc["_id"]},
+                 {"$set": {"conversation_id": new_conv_id}}
+             )
+             doc["conversation_id"] = new_conv_id
+
         doc["last_seen"] = now
         return doc
 
@@ -112,7 +122,10 @@ def ensure_customer(email: str | None = None, name: str | None = None, phone: st
         "name": name or "",
         "created_at": now,
         "last_seen": now,
-        "last_read_at": None
+        "created_at": now,
+        "last_seen": now,
+        "last_read_at": None,
+        "conversation_id": str(uuid.uuid4()) # Persistent Conversation ID
     }
     if email:
         customer_data["cust_email"] = email
@@ -143,6 +156,25 @@ def add_whatsapp_account(phone_number_id: str, access_token: str, display_phone_
             "phone_number_id": phone_number_id,
             "access_token": access_token,
             "display_phone_number": display_phone_number,
+            "active": True,
+            "created_at": datetime.now(timezone.utc)
+        }},
+        upsert=True
+    )
+
+def get_social_accounts():
+    """List all configured social media accounts (Instagram, Facebook)."""
+    return list(social_accounts.find({}, {"_id": 0}))
+
+def add_social_account(account_id: str, access_token: str, platform: str, display_name: str):
+    """Register a new social media account (Facebook Page or Instagram)."""
+    social_accounts.update_one(
+        {"account_id": account_id},
+        {"$set": {
+            "account_id": account_id,
+            "access_token": access_token,
+            "platform": platform, # 'instagram' or 'facebook'
+            "display_name": display_name,
             "active": True,
             "created_at": datetime.now(timezone.utc)
         }},

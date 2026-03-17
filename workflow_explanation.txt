@@ -1,0 +1,56 @@
+
+# Workflow Explanation: Email & Chat System
+
+## 1. Receiving Emails & Messages (Ingestion)
+The system uses a **polling architecture** combined with **WebSockets** for real-time updates.
+
+1.  **The Poller (Backend)**: 
+    *   A background thread (`gmail_sync_loop` in `main.py`) runs continuously.
+    *   It calls `fetch_emails()` (in `gmail_reader.py`), which connects to Gmail/IMAP.
+    *   It scans **INBOX** (for new mail) and **Sent Items** (to sync replies you sent from other devices).
+2.  **Parsing**: 
+    *   `gmail_reader.py` converts raw emails into a standardized dictionary format.
+    *   It handles attachments, HTML content, and strips quoted replies (e.g., "On [date] wrote...").
+3.  **Storage**: 
+    *   The backend calls `insert_message()` to save the clean data into the MongoDB (`email_received` collection).
+4.  **Real-Time Broadcast**: 
+    *   `insert_message()` immediately sends the new message payload to all connected clients via **WebSockets**.
+
+## 2. Displaying the Conversation List (Frontend)
+The "Visitor List" (sidebar) is kept in sync via two methods:
+
+1.  **Initial Fetch**: 
+    *   On load, the frontend calls `GET /api/admin/messages`.
+    *   This returns the **latest message** for every conversation, filtered by your selected account, date range, or search terms.
+2.  **Live Updates**: 
+    *   **WebSocket**: When a new message arrives, the socket event (`new_message`) triggers an immediate UI refresh.
+    *   **Polling Fallback**: The frontend also blindly re-fetches the list every **500ms** (`setInterval` in `admin.html`) to ensure nothing is missed.
+
+## 3. Selecting a Chat
+When you click a visitor in the sidebar:
+1.  **Fetch History**: 
+    *   The frontend calls `GET /api/sync?email=customer@example.com`.
+    *   This retrieves the full message history (both sent and received) from the database.
+2.  **Rendering**: 
+    *   Messages are rendered in the `.main-chat` area.
+    *   Left-aligned: Visitor messages.
+    *   Right-aligned: Admin messages.
+
+## 4. Sending a Reply (The Workflow you likely want to modify)
+1.  **Composition**: 
+    *   You type in the **Quill Editor** (Rich Text) or the simple input box.
+    *   You click **Send**.
+2.  **Submission**: 
+    *   Frontend sends a `POST /api/reply` request with `visitor_email`, `text`, `subject`, etc.
+3.  **Sending (Backend)**: 
+    *   `main.py` delegates to `email_service.send_reply_from_admin_to_customer()`.
+    *   The Python script connects to SMTP (Gmail) and actually sends the email.
+4.  **Storage & Sync**: 
+    *   The sent email is logged to the `email_sent` collection.
+    *   *Crucially*: The UI often waits for the **IMAP Sync** to pick up this sent message from your "Sent" folder to display it in the thread permanently, though it may show a temporary state.
+
+## Key Files
+*   **`main.py`**: The API controller and WebSocket manager.
+*   **`gmail_reader.py`**: The "eyes" of the system that reads and parses emails.
+*   **`email_service.py`**: The "hands" of the system that sends emails.
+*   **`templates/admin.html`**: The monolithic frontend handling all display logic.

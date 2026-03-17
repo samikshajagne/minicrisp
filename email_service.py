@@ -37,7 +37,8 @@ def _send_raw(
     html_body: str | None = None,
     cc: list[str] | None = None,
     bcc: list[str] | None = None,
-    attachments: list[dict] | None = None
+    attachments: list[dict] | None = None,
+    log_file: str | None = None
 ) -> bool:
     try:
         from_email = sender_email or SENDER_EMAIL
@@ -113,10 +114,19 @@ def _send_raw(
         server.sendmail(from_email, recipients, msg.as_string())
         server.quit()
 
+        if log_file:
+            with open(log_file, "a") as f:
+                f.write(f"[{datetime.utcnow()}] SMTP SUCCESS: Sent from {from_email} to {to_email}\n")
+
         logger.info(f"Email sent from {from_email} → {to_email} | subject={subject} | cc={cc} | bcc={bcc}")
         return True
     except Exception as e:
         logger.exception(f"Email send failed → {to_email}: {e}")
+        if log_file:
+            import traceback
+            with open(log_file, "a") as f:
+                f.write(f"[{datetime.utcnow()}] SMTP ERROR: {str(e)}\n")
+                f.write(traceback.format_exc() + "\n")
         return False
 
 
@@ -140,7 +150,7 @@ def send_admin_and_customer_notifications(visitor_email: str, text: str, visitor
 
     # --- Admin notification ---
     admin_subject = f"Conversation with {visitor_email}"
-    admin_body = f"You received a new message from {visitor_email}:\n\n{text}"
+    admin_body = text
 
     sent_admin = _send_raw(
         to_email=ADMIN_EMAIL,
@@ -154,7 +164,7 @@ def send_admin_and_customer_notifications(visitor_email: str, text: str, visitor
 
     # --- Customer acknowledgement ---
     cust_subject = "Your conversation with support"
-    cust_body = f"You wrote:\n{text}\n\nWe will reply shortly."
+    cust_body = f"{text}\n\nWe will reply shortly."
 
     sent_cust = _send_raw(
         to_email=visitor_email,
@@ -198,11 +208,12 @@ def send_reply_from_admin_to_customer(
     subject: str | None = None,
     cc: list[str] | None = None,
     bcc: list[str] | None = None,
-    attachments: list[dict] | None = None
-) -> bool:
+    attachments: list[dict] | None = None,
+    custom_message_id: str | None = None
+) -> dict:
     visitor_email = (visitor_email or "").strip().lower()
     if not visitor_email:
-        return False
+        return {"success": False, "message_id": None}
     
     # Resolve Sender Credentials
     sender_email = None
@@ -226,11 +237,18 @@ def send_reply_from_admin_to_customer(
     thread = threads.find_one({"visitor_email": visitor_email})
     admin_msgid = thread.get("admin_msgid") if thread else None
 
-    cust_msgid = make_msgid(domain="mini-crisp")
+    # Use provided ID or generate
+    cust_msgid = custom_message_id or make_msgid(domain="mini-crisp")
 
     # Use custom subject or default
     email_subject = subject or f"Re: Conversation with {visitor_email}"
     body = text
+
+    # Debug Log
+    with open("email_debug.log", "a") as f:
+        f.write(f"[{datetime.utcnow()}] Attempting to send to {visitor_email} from {sender_email or 'FALLBACK'}\n")
+        f.write(f"   Account Email Requested: {account_email}\n")
+        f.write(f"   Sender Found: {bool(sender_email)}\n")
 
     sent = _send_raw(
         to_email=visitor_email,
@@ -245,8 +263,12 @@ def send_reply_from_admin_to_customer(
         html_body=html_content,
         cc=cc,
         bcc=bcc,
-        attachments=attachments
+        attachments=attachments,
+        log_file="email_debug.log" # Pass log file
     )
+
+    with open("email_debug.log", "a") as f:
+        f.write(f"[{datetime.utcnow()}] Send Result: {sent}\n")
 
     email_sent.insert_one({
         "tb1_id": tb1_id,
@@ -263,7 +285,7 @@ def send_reply_from_admin_to_customer(
         "has_attachments": bool(attachments)
     })
 
-    return sent
+    return {"success": sent, "message_id": cust_msgid}
 
 
 # -------------------------------------------------
@@ -278,7 +300,7 @@ def forward_visitor_message_to_admin(visitor_email: str, text: str) -> bool:
     admin_msgid = thread.get("admin_msgid") if thread else None
 
     admin_subject = f"Conversation with {visitor_email}"
-    body = f"Visitor wrote:\n\n{text}"
+    body = text
 
     sent = _send_raw(
         to_email=ADMIN_EMAIL,

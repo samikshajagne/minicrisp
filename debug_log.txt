@@ -8,3 +8,1685 @@ index: 0
 , falling back to GROQ mock...
 2026-01-29 16:02:49,655 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=244
 2026-01-29 16:11:23,891 - main - ERROR - Gmail sync error: Event loop is closed
+2026-01-29 16:15:25,894 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=263
+2026-01-29 16:16:01,744 - main - WARNING - Gemini Blocked: 
+2026-01-29 16:16:35,448 - main - WARNING - Gemini Blocked: 
+2026-01-29 16:58:20,459 - whatsapp_service - INFO - Webhook verified successfully.
+2026-01-29 17:02:39,189 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:02:39,190 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSMDZCNzhENzdGMDUwNzVCMUQ0AA==",
+                "status": "sent",
+                "timestamp": "1769686358",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": true,
+                  "pricing_model": "PMP",
+                  "category": "utility",
+                  "type": "regular"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:02:40,695 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:02:40,695 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSMDZCNzhENzdGMDUwNzVCMUQ0AA==",
+                "status": "delivered",
+                "timestamp": "1769686358",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": true,
+                  "pricing_model": "PMP",
+                  "category": "utility",
+                  "type": "regular"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:07:54,382 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:07:54,383 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "0",
+      "changes": [
+        {
+          "field": "message_echoes",
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "16505551111",
+              "phone_number_id": "123456123"
+            },
+            "message_echoes": [
+              {
+                "from": "16315551181",
+                "to": "11234567890",
+                "id": "ABGGFlA5Fpa",
+                "timestamp": "1504902988",
+                "type": "text",
+                "message_creation_type": "created_by_1p_bot",
+                "text": {
+                  "body": "this is a text message"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:08:57,951 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:08:57,951 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "0",
+      "changes": [
+        {
+          "field": "message_echoes",
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "16505551111",
+              "phone_number_id": "123456123"
+            },
+            "message_echoes": [
+              {
+                "from": "16315551181",
+                "to": "11234567890",
+                "id": "ABGGFlA5Fpa",
+                "timestamp": "1504902988",
+                "type": "text",
+                "message_creation_type": "created_by_1p_bot",
+                "text": {
+                  "body": "this is a text message"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:09:08,762 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:09:08,763 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "0",
+      "changes": [
+        {
+          "field": "message_echoes",
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "16505551111",
+              "phone_number_id": "123456123"
+            },
+            "message_echoes": [
+              {
+                "from": "16315551181",
+                "to": "11234567890",
+                "id": "ABGGFlA5Fpa",
+                "timestamp": "1504902988",
+                "type": "text",
+                "message_creation_type": "created_by_1p_bot",
+                "text": {
+                  "body": "this is a text message"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:10:05,092 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:10:05,092 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSMDZCNzhENzdGMDUwNzVCMUQ0AA==",
+                "status": "read",
+                "timestamp": "1769686804",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": true,
+                  "pricing_model": "PMP",
+                  "category": "utility",
+                  "type": "regular"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:10:08,142 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:10:08,143 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Samiksha"
+                },
+                "wa_id": "917620979617"
+              }
+            ],
+            "messages": [
+              {
+                "from": "917620979617",
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAEhggQUM2M0VEMjFGNTZFNzg4Njg5MDU0NEE2RjNBRTRCQTgA",
+                "timestamp": "1769686807",
+                "text": {
+                  "body": "Hey"
+                },
+                "type": "text"
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:10:27,431 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:10:27,432 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Samiksha"
+                },
+                "wa_id": "917620979617"
+              }
+            ],
+            "messages": [
+              {
+                "from": "917620979617",
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAEhggQUM5Mjc0M0M1QTBFRDM3RUE1RDlDRkJDNjRFMjcyNkIA",
+                "timestamp": "1769686826",
+                "text": {
+                  "body": "What are you doing"
+                },
+                "type": "text"
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:10:55,241 - main - INFO - api_reply called: visitor=917620979617, account=885768107962649, text_len=2
+2026-01-29 17:10:57,275 - whatsapp_service - INFO - WhatsApp message sent to 917620979617 via 885768107962649
+2026-01-29 17:10:58,244 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:10:58,244 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSREQxRDkxODEzMDYxOEJGQ0QxAA==",
+                "status": "sent",
+                "timestamp": "1769686857",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:10:58,904 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:10:58,905 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSREQxRDkxODEzMDYxOEJGQ0QxAA==",
+                "status": "read",
+                "timestamp": "1769686857",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:10:59,289 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:10:59,289 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSREQxRDkxODEzMDYxOEJGQ0QxAA==",
+                "status": "delivered",
+                "timestamp": "1769686858",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:11:38,838 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:11:38,839 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Samiksha"
+                },
+                "wa_id": "917620979617"
+              }
+            ],
+            "messages": [
+              {
+                "from": "917620979617",
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAEhggQUM0QTg0QkMyMkJFMDlFQ0REMDMyNUI2MUY3MTk4NDUA",
+                "timestamp": "1769686897",
+                "text": {
+                  "body": "How are you?"
+                },
+                "type": "text"
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:11:48,048 - main - INFO - api_reply called: visitor=917620979617, account=885768107962649, text_len=4
+2026-01-29 17:11:49,720 - whatsapp_service - INFO - WhatsApp message sent to 917620979617 via 885768107962649
+2026-01-29 17:11:50,980 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:11:50,981 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSRUFFN0ExNUY1RUEyODQ1RkIxAA==",
+                "status": "sent",
+                "timestamp": "1769686910",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:11:51,340 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:11:51,340 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSRUFFN0ExNUY1RUEyODQ1RkIxAA==",
+                "status": "read",
+                "timestamp": "1769686910",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:12:44,056 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:12:44,057 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSRDc5NTA4NzZENjhBNUVDQTJCAA==",
+                "status": "sent",
+                "timestamp": "1769686963",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "utility",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:12:44,162 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:12:44,163 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSRDc5NTA4NzZENjhBNUVDQTJCAA==",
+                "status": "read",
+                "timestamp": "1769686963",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "utility",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:12:44,405 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:12:44,406 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAERgSRDc5NTA4NzZENjhBNUVDQTJCAA==",
+                "status": "delivered",
+                "timestamp": "1769686963",
+                "recipient_id": "917620979617",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "utility",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:43:40,449 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:43:40,450 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2133368134157611",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551561250",
+              "phone_number_id": "885768107962649"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Samiksha"
+                },
+                "wa_id": "917620979617"
+              }
+            ],
+            "messages": [
+              {
+                "from": "917620979617",
+                "id": "wamid.HBgMOTE3NjIwOTc5NjE3FQIAEhggQUMzRDkyOTRCNURFMjlFRjY5QUYyMkY1MTU3QUQ0RjkA",
+                "timestamp": "1769688819",
+                "text": {
+                  "body": "Hii"
+                },
+                "type": "text"
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:57:39,536 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:57:39,537 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "WhatsApp Business"
+                },
+                "wa_id": "16465894168"
+              }
+            ],
+            "messages": [
+              {
+                "from": "16465894168",
+                "id": "wamid.HBgLMTY0NjU4OTQxNjgVAgASGBI2NzQ4NzkwRTZBNTlFMjgzOTEA",
+                "timestamp": "1769689595",
+                "text": {
+                  "body": "*Continue setting up your account*\n\nYou have a few steps left to get started with WhatsApp Business. Get detailed instructions and track progress for your number +91 86558 24692 in *WhatsApp Manager's* new *Setup guidance*.\n\nGo to your *Setup guidance* on *desktop*: https://business.facebook.com/latest/whatsapp%5Fmanager/setup%5Fguidance?nav%5Fref=nudge&business%5Fid=1399903031007022&lang=en_US&asset%5Fid=2126150511534490&phone%5Fnumber%5Fid=911142645423732"
+                },
+                "type": "text"
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 17:59:51,264 - main - INFO - api_reply called: visitor=918054923300, account=911142645423732, text_len=2
+2026-01-29 17:59:53,113 - whatsapp_service - INFO - WhatsApp message sent to 918054923300 via 911142645423732
+2026-01-29 17:59:55,153 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 17:59:55,153 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE4MDU0OTIzMzAwFQIAERgSMTg4MDM4MEYzMUM5Qzk2QzFBAA==",
+                "status": "failed",
+                "timestamp": "1769689794",
+                "recipient_id": "918054923300",
+                "errors": [
+                  {
+                    "code": 131047,
+                    "title": "Re-engagement message",
+                    "message": "Re-engagement message",
+                    "error_data": {
+                      "details": "Message failed to send because more than 24 hours have passed since the customer last replied to this number."
+                    },
+                    "href": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes/"
+                  }
+                ]
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 18:01:30,530 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 18:01:30,531 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Varun Gupta - AI Expert"
+                },
+                "wa_id": "918054923300"
+              }
+            ],
+            "messages": [
+              {
+                "from": "918054923300",
+                "id": "wamid.HBgMOTE4MDU0OTIzMzAwFQIAEhggQUNDRDJBNzQ4QTYyRDIxRDJEMTcyNzY0NDc5NDk0MkYA",
+                "timestamp": "1769689889",
+                "text": {
+                  "body": "Hi"
+                },
+                "type": "text"
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 18:01:38,958 - main - INFO - api_reply called: visitor=918054923300, account=911142645423732, text_len=2
+2026-01-29 18:01:40,516 - whatsapp_service - INFO - WhatsApp message sent to 918054923300 via 911142645423732
+2026-01-29 18:01:42,560 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 18:01:42,560 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE4MDU0OTIzMzAwFQIAERgSRjhCMjhGOUNCNTUzNzEwRTBCAA==",
+                "status": "sent",
+                "timestamp": "1769689901",
+                "recipient_id": "918054923300",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 18:01:43,103 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 18:01:43,103 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE4MDU0OTIzMzAwFQIAERgSRjhCMjhGOUNCNTUzNzEwRTBCAA==",
+                "status": "delivered",
+                "timestamp": "1769689902",
+                "recipient_id": "918054923300",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 18:01:43,108 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 18:01:43,109 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE4MDU0OTIzMzAwFQIAERgSRjhCMjhGOUNCNTUzNzEwRTBCAA==",
+                "status": "delivered",
+                "timestamp": "1769689902",
+                "recipient_id": "918054923300",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 18:03:13,672 - main - INFO - api_reply called: visitor=918054923300, account=911142645423732, text_len=465
+2026-01-29 18:03:15,256 - whatsapp_service - INFO - WhatsApp message sent to 918054923300 via 911142645423732
+2026-01-29 18:03:16,370 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 18:03:16,371 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE4MDU0OTIzMzAwFQIAERgSNzAxOURERUMwN0VCODFDMkUxAA==",
+                "status": "sent",
+                "timestamp": "1769689995",
+                "recipient_id": "918054923300",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 18:03:17,129 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 18:03:17,130 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE4MDU0OTIzMzAwFQIAERgSNzAxOURERUMwN0VCODFDMkUxAA==",
+                "status": "delivered",
+                "timestamp": "1769689996",
+                "recipient_id": "918054923300",
+                "pricing": {
+                  "billable": false,
+                  "pricing_model": "PMP",
+                  "category": "service",
+                  "type": "free_customer_service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-29 18:03:40,447 - main - INFO - --- Incoming WhatsApp Webhook ---
+2026-01-29 18:03:40,447 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Varun Gupta - AI Expert"
+                },
+                "wa_id": "918054923300"
+              }
+            ],
+            "messages": [
+              {
+                "from": "918054923300",
+                "id": "wamid.HBgMOTE4MDU0OTIzMzAwFQIAEhgWM0VCMDMyQkM4MTgyRDdDRjVERUQ5QwA=",
+                "timestamp": "1769690019",
+                "type": "image",
+                "image": {
+                  "mime_type": "image/jpeg",
+                  "sha256": "E6NX5kFGoDl/iLxhW+3miz04VzFUNgKp22etIsdI0yc=",
+                  "id": "861606693515553",
+                  "url": "https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=861606693515553&source=webhook&ext=1769690320&hash=ARkiEzU1Kt0kp9x5TEGy4bzH__m2Tnvh5jfiTNr2gKd5sQ"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-01-30 10:23:03,035 - main - WARNING - Gemini Blocked: 
+2026-01-30 10:37:02,042 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=102
+2026-01-30 10:37:19,285 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-30 10:46:59,656 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 10:48:17,655 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=232
+2026-01-30 10:49:05,408 - main - WARNING - Gemini Blocked: 
+2026-01-30 10:49:49,295 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 10:54:36,058 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 10:57:36,976 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 10:57:50,121 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 11:01:16,236 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 11:03:03,791 - main - WARNING - Gemini Blocked: 
+2026-01-30 11:03:57,998 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 11:05:02,720 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 11:06:39,709 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=76
+2026-01-30 11:09:35,134 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-30 11:10:24,023 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-30 11:11:30,239 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 11:12:49,668 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-30 11:13:03,580 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=187
+2026-01-30 11:13:51,441 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-30 12:01:05,951 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 12:01:33,981 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 12:01:59,621 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 12:03:11,890 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=259
+2026-01-30 12:05:05,649 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-30 12:05:41,707 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-30 12:06:03,382 - main - ERROR - Transcript receiver error: no close frame received or sent
+2026-01-30 12:06:03,383 - main - ERROR - Audio receiver error: no close frame received or sent
+2026-01-30 12:06:06,761 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-01-30 12:06:19,280 - main - ERROR - Audio receiver error: received 1000 (OK); then sent 1000 (OK)
+2026-01-30 12:06:28,784 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+2026-01-30 12:06:32,663 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+2026-01-30 12:06:48,475 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-01-30 12:08:04,348 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 12:08:26,880 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 12:09:24,834 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 12:12:16,939 - main - WARNING - Gemini Blocked: 
+2026-01-30 12:14:16,358 - main - ERROR - Deepgram WebSocket Error: timed out during opening handshake
+2026-01-30 12:16:12,269 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 14:51:28,211 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 14:52:01,509 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 14:52:32,053 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-01-30 14:55:31,779 - main - ERROR - Gmail sync error: Event loop is closed
+2026-01-30 18:37:50,696 - main - INFO - api_reply called: visitor=917620979617, account=885768107962649, text_len=2
+2026-01-30 18:37:51,422 - whatsapp_service - ERROR - WhatsApp API error: {"error":{"message":"Error validating access token: Session has expired on Thursday, 29-Jan-26 05:00:00 PST. The current time is Friday, 30-Jan-26 05:07:50 PST.","type":"OAuthException","code":190,"error_subcode":463,"fbtrace_id":"ASe-2j_loHeU5dqL2O1YM8q"}}
+2026-01-30 18:37:52,380 - whatsapp_service - ERROR - Failed to upload media to WhatsApp: Client error '401 Unauthorized' for url 'https://graph.facebook.com/v18.0/885768107962649/media'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-01-30 18:37:52,381 - whatsapp_service - ERROR - Meta Reponse: {"error":{"message":"Authentication Error","code":190,"type":"OAuthException","fbtrace_id":"AYoq4jO4wxW3EoJtoawqFvw"}}
+2026-01-30 18:37:52,381 - main - ERROR - Failed to upload media Screenshot (6).png for WhatsApp reply
+2026-01-31 12:29:28,866 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=189
+2026-01-31 14:42:06,759 - main - ERROR - Gmail sync error: Event loop is closed
+2026-01-31 14:42:16,760 - main - ERROR - Gmail sync error: Event loop is closed
+2026-01-31 14:42:26,760 - main - ERROR - Gmail sync error: Event loop is closed
+2026-01-31 14:42:36,761 - main - ERROR - Gmail sync error: Event loop is closed
+2026-01-31 14:42:46,762 - main - ERROR - Gmail sync error: Event loop is closed
+2026-01-31 15:20:54,571 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 15:38:49,093 - main - ERROR - Backfill error: name 'scan_sent_folder' is not defined
+2026-01-31 15:38:49,094 - main - ERROR - Gmail sync error: name 'scan_sent_folder' is not defined
+2026-01-31 15:39:47,578 - main - INFO - api_reply called: visitor=ai.intern@cetl.in, account=planetofstories98@gmail.com, text_len=12
+2026-01-31 15:40:21,601 - main - INFO - api_reply called: visitor=ai.intern@cetl.in, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 15:52:00,018 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 15:52:00,023 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne2@gmail.com
+2026-01-31 15:54:06,890 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 15:54:06,894 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne2@gmail.com
+2026-01-31 15:54:41,959 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 15:54:41,962 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne2@gmail.com
+2026-01-31 15:55:15,183 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 15:55:15,186 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne7@gmail.com
+2026-01-31 16:01:33,232 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 16:01:33,236 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne2@gmail.com
+2026-01-31 16:10:43,097 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 16:10:43,100 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne2@gmail.com
+2026-01-31 16:19:17,010 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 16:19:17,013 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne2@gmail.com
+2026-01-31 16:34:12,508 - main - INFO - api_reply called: visitor=ai.intern@cetl.in, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 16:34:12,519 - main - ERROR - Could not find business_number_id for WhatsApp reply to ai.intern@cetl.in
+2026-01-31 16:34:43,414 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 16:34:43,422 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne2@gmail.com
+2026-01-31 16:41:42,683 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 16:41:42,691 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne2@gmail.com
+2026-01-31 16:43:45,308 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=2
+2026-01-31 16:43:45,311 - main - ERROR - Could not find business_number_id for WhatsApp reply to samikshajagne2@gmail.com
+2026-01-31 16:46:27,967 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-01-31 16:49:01,708 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=3
+2026-01-31 17:34:40,680 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-02-04 14:20:50,309 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=52
+2026-02-06 11:26:16,866 - main - WARNING - Gemini Blocked: 
+2026-02-06 11:27:05,291 - main - WARNING - Gemini execution failure: 'search_customers_tool', falling back to GROQ mock...
+2026-02-06 11:28:19,234 - main - INFO - api_reply called: visitor=samikshajagne7@gmail.com, account=ai.intern@cetl.in, text_len=266
+2026-02-06 11:30:08,805 - main - INFO - api_reply called: visitor=917620979617, account=885768107962649, text_len=2
+2026-02-06 11:30:10,753 - whatsapp_service - ERROR - WhatsApp API error: {"error":{"message":"Error validating access token: Session has expired on Thursday, 29-Jan-26 05:00:00 PST. The current time is Thursday, 05-Feb-26 22:00:11 PST.","type":"OAuthException","code":190,"error_subcode":463,"fbtrace_id":"A64wX15Ibn0CgTf6HAKrEo2"}}
+2026-03-09 12:26:13,490 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:26:15,790 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:26:18,043 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:26:25,683 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:44:38,553 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:44:40,856 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:44:43,129 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:44:45,387 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:44:47,637 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:44:49,739 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:44:51,838 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:44:54,078 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:40,796 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:42,861 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:44,941 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:46,994 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:49,095 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:51,195 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:53,285 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:55,359 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:57,448 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:53:59,554 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:54:01,660 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:54:03,612 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:54:05,690 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:54:07,813 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:54:36,597 - main - WARNING - Gemini Blocked: 
+2026-03-09 12:56:31,578 - main - WARNING - Gemini Blocked: 
+2026-03-09 12:57:38,687 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-03-09 12:58:52,444 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:58:54,518 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:58:56,665 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:58:58,736 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:00,766 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:02,838 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:05,864 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:08,834 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:11,880 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:14,902 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:17,898 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:20,880 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:23,826 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:26,887 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:29,888 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:32,848 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:34,927 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 12:59:37,011 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:00:22,414 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=purchase.it@rmc.in, text_len=415
+2026-03-09 13:03:55,826 - main - WARNING - Gemini Blocked: 
+2026-03-09 13:06:22,362 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=357
+2026-03-09 13:07:06,167 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:08,250 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:10,329 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:12,418 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:14,865 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:17,844 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:19,938 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:32,104 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:34,149 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:36,314 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:38,431 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:40,517 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:42,653 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:44,797 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:46,876 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:48,907 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:51,040 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:07:53,105 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:15:00,708 - main - ERROR - Gmail sync error: Event loop is closed
+2026-03-09 13:15:10,709 - main - ERROR - Gmail sync error: Event loop is closed
+2026-03-09 13:15:42,444 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:15:44,548 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:15:46,588 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:15:48,650 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:15:50,948 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:15:53,041 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 13:15:55,101 - main - ERROR - Deepgram WebSocket Error: server rejected WebSocket connection: HTTP 401
+2026-03-09 14:33:50,126 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:33:52,282 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:33:54,431 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:33:56,558 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:33:58,675 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:34:00,783 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:34:02,963 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:34:05,063 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:34:07,175 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:34:09,233 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:34:11,350 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 14:35:57,090 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=81
+2026-03-09 14:41:50,128 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=122
+2026-03-09 14:43:20,156 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=123
+2026-03-09 14:47:08,731 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=9
+2026-03-09 14:48:56,102 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-03-09 14:49:36,456 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-03-09 14:49:50,590 - main - WARNING - Gemini execution failure: finish_reason: 12
+index: 0
+, falling back to GROQ mock...
+2026-03-09 14:50:22,501 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-03-09 14:50:37,478 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-03-09 14:51:10,614 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-03-09 15:00:04,924 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-03-09 15:00:52,148 - main - WARNING - Gemini execution failure: limit must be an integer, not <class 'float'>, falling back to GROQ mock...
+2026-03-09 15:13:45,467 - main - WARNING - Gemini Blocked: 
+2026-03-09 15:35:43,017 - main - WARNING - Gemini execution failure: 'summarize_conversation_tool', falling back to GROQ mock...
+2026-03-09 15:36:33,296 - main - WARNING - Gemini execution failure: finish_reason: 12
+index: 0
+, falling back to GROQ mock...
+2026-03-09 15:36:36,816 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=ai.intern@cetl.in, text_len=2
+2026-03-09 15:43:08,411 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 15:43:10,531 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 15:43:12,624 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 15:43:14,728 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 15:43:16,815 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 15:43:18,930 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 15:43:21,039 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-09 16:29:46,453 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=doremon140220@gmail.com, text_len=5
+2026-03-09 16:40:29,966 - whatsapp_service - INFO - Webhook verified successfully.
+2026-03-09 18:31:15,994 - main - INFO - --- Incoming Meta Webhook ---
+2026-03-09 18:31:15,995 - main - INFO - {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "2126150511534490",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "918655824692",
+              "phone_number_id": "911142645423732"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Vishal Chaudhari"
+                },
+                "wa_id": "918149832283"
+              }
+            ],
+            "messages": [
+              {
+                "from": "918149832283",
+                "id": "wamid.HBgMOTE4MTQ5ODMyMjgzFQIAEhggQUNEQ0VEOTA3NzM0Qzc5RUE1MzZEN0QzQkQ3RkJDMDQA",
+                "timestamp": "1772701340",
+                "type": "contacts",
+                "contacts": [
+                  {
+                    "name": {
+                      "first_name": "Rashmi",
+                      "middle_name": "Patil\u2728",
+                      "last_name": "SCPL",
+                      "formatted_name": "Rashmi Patil\u2728 SCPL"
+                    },
+                    "phones": [
+                      {
+                        "phone": "+91 72768 38889",
+                        "wa_id": "917276838889",
+                        "type": "MOBILE"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+2026-03-12 15:40:42,043 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-12 15:40:44,225 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-12 15:40:46,326 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-12 15:40:48,408 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-12 15:40:50,505 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false&keywords=Discat:20&keywords=Ok:10
+2026-03-12 15:48:05,287 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:07,441 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:09,489 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:11,566 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:13,647 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:16,202 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:19,204 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:22,192 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:25,203 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:28,190 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:31,205 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:34,203 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:37,197 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:40,196 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:43,198 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:46,204 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:49,213 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:52,202 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:48:55,202 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:02,142 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:05,195 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:08,207 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:11,196 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:14,200 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:17,207 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:20,201 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:23,208 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:26,212 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:29,202 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:32,198 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:35,203 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:38,208 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:41,202 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:44,200 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:47,198 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:50,210 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:53,203 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:56,208 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:49:59,196 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:02,202 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:05,199 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:08,195 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:11,195 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:14,208 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:17,198 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:20,205 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:23,194 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:26,205 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:29,199 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:32,198 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:35,205 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:38,200 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:41,202 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:44,196 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:47,202 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:50,194 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:53,201 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:56,205 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:50:59,202 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:02,210 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:05,201 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:08,201 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:10,280 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:12,341 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:14,408 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:16,504 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:18,587 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:20,802 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:22,941 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:25,050 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:27,162 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:29,293 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:31,368 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:33,437 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:35,505 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:37,587 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:39,669 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:41,772 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:43,851 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:45,970 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:48,141 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:49,039 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:51,190 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:53,315 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:55,353 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:56,541 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:57,401 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:51:58,581 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:00,053 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:02,123 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:04,191 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:06,482 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:07,170 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=20
+2026-03-12 15:52:09,175 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:11,417 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:11,450 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:13,711 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:15,969 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:18,026 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:19,125 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:21,198 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:23,283 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:24,839 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:26,908 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:29,003 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:31,092 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:33,198 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:35,295 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:37,371 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:39,502 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:41,603 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:43,699 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:45,812 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:47,902 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:49,981 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:52,025 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:54,101 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:56,233 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:52:58,427 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:00,505 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:02,544 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:04,591 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:06,674 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:08,688 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:10,762 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:12,469 - main - WARNING - Gemini execution failure: 'search_accounts_tool', falling back to GROQ mock...
+2026-03-12 15:53:12,819 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:14,910 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:16,976 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:19,076 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:21,153 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:23,252 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:23,785 - main - WARNING - Gemini execution failure: 'search_accounts_tool', falling back to GROQ mock...
+2026-03-12 15:53:25,524 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:27,603 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:28,991 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:31,094 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:33,213 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:35,327 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:37,419 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:39,713 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:41,975 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:44,235 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:46,499 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 15:53:48,783 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:05:34,357 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:05:36,485 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:05:38,569 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:05:40,667 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:05:42,758 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:05:44,837 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:05:47,211 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:05:50,203 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:06:05,218 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:06:06,314 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:06:24,820 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:06:25,977 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:06:35,754 - main - INFO - Received stop command from client.
+2026-03-12 16:06:36,181 - main - INFO - Received stop command from client.
+2026-03-12 16:06:41,459 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:06:42,551 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:06:43,882 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:06:44,938 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:06:47,227 - main - INFO - Received stop command from client.
+2026-03-12 16:06:51,759 - main - INFO - Received stop command from client.
+2026-03-12 16:06:55,130 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:06:56,228 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:07:00,651 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:07:01,725 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:07:03,019 - main - INFO - Received stop command from client.
+2026-03-12 16:07:08,549 - main - INFO - Received stop command from client.
+2026-03-12 16:07:10,958 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:07:12,043 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:07:15,785 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:07:16,466 - main - INFO - Received stop command from client.
+2026-03-12 16:07:16,832 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:07:21,217 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=20
+2026-03-12 16:07:26,016 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:07:27,104 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:07:28,131 - main - INFO - Received stop command from client.
+2026-03-12 16:07:28,462 - main - INFO - Received stop command from client.
+2026-03-12 16:07:33,497 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:07:34,628 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:10:03,180 - main - INFO - Received stop command from client.
+2026-03-12 16:10:12,509 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:10:13,662 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:10:18,284 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:10:19,337 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:10:26,174 - main - INFO - Received stop command from client.
+2026-03-12 16:10:27,448 - main - INFO - Received stop command from client.
+2026-03-12 16:10:33,279 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:10:34,357 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:10:35,114 - main - INFO - Received stop command from client.
+2026-03-12 16:10:35,864 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:10:37,000 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:10:43,806 - main - INFO - Received stop command from client.
+2026-03-12 16:10:52,856 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:10:54,142 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:11:44,193 - main - INFO - Received stop command from client.
+2026-03-12 16:11:52,038 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:11:53,116 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:11:56,379 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 2306, in receive_audio
+    data = await websocket.receive()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\starlette\websockets.py", line 57, in receive
+    raise RuntimeError('Cannot call "receive" once a disconnect message has been received.')
+RuntimeError: Cannot call "receive" once a disconnect message has been received.
+2026-03-12 16:12:08,498 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 2322, in receive_transcript
+    async for msg in dg_socket:
+    ...<9 lines>...
+                })
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\websockets\asyncio\connection.py", line 242, in __aiter__
+    yield await self.recv()
+          ^^^^^^^^^^^^^^^^^
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\websockets\asyncio\connection.py", line 322, in recv
+    raise self.protocol.close_exc from self.recv_exc
+websockets.exceptions.ConnectionClosedError: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-03-12 16:13:09,427 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:13:10,544 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:13:10,545 - main - INFO - Received stop command from client.
+2026-03-12 16:13:30,181 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:13:31,336 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:13:36,530 - main - INFO - Received stop command from client.
+2026-03-12 16:16:07,764 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:16:08,811 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:16:16,771 - main - INFO - Received stop command from client.
+2026-03-12 16:16:25,896 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:16:27,204 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:16:34,038 - main - INFO - Received stop command from client.
+2026-03-12 16:16:43,036 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:16:44,298 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:16:50,062 - main - INFO - Received stop command from client.
+2026-03-12 16:16:57,564 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:16:58,829 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:17:08,252 - main - INFO - Received stop command from client.
+2026-03-12 16:17:12,491 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=102
+2026-03-12 16:17:15,306 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:17:16,432 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:17:23,203 - main - INFO - Received stop command from client.
+2026-03-12 16:17:26,798 - main - WARNING - Gemini execution failure: finish_reason: 12
+index: 0
+, falling back to GROQ mock...
+2026-03-12 16:17:30,095 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:17:31,189 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:17:42,469 - main - INFO - Received stop command from client.
+2026-03-12 16:17:50,232 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:17:51,313 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:17:55,753 - main - INFO - Received stop command from client.
+2026-03-12 16:18:15,137 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:15,215 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:15,278 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:15,338 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:15,401 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:15,497 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:15,618 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:15,744 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:15,807 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:15,868 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:18:16,217 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,217 - main - INFO - Received stop command from client.
+2026-03-12 16:18:16,272 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,272 - main - INFO - Received stop command from client.
+2026-03-12 16:18:16,315 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,315 - main - INFO - Received stop command from client.
+2026-03-12 16:18:16,392 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,393 - main - INFO - Received stop command from client.
+2026-03-12 16:18:16,498 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,499 - main - INFO - Received stop command from client.
+2026-03-12 16:18:16,528 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,528 - main - INFO - Received stop command from client.
+2026-03-12 16:18:16,664 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,665 - main - INFO - Received stop command from client.
+2026-03-12 16:18:16,821 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,821 - main - INFO - Received stop command from client.
+2026-03-12 16:18:16,827 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,827 - main - INFO - Received stop command from client.
+2026-03-12 16:18:16,953 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:18:16,953 - main - INFO - Received stop command from client.
+2026-03-12 16:21:37,111 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:21:38,206 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:21:42,074 - main - INFO - Received stop command from client.
+2026-03-12 16:21:50,296 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:21:51,366 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:21:58,198 - main - INFO - Received stop command from client.
+2026-03-12 16:22:10,579 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:22:11,886 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:22:18,726 - main - INFO - Received stop command from client.
+2026-03-12 16:22:30,584 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:22:31,665 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:22:43,563 - main - INFO - Received stop command from client.
+2026-03-12 16:22:53,382 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:22:54,469 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:23:01,282 - main - INFO - Received stop command from client.
+2026-03-12 16:23:12,666 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:23:13,900 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:23:30,221 - main - INFO - Received stop command from client.
+2026-03-12 16:23:38,880 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:23:39,919 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:23:51,243 - main - INFO - Received stop command from client.
+2026-03-12 16:23:58,468 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:23:59,514 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:24:04,664 - main - INFO - Received stop command from client.
+2026-03-12 16:24:11,972 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:24:13,047 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:24:24,333 - main - INFO - Received stop command from client.
+2026-03-12 16:24:32,591 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:24:33,672 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:24:37,869 - main - INFO - Received stop command from client.
+2026-03-12 16:24:48,357 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:24:49,421 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:24:56,234 - main - INFO - Received stop command from client.
+2026-03-12 16:25:06,172 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:25:07,232 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:25:19,151 - main - INFO - Received stop command from client.
+2026-03-12 16:25:23,201 - main - WARNING - Gemini execution failure: finish_reason: 12
+index: 0
+, falling back to GROQ mock...
+2026-03-12 16:25:27,820 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:25:28,886 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:25:35,696 - main - INFO - Received stop command from client.
+2026-03-12 16:25:58,487 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:25:59,665 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:26:10,329 - main - INFO - Received stop command from client.
+2026-03-12 16:26:18,011 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:26:19,147 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:26:25,933 - main - INFO - Received stop command from client.
+2026-03-12 16:26:33,611 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:26:34,712 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:26:44,520 - main - INFO - Received stop command from client.
+2026-03-12 16:26:51,988 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:26:53,063 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:26:59,870 - main - INFO - Received stop command from client.
+2026-03-12 16:27:06,029 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:27:07,095 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:27:13,902 - main - INFO - Received stop command from client.
+2026-03-12 16:27:21,592 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:27:22,666 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:27:29,475 - main - INFO - Received stop command from client.
+2026-03-12 16:27:36,892 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:27:37,994 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:27:44,778 - main - INFO - Received stop command from client.
+2026-03-12 16:27:53,800 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:27:54,894 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:27:57,026 - main - INFO - Received stop command from client.
+2026-03-12 16:28:46,430 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:28:47,508 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:28:54,307 - main - INFO - Received stop command from client.
+2026-03-12 16:29:01,690 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:29:02,764 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:29:09,561 - main - INFO - Received stop command from client.
+2026-03-12 16:29:24,755 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:29:25,844 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:29:30,336 - main - INFO - Received stop command from client.
+2026-03-12 16:29:41,002 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:29:42,067 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:29:48,906 - main - INFO - Received stop command from client.
+2026-03-12 16:30:23,748 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:30:24,913 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:30:29,414 - main - INFO - Received stop command from client.
+2026-03-12 16:30:39,209 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:30:40,302 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:30:42,817 - main - INFO - Received stop command from client.
+2026-03-12 16:30:59,562 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:31:00,834 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:31:00,835 - main - INFO - Received stop command from client.
+2026-03-12 16:31:00,854 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:31:02,128 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:31:02,512 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:31:03,844 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:31:14,740 - main - ERROR - Transcript receiver error: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 2322, in receive_transcript
+    async for msg in dg_socket:
+    ...<9 lines>...
+                })
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\websockets\asyncio\connection.py", line 242, in __aiter__
+    yield await self.recv()
+          ^^^^^^^^^^^^^^^^^
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\websockets\asyncio\connection.py", line 322, in recv
+    raise self.protocol.close_exc from self.recv_exc
+websockets.exceptions.ConnectionClosedError: received 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001; then sent 1011 (internal error) Deepgram did not receive audio data or a text message within the timeout window. See https://dpgr.am/net0001
+2026-03-12 16:31:14,962 - main - INFO - Received stop command from client.
+2026-03-12 16:31:24,740 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:31:25,824 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:31:32,636 - main - INFO - Received stop command from client.
+2026-03-12 16:31:55,660 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:31:56,843 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:31:56,844 - main - INFO - Received stop command from client.
+2026-03-12 16:32:23,783 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:32:25,105 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:32:31,830 - main - INFO - Received stop command from client.
+2026-03-12 16:32:40,205 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:32:41,282 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:32:44,238 - main - INFO - Received stop command from client.
+2026-03-12 16:33:18,767 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-12 16:33:20,051 - main - INFO - Connected to Deepgram successfully!
+2026-03-12 16:33:21,642 - main - INFO - Received stop command from client.
+2026-03-12 17:06:37,426 - main - ERROR - Audio receiver error: Cannot call "receive" once a disconnect message has been received.
+Traceback (most recent call last):
+  File "D:\anticrisp\main.py", line 2306, in receive_audio
+    data = await websocket.receive()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\sam\anticrisp\.venv\Lib\site-packages\starlette\websockets.py", line 57, in receive
+    raise RuntimeError('Cannot call "receive" once a disconnect message has been received.')
+RuntimeError: Cannot call "receive" once a disconnect message has been received.
+2026-03-13 11:31:46,132 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=3
+2026-03-13 11:40:11,307 - main - INFO - Connecting to Deepgram: wss://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&language=en-US&punctuate=true&interim_results=true&endpointing=false
+2026-03-13 11:40:12,648 - main - INFO - Connected to Deepgram successfully!
+2026-03-13 11:40:16,708 - main - INFO - Received stop command from client.
+2026-03-13 11:46:29,684 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=2
+2026-03-16 11:07:08,394 - main - INFO - api_reply called: visitor=samikshajagne2@gmail.com, account=planetofstories98@gmail.com, text_len=21

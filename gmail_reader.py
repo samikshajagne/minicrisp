@@ -117,7 +117,7 @@ def _save_attachment(part, msg_id):
         logger.error(f"Failed to save attachment {filename}: {e}")
         return None
 
-def fetch_account_emails(account_config, criteria="UNSEEN"):
+def fetch_account_emails(account_config, criteria="UNSEEN", scan_sent_folder=True):
     """Fetch emails for a SINGLE account config."""
     results = []
     
@@ -135,26 +135,27 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
         # Determine folders to scan
         folders_to_scan = ["INBOX"]
         
-        # Try to identify Sent folder
-        sent_folder = None
-        list_typ, list_data = mail.list()
-        if list_typ == "OK":
-            for f in list_data:
-                decoded = f.decode()
-                match = re.search(r'\((?P<flags>.*?)\) "(?P<delim>.*?)" (?P<name>.*)', decoded)
-                if match:
-                    name_raw = match.group("name")
-                    name = name_raw.strip('"')
-                    
-                    if "Sent" in name and "Trash" not in name:
-                         if "Gmail" in name or name == "Sent":
-                             sent_folder = name
-        
-        if sent_folder:
-            folders_to_scan.append(sent_folder)
-        else:
-             if "[Gmail]/Sent Mail" not in folders_to_scan:
-                 folders_to_scan.append("[Gmail]/Sent Mail")
+        if scan_sent_folder:
+            # Try to identify Sent folder
+            sent_folder = None
+            list_typ, list_data = mail.list()
+            if list_typ == "OK":
+                for f in list_data:
+                    decoded = f.decode()
+                    match = re.search(r'\((?P<flags>.*?)\) "(?P<delim>.*?)" (?P<name>.*)', decoded)
+                    if match:
+                        name_raw = match.group("name")
+                        name = name_raw.strip('"')
+                        
+                        if "Sent" in name and "Trash" not in name:
+                             if "Gmail" in name or name == "Sent":
+                                 sent_folder = name
+            
+            if sent_folder:
+                folders_to_scan.append(sent_folder)
+            else:
+                 if "[Gmail]/Sent Mail" not in folders_to_scan:
+                     folders_to_scan.append("[Gmail]/Sent Mail")
 
 
         # Load all threads for mapping
@@ -193,6 +194,9 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
                         msg = email.message_from_bytes(raw)
 
                         msg_id = msg.get("Message-ID", "").strip()
+                        # CLEAN MESSAGE-ID: Remove angle brackets to ensure consistency with DB
+                        if msg_id.startswith("<") and msg_id.endswith(">"):
+                            msg_id = msg_id[1:-1]
 
                         email_date = None
                         try:
@@ -203,6 +207,7 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
                             pass
 
                         # 🛑 DEDUPLICATION / UPDATE CHECK
+                        # We perform a strict check on message_id to prevent processing the same email twice.
                         existing_doc = email_received.find_one({"message_id": msg_id})
                         
                         # Parse body & attachments FIRST to see if we have new info
@@ -211,8 +216,11 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
                         to_raw = _decode_mime_words(msg.get("To", ""))
                         in_reply_to = msg.get("In-Reply-To", "").strip("<>")
 
+                        sender_name = None
                         if "<" in from_raw:
-                            from_email = from_raw.split("<")[-1].split(">")[0].strip().lower()
+                            parts = from_raw.split("<")
+                            sender_name = parts[0].strip().strip('"')
+                            from_email = parts[-1].split(">")[0].strip().lower()
                         else:
                             from_email = from_raw.strip().lower()
 
@@ -332,22 +340,33 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
                              if to_email != email_addr.lower() and "support" not in to_email:
                                  visitor = to_email
 
-                        if not visitor and not is_admin and from_email:
-                            visitor = from_email
-
                         if not visitor or (visitor == email_addr.lower()):
+                            continue
+
+                        # --- NEW: Filter internal system notifications ---
+                        # These are automated alerts/acks that we don't want to show as 'messages' in the dashboard chat
+                        # because they are duplicates of widget activity.
+                        is_automated = (
+                            subject == "Your conversation with support" or 
+                            (subject.lower().startswith("conversation with ") and not subject.lower().startswith("re:"))
+                        )
+                        if is_automated:
+                            logger.info(f"Ignoring automated notification email: {subject}")
+                            mail.store(num, "+FLAGS", "\\Seen") # Mark as seen anyway
                             continue
 
                         results.append({
                             "visitor": visitor,
                             "sender": sender,
+                            "sender_name": sender_name,
                             "body": body_clean.strip(),
                             "source": "imap",
                             "message_id": msg_id,
                             "timestamp": email_date,
                             "attachments": attachments,
                             "account_email": email_addr,
-                            "html_content": full_html
+                            "html_content": full_html,
+                            "in_reply_to": in_reply_to
                         })
 
                         mail.store(num, "+FLAGS", "\\Seen")
@@ -366,14 +385,14 @@ def fetch_account_emails(account_config, criteria="UNSEEN"):
     return results
 
 
-def fetch_emails(criteria="UNSEEN"):
+def fetch_emails(criteria="UNSEEN", scan_sent_folder=True):
     """Fetch emails from ALL configured accounts."""
     all_results = []
     
     # 1. Fetch from DB accounts
     db_accounts = get_email_accounts_with_secrets()
     for acc in db_accounts:
-        all_results.extend(fetch_account_emails(acc, criteria))
+        all_results.extend(fetch_account_emails(acc, criteria, scan_sent_folder))
         
     # 2. Fetch from ENV account (legacy support)
     if IMAP_EMAIL and IMAP_PASSWORD:
@@ -384,7 +403,7 @@ def fetch_emails(criteria="UNSEEN"):
          }
          # Avoid duplicate processing if same email is in DB
          if not any(a["email"] == IMAP_EMAIL.lower() for a in db_accounts):
-             all_results.extend(fetch_account_emails(env_acc, criteria))
+             all_results.extend(fetch_account_emails(env_acc, criteria, scan_sent_folder))
 
     return all_results
 

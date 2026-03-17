@@ -1,0 +1,48 @@
+1. Global Navigation & Layout
+Top Navbar (#top-navbar): The main header containing:
+Logo Area: Displays "SCPL Admin Inbox".
+Account Selector: Dropdown to switch between accounts.
+Action Buttons: 'Add Account', 'AI Assistant' (DISCAAT KID), 'Resync'.
+Nav Links: Buttons for 'Map View', 'WhatsApp Inbox', and 'Logout'.
+Main Container (#main-interface): The responsive flex container that holds the Sidebar and Main Chat.
+
+2. Sidebar Component (.sidebar)
+Search Box: Requires specific interactions? Refer to the .search-box class.
+includes the Sync Indicator (a small dot showing real-time status).
+Advanced Filter Panel (.advanced-search-panel): The dropdown menu for filtering by:
+Start/End Date.
+Message Keywords.
+Source (Website Chat, Email, IMAP).
+Filter Chips (.sidebar-chips): The quick-toggle pills (e.g., "All", "Unread", "My Assigns").
+Visitor List (.visitor-list): The scrollable list of users/conversations.
+Visitor Item (.visitor-item): Individual row showing Avatar, Name, Message Preview, and Unread Badge.
+
+3. Chat Interface (.main-chat)
+Chat Header (.chat-header): The top bar of the chat pane showing the user's Avatar, Name, and Online Status.
+Messages Area (.messages-area): The main scrollable view for the conversation.
+Message Bubble (.message): Styles for .visitor (left/gray) vs .admin (right/gradient).
+System/Time Labels: Small text indicating message time or status.
+Input Area (.input-area): The bottom section for typing.
+Textarea: Auto-expanding text input.
+Send Button: The primary action button.
+Chat Toolbar (.chat-tools): A specialized bar (often hidden/contextual) for quick actions like jumping to dates.
+
+4. Email Composer (.email-composer)
+Recipient Fields: Inputs for 
+To
+, CC, BCC, and Subject.
+Rich Text Editor: The Quill.js editor instance (#email-editor).
+Attachment Grid: (.file-previews): Area showing attached files with remove buttons.
+Action Bar (.composer-actions): Contains the definitive 'Send Email' button.
+
+5. AI Assistant (#ai-assistant-box)
+Floating Window: The dedicated chat interface for "DISCAAT KID" that floats in the bottom-right.
+Voice Interface: Includes the specific microphone/recording button styling.
+
+6. Overlays & Utilities
+Toast Notifications (.toast-container): The sliding alerts that appear (top-right) for success/error messages.
+Lightbox (.lightbox): The full-screen modal for viewing active images/media.
+Login/Auth Pages: Separate distinct designs found in 
+login.html
+ and 
+signup.html

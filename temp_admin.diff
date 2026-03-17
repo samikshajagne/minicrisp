@@ -1,0 +1,1314 @@
+diff --git a/templates/admin.html b/templates/admin.html
+index 111e9e5..0ca78dd 100644
+--- a/templates/admin.html
++++ b/templates/admin.html
+@@ -312,8 +312,79 @@
+             font-size: 0.75rem;
+             font-weight: 700;
+             box-shadow: 0 6px 12px rgba(16, 185, 129, 0.2);
++            margin-left: auto;
++            /* Push to right */
+         }
+ 
++        /* Conversation Options Menu */
++        .visitor-options-container {
++            position: relative;
++            margin-left: 8px;
++            /* Space from badge/time */
++        }
++
++        .visitor-options-btn {
++            background: none;
++            border: none;
++            color: #9ca3af;
++            cursor: pointer;
++            padding: 4px;
++            border-radius: 4px;
++            font-size: 1.1rem;
++            line-height: 1;
++            opacity: 0;
++            /* Hidden by default */
++            transition: opacity 0.2s, background 0.2s;
++        }
++
++        .visitor-item:hover .visitor-options-btn,
++        .visitor-options-btn.active {
++            opacity: 1;
++            /* Show on hover */
++        }
++
++        .visitor-options-btn:hover {
++            background: #e2e8f0;
++            color: var(--text-primary);
++        }
++
++        .visitor-options-menu {
++            display: none;
++            position: absolute;
++            top: 100%;
++            right: 0;
++            background: white;
++            border: 1px solid var(--border-color);
++            border-radius: 8px;
++            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
++            z-index: 100;
++            width: 140px;
++            padding: 4px 0;
++            flex-direction: column;
++        }
++
++        .visitor-options-menu.open {
++            display: flex;
++        }
++
++        .menu-item {
++            padding: 8px 12px;
++            font-size: 0.85rem;
++            color: var(--text-secondary);
++            cursor: pointer;
++            transition: background 0.1s;
++            text-align: left;
++            background: none;
++            border: none;
++            width: 100%;
++        }
++
++        .menu-item:hover {
++            background: #f1f5f9;
++            color: var(--text-primary);
++        }
++
++
+         /* Sync Indicator */
+         .sync-indicator {
+             width: 10px;
+@@ -450,9 +521,16 @@
+             padding: 25px;
+             display: flex;
+             flex-direction: column;
+-            gap: 15px;
+-            background: radial-gradient(circle at 10% 20%, rgba(224, 242, 254, 0.8), transparent 26%),
+-                radial-gradient(circle at 90% 10%, rgba(209, 250, 229, 0.8), transparent 32%), #ffffff;
++            gap: 8px;
++            /* Slightly tighter gap for WhatsApp feel */
++
++            /* WhatsApp-like Background */
++            background-color: #efeae2;
++            background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
++            background-repeat: repeat;
++            background-size: 400px;
++            /* Adjust size */
++
+             z-index: 1;
+         }
+ 
+@@ -469,20 +547,38 @@
+         }
+ 
+         .message {
+-            max-width: 80%;
+-            /* Prevent full width */
++            max-width: 65%;
+             width: fit-content;
+-            /* Hug text */
+-            padding: 3px 6px;
+-            /* Absolute minimum */
+-            border-radius: 6px;
+-            font-size: 0.9rem;
+-            line-height: 1.2;
+-            /* READABLE */
++
++            .message-sender {
++                font-size: 0.75rem;
++                color: #d65d0a;
++                /* Default visitor color */
++                margin-bottom: 2px;
++                font-weight: 500;
++                line-height: 1.2;
++            }
++
++            .message.admin .message-sender {
++                color: #667781;
++                /* Muted for Admin/You */
++                display: none;
++                /* User option: "display... for every message... optional hiding... consecutive". 
++                               But "You" on outgoing might be redundant?
++                               User Requested: "You appears on outgoing ones". okay.
++                            */
++                display: block;
++            }
++
++            padding: 8px 12px;
++            border-radius: 7.5px;
++            font-size: 0.92rem;
++            line-height: 1.4;
+             position: relative;
+             word-wrap: break-word;
+-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
++            box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+             white-space: pre-wrap;
++            margin-bottom: 2px;
+         }
+ 
+         /* Wider messages for HTML emails */
+@@ -493,11 +589,10 @@
+ 
+         .message.visitor {
+             align-self: flex-start;
+-            background: var(--message-in-bg);
+-            color: var(--text-primary);
+-            border-bottom-left-radius: 4px;
+-            border: 1px solid #cbd5e1;
+-            /* Slightly darker border for white-on-white/gradient contrast */
++            background: #ffffff;
++            color: #111b21;
++            border-top-left-radius: 0;
++            border: none;
+         }
+ 
+         .message.visitor a {
+@@ -508,25 +603,40 @@
+ 
+         .message.admin {
+             align-self: flex-end;
+-            background: #ffffff;
+-            color: var(--text-primary);
+-            border-bottom-right-radius: 0px;
+-
+-            /* Gradient Border */
+-            border: 2px solid transparent;
+-            background-clip: padding-box, border-box;
+-            background-origin: padding-box, border-box;
+-            background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #0ea5e9, #10b981);
++            background: #d9fdd3;
++            /* WhatsApp-like green */
++            color: #111b21;
++            border-top-right-radius: 0;
++            border-bottom-right-radius: 7.5px;
++            /* reset */
++            border: none;
++            background-image: none;
+         }
+ 
+         /* WhatsApp specific styles */
+         .message.whatsapp.visitor {
+             border-left: 4px solid #25d366;
+         }
++        
++        .message.facebook.visitor {
++            border-left: 4px solid #0084ff;
++        }
++
++        .message.instagram.visitor {
++            border-left: 4px solid #e1306c;
++        }
+ 
+         .message.whatsapp.admin {
+             background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #25d366, #128c7e);
+         }
++        
++        .message.facebook.admin {
++             background-image: linear-gradient(#d9fdd3, #d9fdd3), linear-gradient(135deg, #0084ff, #0077e5);
++        }
++
++        .message.instagram.admin {
++             background-image: linear-gradient(#d9fdd3, #d9fdd3), linear-gradient(135deg, #c13584, #e1306c);
++        }
+ 
+         /* Fix link visibility in admin bubbles (Blue text on White bg) */
+         /* Fix link visibility in admin bubbles (Blue text on White bg) */
+@@ -537,6 +647,33 @@
+         }
+ 
+         /* Reset margins for HTML content in admin bubbles */
++        .email-content {
++            display: block;
++        }
++
++        .email-content * {
++            margin: 0;
++            padding: 0;
++            line-height: 1.4;
++            max-width: 100%;
++        }
++
++        .email-content p {
++            margin-bottom: 6px;
++        }
++
++        .email-content p:last-child {
++            margin-bottom: 0;
++        }
++
++        .email-content blockquote {
++            border-left: 3px solid #ccc;
++            padding-left: 8px;
++            margin-left: 4px;
++            color: #666;
++            font-style: italic;
++        }
++
+         .message.admin p {
+             margin: 0;
+             padding: 0;
+@@ -1445,7 +1582,22 @@
+                 align-items:center;
+                 gap:6px;
+             ">
+-                <span>???</span><span>Add Account</span>
++                <span>???</span><span>Add Email</span>
++            </button>
++            <button id="add-social-btn" style="
++                background:#eef2ff;
++                color:#3730a3;
++                border:none;
++                padding:8px 14px;
++                border-radius:999px;
++                font-weight:700;
++                cursor:pointer;
++                box-shadow:0 10px 24px rgba(15,23,42,0.25);
++                display:flex;
++                align-items:center;
++                gap:6px;
++            ">
++                <span>????</span><span>Add Social</span>
+             </button>
+             <button id="ai-assistant-btn" style="
+                 background:#eff6ff;
+@@ -1597,6 +1749,9 @@
+                             <option value="chat">Website Chat</option>
+                             <option value="email">Email</option>
+                             <option value="imap">IMAP</option>
++                            <option value="whatsapp">WhatsApp</option>
++                            <option value="facebook">Facebook</option>
++                            <option value="instagram">Instagram</option>
+                         </select>
+                     </div>
+                     <div class="panel-row" style="align-items:center;">
+@@ -1618,10 +1773,12 @@
+             </div>
+ 
+             <div class="sidebar-chips">
+-                <span class="chip active" data-filter="all">All</span>
++                <span class="chip active" data-filter="inbox">Inbox</span>
++                <span class="chip" data-filter="all">All</span>
+                 <span class="chip" data-filter="unread">Unread</span>
+                 <span class="chip" data-filter="read">Read</span>
+                 <span class="chip" data-filter="drafts">Drafts</span>
++                <span class="chip" data-filter="notifications">Notifications</span>
+             </div>
+ 
+             <div class="visitor-list" id="visitor-list">
+@@ -1773,6 +1930,56 @@
+         </div>
+     </div>
+ 
++    <!-- ADD SOCIAL ACCOUNT MODAL -->
++    <div id="social-modal" style="
++        display:none; 
++        position:fixed; 
++        top:0; left:0; width:100%; height:100%; 
++        background:rgba(0,0,0,0.4); 
++        z-index:99; 
++        align-items:center; 
++        justify-content:center;
++        backdrop-filter:blur(4px);
++    ">
++        <div style="
++            background:white; 
++            padding:24px; 
++            border-radius:18px; 
++            width:400px; 
++            box-shadow:0 20px 40px rgba(0,0,0,0.2);
++        ">
++            <h3 style="margin-top:0;">Add Social Media Account</h3>
++            <div style="margin-bottom:12px;">
++                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Platform</label>
++                <select id="social-platform" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
++                    <option value="facebook">Facebook Messenger</option>
++                    <option value="instagram">Instagram Direct</option>
++                </select>
++            </div>
++            <div style="margin-bottom:12px;">
++                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Account ID (Page/IG ID)</label>
++                <input type="text" id="social-id" placeholder="1234567890"
++                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
++            </div>
++            <div style="margin-bottom:12px;">
++                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Access Token</label>
++                <input type="password" id="social-token" placeholder="EAAB..."
++                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
++            </div>
++            <div style="margin-bottom:12px;">
++                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Display Name</label>
++                <input type="text" id="social-name" placeholder="My Page Name"
++                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
++            </div>
++            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
++                <button onclick="closeSocialModal()"
++                    style="padding:8px 16px; border:none; background:#f1f5f9; border-radius:8px; cursor:pointer;">Cancel</button>
++                <button onclick="saveSocialAccount()"
++                    style="padding:8px 16px; border:none; background:var(--primary-color); color:white; border-radius:8px; cursor:pointer; font-weight:600;">Save</button>
++            </div>
++        </div>
++    </div>
++
+     <!-- SUCCESS MODAL -->
+     <div id="success-modal" style="
+         display:none; 
+@@ -1818,16 +2025,13 @@
+                 we do next?
+             </div>
+         </div>
+-        <div id="ai-status"
+-            style="padding: 4px 16px; font-size: 0.75rem; color: #ef4444; display: none; font-weight: 600;">
+-            ??? Listening...
+-        </div>
++
+         <div class="ai-input-area">
+             <button id="wake-word-btn" class="voice-btn" title="Enable Continuous Loop Mode"
+                 style="margin-right: 4px; opacity: 0.4;">????</button>
+             <button id="tts-toggle-btn" class="voice-btn" title="Toggle Voice Output"
+                 style="margin-right: 4px;">????</button>
+-            <button id="voice-btn" class="voice-btn" title="Voice Command">????</button>
++
+             <input type="text" id="ai-input" class="ai-input" placeholder="Type a command...">
+             <button id="ai-send-btn" class="icon-btn"
+                 style="width:36px; height:36px; border-radius:50%; background:var(--primary-color); color:white; border:none;">??????</button>
+@@ -1875,6 +2079,49 @@
+             }
+         };
+ 
++        // Social Modal Logic
++        const socialModal = document.getElementById('social-modal');
++        document.getElementById('add-social-btn').onclick = () => {
++            socialModal.style.display = 'flex';
++        };
++        function closeSocialModal() {
++            socialModal.style.display = 'none';
++        }
++        async function saveSocialAccount() {
++            const platform = document.getElementById('social-platform').value;
++            const account_id = document.getElementById('social-id').value;
++            const access_token = document.getElementById('social-token').value;
++            const display_name = document.getElementById('social-name').value;
++
++            if (!account_id || !access_token) return alert("Account ID and Token required");
++
++            const saveBtn = document.querySelector('#social-modal button:last-child');
++            const originalText = saveBtn.textContent;
++            saveBtn.textContent = "Saving...";
++            saveBtn.disabled = true;
++
++            try {
++                const res = await fetch('/api/admin/social-accounts', {
++                    method: 'POST',
++                    headers: { 'Content-Type': 'application/json' },
++                    body: JSON.stringify({ platform, account_id, access_token, display_name })
++                });
++
++                if (res.ok) {
++                    closeSocialModal();
++                    document.getElementById('success-modal').style.display = 'flex';
++                } else {
++                    const data = await res.json();
++                    alert("Error: " + (data.detail || "Failed to save"));
++                }
++            } catch (err) {
++                alert("Network error: " + err.message);
++            } finally {
++                saveBtn.textContent = originalText;
++                saveBtn.disabled = false;
++            }
++        }
++
+         // Account Modal Logic
+         const modal = document.getElementById('account-modal');
+         document.getElementById('add-account-btn').onclick = () => {
+@@ -1942,29 +2189,38 @@
+         }
+ 
+         async function fetchAccounts() {
+-            const res = await fetch('/api/admin/email-accounts');
+-            const data = await res.json();
++            const [emailRes, socialRes] = await Promise.all([
++                fetch('/api/admin/email-accounts'),
++                fetch('/api/admin/social-accounts')
++            ]);
++            
++            const emailData = await emailRes.json();
++            const socialData = await socialRes.json();
+ 
+             const selector = document.getElementById('account-selector');
+             const currentVal = selector.value;
+             selector.innerHTML = '';
+ 
+-            if (data.accounts && data.accounts.length > 0) {
+-                data.accounts.forEach(acc => {
++            const allAccounts = [
++                ...(emailData.accounts || []).map(a => ({ id: a.email, name: a.email, type: 'email' })),
++                ...(socialData.accounts || []).map(a => ({ id: a.account_id, name: `${a.display_name} (${a.platform})`, type: a.platform }))
++            ];
++
++            if (allAccounts.length > 0) {
++                allAccounts.forEach(acc => {
+                     const opt = document.createElement('option');
+-                    opt.value = acc.email;
+-                    opt.textContent = acc.email;
+-                    opt.style.color = '#333'; // fix for white text in dropdown
++                    opt.value = acc.id;
++                    opt.textContent = acc.name;
++                    opt.setAttribute('data-platform', acc.type);
++                    opt.style.color = '#333';
+                     selector.appendChild(opt);
+                 });
+ 
+-                // Restore selection or default to first
+-                if (currentVal && data.accounts.some(a => a.email === currentVal)) {
++                if (currentVal && allAccounts.some(a => a.id === currentVal)) {
+                     selector.value = currentVal;
+                 } else {
+-                    selector.value = data.accounts[0].email;
+-                    // Trigger change to load messages for this account
+-                    if (!currentSelectedAccount) handleAccountChange(data.accounts[0].email);
++                    selector.value = allAccounts[0].id;
++                    if (!currentSelectedAccount) handleAccountChange(allAccounts[0].id);
+                 }
+             } else {
+                 const opt = document.createElement('option');
+@@ -1989,10 +2245,14 @@
+ 
+ 
+ 
++        // Sync State
+         let allMessages = [];
++        let lastSyncTimestamp = null;
++        let lastSyncParams = ""; // To detect filter changes
++
+         let currentConversationEmail = null;
+         let searchFilter = "";
+-        let statusFilter = "all";
++        let statusFilter = "inbox";
+         let filterStartDate = null;
+         let filterEndDate = null;
+         let filterHasAttachments = false;
+@@ -2058,11 +2318,22 @@
+             // Connect to Global Admin WS
+             connectGlobalAdminWS();
+ 
+-            // --- LOCKED FEATURE: REAL-TIME REFRESH ---
+-            // Auto-refresh interval (0.5 seconds)
+-            setInterval(() => {
+-                fetchMessages(searchFilter);
+-            }, 500);
++            // --- LOCKED FEATURE: REAL-TIME REFRESH (OPTIMIZED) ---
++            // Polling approach: Websocket is primary. Polling is fallback.
++            // If Connected: Poll every 60s (Safety check)
++            // If Disconnected: Poll every 5s (Active recovery)
++            function scheduleNextPoll() {
++                // If socket is defined and open (readyState 1), we are good
++                const isSocketHealthy = globalAdminSocket && globalAdminSocket.readyState === WebSocket.OPEN;
++
++                const delay = isSocketHealthy ? 60000 : 5000;
++
++                setTimeout(() => {
++                    fetchMessages(searchFilter);
++                    scheduleNextPoll();
++                }, delay);
++            }
++            scheduleNextPoll();
+             // ---------------------------------------
+         });
+ 
+@@ -2170,6 +2441,8 @@
+         });
+ 
+ 
++
++
+         let socket = null;
+         let globalAdminSocket = null;
+ 
+@@ -2182,6 +2455,10 @@
+                 `${protocol}//${location.host}/ws?email=admin_global`
+             );
+ 
++            globalAdminSocket.onopen = () => {
++                console.log("Global WS Connected");
++            };
++
+             globalAdminSocket.onmessage = (event) => {
+                 const data = JSON.parse(event.data);
+ 
+@@ -2194,8 +2471,10 @@
+                     const payload = data.payload;
+                     console.log("Global new message received:", payload);
+ 
+-                    // Show notification
+-                    showNotification(payload.sender, payload.text, payload.email, payload.account_email);
++                    // Show notification ONLY for incoming visitor messages
++                    if (payload.sender === 'visitor' || payload.sender !== 'admin') {
++                        showNotification(payload.sender, payload.text, payload.email, payload.account_email);
++                    }
+ 
+                     // Refresh visitor list immediately
+                     fetchMessages(searchFilter);
+@@ -2205,6 +2484,33 @@
+                     if (payload.email === currentConversationEmail) {
+                         renderChat(payload.email, searchFilter);
+                     }
++                } else if (data.type === 'message_status') {
++                    // Real-time status update (Clock -> Tick)
++                    const msgId = data.id;
++                    const status = data.status;
++                    const msgEl = document.getElementById(`msg-${msgId}`);
++                    if (msgEl) {
++                        const timeEl = msgEl.querySelector('.message-time');
++                        if (timeEl) {
++                            // Preserve time text, replace icon
++                            // Format: "HH:MM XM ????"
++                            // We re-render the status part.
++                            // Simple hack: Replace the icon char or append if missing?
++                            // Better: Verify the text content structure.
++                            // Current: "${formatTime} ${statusIcon}"
++                            // We can't parse easily. 
++                            // Let's just append/replace last char? No.
++                            // We should update the class or re-insert the time string if we knew it?
++                            // We don't have the timestamp here.
++                            // But we can manipulate the textContent.
++                            let text = timeEl.textContent;
++                            // Remove old icons
++                            text = text.replace('????', '').replace('???', '').replace('??????', '').replace('???', '').trim();
++
++                            const icon = status === 'sent' ? ' ???' : (status === 'failed' ? ' ???' : ' ????');
++                            timeEl.textContent = text + icon;
++                        }
++                    }
+                 }
+             };
+ 
+@@ -2335,21 +2641,59 @@
+                 if (filterEndDate) params.append('end_date', filterEndDate);
+                 if (filterHasAttachments) params.append('has_attachments', 'true');
+                 if (filterSource && filterSource !== 'all') params.append('source', filterSource);
++                if (currentSelectedAccount) params.append('account', currentSelectedAccount);
++
++                // Check for filter changes
++                const currentParamsStr = params.toString();
++                let isIncremental = false;
++
++                if (lastSyncParams === currentParamsStr && lastSyncTimestamp) {
++                    params.append('since', lastSyncTimestamp);
++                    isIncremental = true;
++                } else {
++                    // Filter changed or first load -> Full Sync
++                    lastSyncParams = currentParamsStr;
++                    lastSyncTimestamp = null; // Reset
++                }
+ 
+                 if ([...params].length > 0) {
++                    // Note: We reconstruct query string cleanly
+                     url += `?${params.toString()}`;
+                 }
+ 
+-                // Add Account Filter
+-                if (currentSelectedAccount) {
+-                    const sep = url.includes('?') ? '&' : '?';
+-                    url += `${sep}account=${encodeURIComponent(currentSelectedAccount)}`;
+-                }
+                 const res = await fetch(url);
+                 const data = await res.json();
+-                allMessages = data.messages;
++
++                if (isIncremental) {
++                    // MERGE LOGIC
++                    if (data.messages && data.messages.length > 0) {
++                        const newMsgs = data.messages;
++                        // Create map for O(1) lookup of current messages
++                        const msgMap = new Map(allMessages.map(m => [m.conversation_id || m.email, m]));
++
++                        newMsgs.forEach(m => {
++                            // Update or Add
++                            // Prefer conversation_id, fallback to email
++                            const key = m.conversation_id || m.email;
++                            msgMap.set(key, m);
++                        });
++
++                        allMessages = Array.from(msgMap.values());
++
++                        // Re-sort desc by timestamp
++                        allMessages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
++                    }
++                } else {
++                    // Full Replace
++                    allMessages = data.messages;
++                }
++
++                // Update Sync Token
++                if (data.server_time) {
++                    lastSyncTimestamp = data.server_time;
++                }
++
+                 renderVisitorList();
+-                // We do NOT assume currentConversationEmail is set here; we just update the list
+             } catch (err) {
+                 console.error("Failed to fetch messages:", err);
+             }
+@@ -2361,6 +2705,20 @@
+ 
+         }
+ 
++        // --- CENTRALIZED CATEGORY LOGIC ---
++        function resolveConversationCategory(email, tags) {
++            // 1. Tag wins (Manual Override)
++            if (tags && tags.includes('notifications')) return 'notifications';
++            if (tags && tags.includes('inbox')) return 'inbox';
++
++            // 2. Fallback to Regex (Auto-Detection)
++            const isRegexNotification = /noreply|no-reply|notification|support|alert|update|newsletter|marketing|do-not-reply/i.test(email);
++            if (isRegexNotification) return 'notifications';
++
++            // 3. Default
++            return 'inbox';
++        }
++
+         function getInitials(name) {
+             return name.substring(0, 2).toUpperCase();
+ 
+@@ -2409,16 +2767,28 @@
+                 const unread = conv.unread || 0;
+                 const timeString = formatTime(conv.timestamp);
+                 const source = conv.source || 'chat';
+-                const sourceIcon = source === 'whatsapp' ? '????' : (source === 'email' || source === 'imap' ? '????' : '????');
++                const sourceIcon = source === 'whatsapp' ? '????' : (source === 'facebook' ? '????' : (source === 'instagram' ? '????' : (source === 'email' || source === 'imap' ? '????' : '????')));
+ 
+                 // --- RESTORED FILTERS ---
+                 if (statusFilter === 'unread' && unread === 0) return;
+                 if (statusFilter === 'read' && unread > 0) return;
+ 
++                const tags = conv.tags || [];
+ 
+-                // Client-side search removed in favor of backend search
+-                // but we keep text highlighting logic if desired, or simple list rendering
+-                // -------------------------
++                // --- CENTRALIZED CATEGORY RESOLUTION ---
++                const category = resolveConversationCategory(id, tags);
++
++                // --- PENDING MOVE OVERRIDE ---
++                let effectiveCategory = category;
++                if (pendingMoves.has(conv.conversation_id)) {
++                    effectiveCategory = pendingMoves.get(conv.conversation_id);
++                    if (category === effectiveCategory) {
++                        pendingMoves.delete(conv.conversation_id);
++                    }
++                }
++
++                if (statusFilter === 'notifications' && effectiveCategory !== 'notifications') return;
++                if (statusFilter === 'inbox' && effectiveCategory !== 'inbox') return;
+ 
+                 const div = document.createElement('div');
+                 div.className = 'visitor-item';
+@@ -2432,8 +2802,13 @@
+                     .replace(/"/g, "&quot;")
+                     .replace(/'/g, "&#039;");
+ 
++                let avatarContent = id.substring(0, 2).toUpperCase();
++                if (source === 'whatsapp') avatarContent = '???';
++                else if (source === 'facebook') avatarContent = ' f';
++                else if (source === 'instagram') avatarContent = 'ig';
++
+                 div.innerHTML = `
+-            <div class="visitor-avatar">${source === 'whatsapp' ? '???' : id.substring(0, 2).toUpperCase()}</div>
++            <div class="visitor-avatar">${avatarContent}</div>
+             <div class="visitor-info">
+                 <div style="display:flex; justify-content:space-between;">
+                     <div class="visitor-name">${sourceIcon} ${id}</div>
+@@ -2442,6 +2817,14 @@
+                 <div class="visitor-preview">${lastMsg.substring(0, 60)}...</div>
+             </div>
+             ${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}
++            
++            <div class="visitor-options-container">
++                <button class="visitor-options-btn" onclick="toggleMenu(event, '${conv.conversation_id}')">???</button>
++                <div class="visitor-options-menu" id="menu-${conv.conversation_id}">
++                    <button class="menu-item" onclick="moveConversation(event, '${conv.conversation_id}', 'inbox', '${id}')">Move to Inbox</button>
++                    <button class="menu-item" onclick="moveConversation(event, '${conv.conversation_id}', 'notifications', '${id}')">Move to Notifications</button>
++                </div>
++            </div>
+         `;
+ 
+                 div.onclick = async () => {
+@@ -2556,9 +2939,16 @@
+             document.getElementById('email-composer').style.display = 'none';
+             document.getElementById('reply-bar').style.display = 'flex';
+ 
+-            const isWhatsapp = !email.includes('@');
++            const isEmail = email.includes('@');
++            const accountSelector = document.getElementById('account-selector');
++            const selectedOpt = accountSelector.options[accountSelector.selectedIndex];
++            const platform = selectedOpt ? selectedOpt.getAttribute('data-platform') : (isEmail ? 'email' : 'whatsapp');
++
+             const composeBtn = document.getElementById('compose-btn');
+-            composeBtn.innerHTML = isWhatsapp ? '<span>????</span> Send WhatsApp' : '<span>????</span> Compose Reply';
++            if (platform === 'whatsapp') composeBtn.innerHTML = '<span>????</span> Send WhatsApp';
++            else if (platform === 'facebook') composeBtn.innerHTML = '<span>????</span> Send Messenger';
++            else if (platform === 'instagram') composeBtn.innerHTML = '<span>????</span> Send Instagram';
++            else composeBtn.innerHTML = '<span>????</span> Compose Reply';
+ 
+             // Initialize Editor if needed
+             initializeQuillEditor();
+@@ -2587,6 +2977,7 @@
+             totalMatches = 0;
+ 
+             const finalSearch = localSearchTerm || searchTerm;
++            let lastSender = null; // Track for name grouping
+ 
+             data.messages.forEach(m => {
+                 const day = getDayLabel(m.timestamp);
+@@ -2603,58 +2994,84 @@
+ 
+                 const div = document.createElement('div');
+                 div.className = `message ${m.sender}`;
++                if (m.message_id) div.id = `msg-${m.message_id.replace(/[<>]/g, '')}`; // Set ID for updates
+                 if (m.source === 'whatsapp') div.classList.add('whatsapp');
++                if (m.source === 'facebook') div.classList.add('facebook');
++                if (m.source === 'instagram') div.classList.add('instagram');
++
++                // Render Sender Name (if not consecutive)
++                if (m.sender !== lastSender) {
++                    const senderDiv = document.createElement('div');
++                    senderDiv.className = 'message-sender';
++                    // Determine Name
++                    let dName = '';
++                    if (m.sender === 'admin') {
++                        dName = m.sender_name || 'You';
++                    } else {
++                        // Use stored name OR fallback to known visitor name
++                        dName = m.sender_name || getVisitorName(m.email);
++                    }
++                    senderDiv.textContent = dName;
++                    div.appendChild(senderDiv);
++                }
++                lastSender = m.sender;
+ 
+                 // Content with highlighting
+                 // Content rendering logic
+                 let contentHtml = '';
+                 let isHtmlEmail = false;
+ 
+-                if (m.sender === 'visitor' && m.html_content) {
+-                    // Render HTML for visitor emails in IFRAME (Security + Layout)
+-                    isHtmlEmail = true;
+-                    const uniqueId = `frame-${m.timestamp}`;
+-
+-                    // Highlight inside the HTML content before setting it in srcdoc
+-                    const highlightedHtml = highlightHtml(m.html_content, finalSearch);
+-
+-                    contentHtml = `
+-                        <div class="iframe-wrapper" style="max-height: 400px; overflow-y: auto; display:block;">
+-                             <iframe 
+-                                id="${uniqueId}" 
+-                                sandbox="allow-same-origin"
+-                                scrolling="no" 
+-                                style="width:100%; border:none; display: block; overflow: hidden;"
+-                                srcdoc="<style>body{margin:0;padding:2px;font-family:system-ui,-apple-system,sans-serif;font-size:13.5px;color:#0f172a;line-height:1.2;overflow:hidden}.highlight{background-color:#fef08a;color:#854d0e;font-weight:bold;border-radius:2px;padding:0 2px;}p{margin:0;padding:0}div{margin:0}</style>${highlightedHtml.replace(/"/g, '&quot;')}"
+-                                onload="this.style.height = (this.contentWindow.document.body.scrollHeight) + 'px'; this.contentWindow.document.body.style.margin='0';"
+-                             ></iframe>
++                // Check for Referenced Message (Reply context)
++                let referencedHtml = '';
++                if (m.referenced_message) {
++                    const refBorderColor = m.sender === 'admin' ? '#06cf9c' : '#b4b4b4';
++                    const refBg = m.sender === 'admin' ? 'rgba(0,0,0,0.05)' : '#f0f2f5';
++
++                    referencedHtml = `
++                        <div class="referenced-message" style="
++                            background: ${refBg};
++                            border-left: 4px solid ${refBorderColor};
++                            border-radius: 4px;
++                            padding: 4px 8px;
++                            margin-bottom: 6px;
++                            font-size: 0.8rem;
++                            cursor: pointer;
++                            display: flex;
++                            flex-direction: column;
++                            opacity: 0.9;
++                        ">
++                            <span style="font-weight:700; color: ${m.sender === 'admin' ? '#044c38' : 'var(--primary-color)'}; font-size: 0.75rem; margin-bottom: 2px;">
++                                ${m.referenced_message.sender === 'admin' ? 'You' : 'Visitor'}
++                            </span>
++                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit;">
++                                ${m.referenced_message.text || '???? Attachment'}
++                            </span>
+                         </div>
+-                     `;
+-                } else if (m.sender === 'admin' && m.html_content) {
+-                    // Render HTML for admin emails DIRECTLY (Auto-size bubble)
+-                    // We trust our own sanitized/generated HTML
+-                    isHtmlEmail = false;
+-                    const highlightedHtml = highlightHtml(m.html_content, finalSearch);
+-                    contentHtml = `<div class="email-content">${highlightedHtml}</div>`;
+-                } else {
+-                    // LINKIFY + HIGHLIGHT Logic
+-                    // 1. Split text by URLs so we don't break <a> tags with highlighting or vice versa
+-                    const urlRegex = /(https?:\/\/[^\s]+)/g;
+-                    // Split keeps the separators (URLs) because of the capturing group in regex
+-                    const parts = m.text.split(urlRegex);
+-
+-                    contentHtml = parts.map(part => {
+-                        // Check if this part is a URL
+-                        if (part.match(/^https?:\/\//)) {
+-                            return `<a href="${part}" target="_blank" style="color:#0ea5e9; text-decoration:underline; word-break:break-all;">${part}</a>`;
+-                        } else {
+-                            // It's text: Escape HTML special chars then Highlight
+-                            let safePart = part.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+-                            return highlightText(safePart, finalSearch);
+-                        }
+-                    }).join('');
++                    `;
+                 }
+ 
++                // PLAIN TEXT RENDERING (Unified for Visitor & Admin)
++                // We ignore m.html_content to prevent layout breakage and ensure clean chat UI.
++                isHtmlEmail = false;
++
++                // LINKIFY + HIGHLIGHT Logic
++                // 1. Split text by URLs so we don't break <a> tags with highlighting or vice versa
++                const urlRegex = /(https?:\/\/[^\s]+)/g;
++                // Split keeps the separators (URLs) because of the capturing group in regex
++                const txtContent = (m.text || "").trim(); // Fallback if empty and trim whitespace
++                const parts = txtContent.split(urlRegex);
++
++                contentHtml = parts.map(part => {
++                    // Check if this part is a URL
++                    if (part.match(/^https?:\/\//)) {
++                        return `<a href="${part}" target="_blank" style="color:#0ea5e9; text-decoration:underline; word-break:break-all;">${part}</a>`;
++                    } else {
++                        // It's text: Escape HTML special chars then Highlight
++                        let safePart = part.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
++                        return highlightText(safePart, finalSearch);
++                    }
++                }).join('');
++
+                 // Also highlight subject if present
+                 if (m.subject) {
+                     m.subject = highlightText(m.subject, finalSearch);
+@@ -2685,29 +3102,14 @@
+                     attachmentsHtml += '</div>';
+                 }
+ 
+-                // Add email metadata if present (subject, CC, BCC)
+-                let metadataHtml = '';
+-                if (m.subject) {
+-                    const highlightedSubject = highlightText(m.subject, finalSearch);
+-                    metadataHtml = `<div class="message-subject">???? ${highlightedSubject}</div>`;
+-                }
+-                let recipientsHtml = '';
+-                if (m.cc && m.cc.length > 0) {
+-                    const safeCC = m.cc.join(', ').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+-                    recipientsHtml += `<div class="message-recipients">CC: ${highlightText(safeCC, finalSearch)}</div>`;
+-                }
+-                if (m.bcc && m.bcc.length > 0) {
+-                    const safeBCC = m.bcc.join(', ').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+-                    recipientsHtml += `<div class="message-recipients">BCC: ${highlightText(safeBCC, finalSearch)}</div>`;
+-                }
++                // Removed Subject/CC/BCC metadata rendering for cleaner chat bubbles
+ 
+                 div.innerHTML = `
+-        ${metadataHtml}
++        ${referencedHtml}
+         ${contentHtml}
+         ${attachmentsHtml}
+-        ${recipientsHtml}
+         <div class="message-time">
+-            ${formatTime(m.timestamp)} ${m.sender === 'admin' ? (m.seen_at ? ' ??????' : ' ???') : ''}
++            ${formatTime(m.timestamp)} ${m.sender === 'admin' ? (m.status === 'sending' ? '????' : (m.status === 'failed' ? '???' : (m.seen_at ? ' ??????' : ' ???'))) : ''}
+         </div>`;
+                 messagesAreaEl.appendChild(div);
+                 prevMsg = m;
+@@ -2749,6 +3151,67 @@
+             }
+         }
+ 
++        // --- VISITOR MENU LOGIC ---
++        const pendingMoves = new Map(); // conversation_id -> target_category
++
++        function toggleMenu(e, id) {
++            e.stopPropagation();
++            // Close others
++            document.querySelectorAll('.visitor-options-menu.open').forEach(el => {
++                if (el.id !== `menu-${id}`) el.classList.remove('open');
++            });
++
++            const menu = document.getElementById(`menu-${id}`);
++            if (menu) menu.classList.toggle('open');
++
++            const btn = e.target;
++            btn.classList.toggle('active');
++        }
++
++        async function moveConversation(e, convId, target, email) {
++            e.stopPropagation();
++            // Close menu
++            const menu = document.getElementById(`menu-${convId}`);
++            if (menu) menu.classList.remove('open');
++
++            // Set Pending State (Lock)
++            pendingMoves.set(convId, target);
++
++            // Trigger immediate re-render to apply the filter based on pending state
++            renderVisitorList();
++
++            try {
++                const res = await fetch('/api/admin/move-conversation', {
++                    method: 'POST',
++                    headers: { 'Content-Type': 'application/json' },
++                    body: JSON.stringify({ conversation_id: convId, target })
++                });
++                if (res.ok) {
++                    // We don't clear pendingMoves here immediately because the next poll might still be stale.
++                    // We let renderVisitorList clear it when it sees the data matches.
++                    fetchMessages(searchFilter);
++                } else {
++                    // Revert on error
++                    pendingMoves.delete(convId);
++                    renderVisitorList(); // Re-render to show it back if it was hidden
++                }
++            } catch (err) {
++                console.error("Move failed", err);
++                pendingMoves.delete(convId);
++                renderVisitorList();
++            }
++        }
++
++        // Close menus on outside click
++        document.addEventListener('click', (e) => {
++            document.querySelectorAll('.visitor-options-menu.open').forEach(el => {
++                el.classList.remove('open');
++            });
++            document.querySelectorAll('.visitor-options-btn.active').forEach(el => {
++                el.classList.remove('active');
++            });
++        });
++
+ 
+ 
+     </script>
+@@ -2786,7 +3249,6 @@
+         const aiBox = document.getElementById('ai-assistant-box');
+         const aiMessages = document.getElementById('ai-messages');
+         const aiInput = document.getElementById('ai-input');
+-        const voiceBtn = document.getElementById('voice-btn');
+         const assistantBtn = document.getElementById('ai-assistant-btn');
+         const ttsBtn = document.getElementById('tts-toggle-btn');
+ 
+@@ -3031,13 +3493,24 @@
+             async openChat(email) {
+                 this.log(`Opening chat for: ${email}`);
+                 // Use robust data-email selector
+-                const visitorEl = document.querySelector(`.visitor-item[data-email='${email}']`);
++                let visitorEl = document.querySelector(`.visitor-item[data-email='${email}']`);
+                 if (visitorEl) {
+                     this.log(`Found visitor element in sidebar, clicking.`);
+                     visitorEl.click();
+                 } else {
+-                    this.log(`Contact not in active sidebar DOM, calling renderChat directly for ${email}`);
+-                    await renderChat(email, "");
++                    this.log(`Contact not in active sidebar DOM, trying to clear filters...`);
++                    // If not in list, maybe it's filtered out? Switch to 'all'
++                    statusFilter = 'all';
++                    filterChips.forEach(c => c.classList.toggle('active', c.dataset.filter === 'all'));
++                    renderVisitorList();
++                    
++                    visitorEl = document.querySelector(`.visitor-item[data-email='${email}']`);
++                    if (visitorEl) {
++                        visitorEl.click();
++                    } else {
++                        this.log(`Contact still not found, calling renderChat directly for ${email}`);
++                        await renderChat(email, "");
++                    }
+                 }
+                 await this.wait(400); // Wait for UI transition and loading
+             },
+@@ -3363,26 +3836,25 @@
+                 }
+ 
+                 const utterance = new SpeechSynthesisUtterance(spokenText);
++                window.currentAiUtterance = utterance; // Prevent garbage collection
+                 utterance.onend = () => {
+                     console.log("TTS Finished.");
+-                    resumeContinuousListening(); // RESUME AFTER SPEECH
++                    if (isWakeWordMode) resumeContinuousListening(); // RESUME ONLY AFTER SPEECH if in mode
+                 };
+                 utterance.onerror = () => {
+                     console.error("TTS Error");
+-                    resumeContinuousListening(); // RESUME ON ERROR
++                    if (isWakeWordMode) resumeContinuousListening(); 
+                 };
+ 
+                 window.speechSynthesis.speak(utterance);
+                 didSpeak = true;
+             }
+ 
+-            // If we didn't speak, we must resume immediately
+-            if (!didSpeak) {
+-                resumeContinuousListening();
+-            }
+-
+             // --- Existing Action Handling ---
+-            if (!actions || actions.length === 0) return;
++            if (!actions || actions.length === 0) {
++                 if (!didSpeak && isWakeWordMode) resumeContinuousListening();
++                 return;
++            }
+             // Process actions sequentially
+             for (const act of actions) {
+                 try {
+@@ -3494,6 +3966,11 @@
+                     console.error("Action Error:", e);
+                 }
+             }
++            
++            // Resume if we never used Text-To-Speech to reply
++            if (!didSpeak && isWakeWordMode) {
++                resumeContinuousListening();
++            }
+         }
+ 
+         // --- Deepgram Voice Recognition (Real-time) ---
+@@ -3589,20 +4066,15 @@
+                     mediaRecorder.start(250);
+ 
+                     // 6. UI updates
+-                    voiceBtn.classList.add('recording');
+-                    if (statusEl) statusEl.style.display = 'block';
+-
+-                    if (isWakeWordMode) {
+-                        isAssistantActive = true; // Always active in Continuous Mode
+-                        aiInput.placeholder = "Continuous Mode: Speak now...";
+-                        statusEl.innerHTML = "??? Continuous Listening...";
+-                        statusEl.style.color = "#ef4444"; // Red
+-                    } else {
+-                        aiInput.placeholder = "Listening live...";
+-                        statusEl.innerHTML = "??? Listening...";
+-                        statusEl.style.color = "#ef4444"; // Red
++                    wakeWordBtn.classList.add('recording');
++                    
++                    if (analyser) {
++                         monitorSilence();
+                     }
+ 
++                    isAssistantActive = true;
++                    aiInput.placeholder = "Listening... speak your command";
++
+                     // Reset texts
+                     initialText = aiInput.value;
+                     sessionFinals = "";
+@@ -3641,20 +4113,17 @@
+                         if (data.is_final) {
+                             aiInput.placeholder = "Listening live...";
+                         }
+-
+-                        // Detect Silence for Auto-Send (If Continuous Mode is ON)
++                        
++                        // Detect Silence for Auto-Send (Continuous Mode fallback if audio volume check fails)
+                         if (isWakeWordMode && data.is_final) {
+-                            // Simple heuristic: If we got a final sentence, and there's a pause, we could send?
+-                            // Better: Rely on the silence detector or the existing timer. 
+-                            // But deepgram gives us 'is_final'. 
+-                            // Let's use a short debounce timer after 'is_final' to send.
+-
+                             if (autoSendTimer) clearTimeout(autoSendTimer);
+                             autoSendTimer = setTimeout(() => {
+-                                console.log("Pause detected in Continuous Mode. Sending...");
+-                                shouldAutoSend = true;
+-                                stopRecording();
+-                            }, 2500); // 2.5s pause trigger
++                                if (aiInput.value.trim().length > 0) {
++                                    console.log("Deepgram pause detected. Auto-sending...");
++                                    shouldAutoSend = true;
++                                    stopRecording();
++                                }
++                            }, 2500); 
+                         }
+                     } else if (data.type === 'error') {
+                         console.error("Deepgram Error:", data.message);
+@@ -3672,25 +4141,49 @@
+                         if (finalMsg) {
+                             console.log("Auto-sending message:", finalMsg);
+                             sendAiCommand();
++                        } else {
++                            // If empty, do not send command, but we MUST resume listening if in mode
++                            if (isWakeWordMode) {
++                                console.log("Empty message, restarting continuous loop...");
++                                setTimeout(() => {
++                                    if (isWakeWordMode && (!mediaRecorder || mediaRecorder.state === 'inactive')) {
++                                        startRecording();
++                                    }
++                                }, 1500);
++                            }
+                         }
+                         shouldAutoSend = false;
+-                    } else if (isWakeWordMode) {
+-                        // Connection closed without sending (Timeout/Error/Manual Stop)
+-                        // If we are in Wake Word mode, we should persist unless explicitly disabled.
+-                        console.log("Connection closed in Wake Word mode. Restarting...");
++                    } else if (isWakeWordMode && e.code !== 1000) {
++                        // Connection closed without sending and NOT a normal close (Timeout/Error/Silence)
++                        console.log("Connection closed in Wake Word mode (code " + e.code + "). Restarting...");
+                         setTimeout(() => {
+                             if (isWakeWordMode && (!mediaRecorder || mediaRecorder.state === 'inactive')) {
+                                 startRecording();
+                             }
+                         }, 1000);
++                    } else if (isWakeWordMode && e.code === 1000 && !shouldAutoSend) {
++                         // Deepgram 1s silence auto-closes clean: let's restart if we want to loop
++                         console.log("Deepgram closed cleanly, restarting to maintain loop...");
++                         setTimeout(() => {
++                            if (isWakeWordMode && (!mediaRecorder || mediaRecorder.state === 'inactive')) {
++                                startRecording();
++                            }
++                        }, 1000);
+                     }
+ 
+-                    stopRecording();
++                    // Only clean up UI state, do not send stop over WS as it's already closed
++                    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
++                        mediaRecorder.stop();
++                        mediaRecorder.stream.getTracks().forEach(t => t.stop());
++                    }
++                    if (autoSendTimer) {
++                        clearTimeout(autoSendTimer);
++                        autoSendTimer = null;
++                    }
+                 };
+ 
+                 transcriptionSocket.onerror = (e) => {
+                     console.error('WebSocket error:', e);
+-                    stopRecording();
+                 };
+ 
+             } catch (err) {
+@@ -3700,7 +4193,7 @@
+         }
+ 
+         function monitorSilence() {
+-            if (!voiceBtn.classList.contains('recording')) return;
++            if (!wakeWordBtn.classList.contains('recording')) return;
+ 
+             const bufferLength = analyser.frequencyBinCount;
+             const dataArray = new Uint8Array(bufferLength);
+@@ -3715,19 +4208,17 @@
+ 
+             // Volume visual feedback
+             const scale = Math.min(1 + rms * 3, 1.4);
+-            voiceBtn.style.transform = `scale(${scale})`;
++            wakeWordBtn.style.transform = `scale(${scale})`;
+ 
+             if (rms < SILENCE_THRESHOLD) {
+                 if (!silenceStartTime) silenceStartTime = Date.now();
+                 else if (Date.now() - silenceStartTime > SILENCE_TIMEOUT) {
+-                    // Silence limit reached -> Auto Send
+-                    // console.log("Silence detected. Auto-stopping...");
+-                    // shouldAutoSend = true;
+-                    // stopRecording();
+-                    // return;
+-
+-                    // USER REQUEST CHANGE: DO NOT STOP ON SILENCE. 
+-                    // ONLY STOP ON 20S TIMER.
++                    if (isWakeWordMode && aiInput.value.trim().length > 0) {
++                        console.log("Silence detected in Continuous Mode. Auto-stopping...");
++                        shouldAutoSend = true;
++                        stopRecording();
++                        return;
++                    }
+                 }
+             } else {
+                 silenceStartTime = null;
+@@ -3748,20 +4239,19 @@
+                 clearTimeout(autoSendTimer);
+                 autoSendTimer = null;
+             }
+-            voiceBtn.classList.remove('recording');
+-            voiceBtn.style.transform = 'scale(1)';
+-            if (statusEl) statusEl.style.display = 'none';
+-            aiInput.placeholder = originalPlaceholder;
++            // Add UI Cleanup guard
++            setTimeout(() => {
++                if (!mediaRecorder || mediaRecorder.state === 'inactive') {
++                    wakeWordBtn.classList.remove('recording');
++                    wakeWordBtn.style.transform = 'scale(1)';
++                    if (aiInput) aiInput.placeholder = originalPlaceholder;
++                }
++            }, 300);
++            
+             silenceStartTime = null;
+         }
+ 
+-        voiceBtn.addEventListener('click', () => {
+-            if (voiceBtn.classList.contains('recording')) {
+-                stopRecording();
+-            } else {
+-                startRecording();
+-            }
+-        });
++        // Wake word btn click is already handled above (lines ~4004-4017)
+ 
+         document.getElementById('ai-send-btn').addEventListener('click', sendAiCommand);
+         aiInput.addEventListener('keypress', (e) => {
+@@ -3892,11 +4382,19 @@
+             const toggleCC = document.getElementById('toggle-cc-bcc');
+             const sendBtn = document.getElementById('send-email-btn');
+ 
+-            if (isWhatsapp) {
++            const accountSelector = document.getElementById('account-selector');
++            const selectedOpt = accountSelector.options[accountSelector.selectedIndex];
++            const platform = selectedOpt ? selectedOpt.getAttribute('data-platform') : 'email';
++
++            if (platform === 'whatsapp' || platform === 'facebook' || platform === 'instagram') {
+                 subjectField.style.display = 'none';
+                 toggleCC.style.display = 'none';
+-                sendBtn.innerHTML = '???? Send via WhatsApp';
+-                // WhatsApp usually doesn't need rich text, but we can keep it for convenience 
++                
++                if (platform === 'whatsapp') sendBtn.innerHTML = '<span>????</span> Send via WhatsApp';
++                else if (platform === 'facebook') sendBtn.innerHTML = '<span>????</span> Send via Messenger';
++                else if (platform === 'instagram') sendBtn.innerHTML = '<span>????</span> Send via Instagram';
++                
++                // Platforms usually don't need rich text, but we can keep it for convenience 
+                 // and the backend will strip it.
+             } else {
+                 subjectField.style.display = 'flex';
+@@ -4070,7 +4568,13 @@
+             // Disable button during send
+             const btn = this;
+             btn.disabled = true;
+-            btn.textContent = '???? Sending...';
++            
++            const accountSelector = document.getElementById('account-selector');
++            const selectedOpt = accountSelector.options[accountSelector.selectedIndex];
++            const platform = selectedOpt ? selectedOpt.getAttribute('data-platform') : 'email';
++            
++            const originalText = btn.innerHTML;
++            btn.innerHTML = '???? Sending...';
+ 
+             try {
+                 const response = await fetch('/api/reply', {
+@@ -4103,14 +4607,14 @@
+                     // Refresh messages
+                     await fetchMessages(searchFilter);
+                 } else {
+-                    alert('Failed to send email. Please try again.');
++                    alert(`Failed to send ${platform}. Please try again.`);
+                 }
+             } catch (error) {
+-                console.error('Error sending email:', error);
+-                alert('Error sending email. Please check your connection.');
++                console.error(`Error sending ${platform}:`, error);
++                alert(`Error sending ${platform}. Please check your connection.`);
+             } finally {
+                 btn.disabled = false;
+-                btn.textContent = '???? Send Email';
++                btn.innerHTML = originalText;
+             }
+         });
+ 

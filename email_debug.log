@@ -1,0 +1,112 @@
+[2026-01-31 11:16:27.988708] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-01-31 11:16:31.148294] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-01-31 11:16:31.149964] Send Result: True
+[2026-01-31 11:19:01.728743] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-01-31 11:19:05.225964] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-01-31 11:19:05.227783] Send Result: True
+[2026-01-31 12:04:40.698683] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-01-31 12:04:43.836814] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-01-31 12:04:43.838821] Send Result: True
+[2026-02-04 08:50:50.335614] Attempting to send to samikshajagne2@gmail.com from ai.intern@cetl.in
+   Account Email Requested: ai.intern@cetl.in
+   Sender Found: True
+[2026-02-04 08:50:54.993943] SMTP SUCCESS: Sent from ai.intern@cetl.in to samikshajagne2@gmail.com
+[2026-02-04 08:50:54.994837] Send Result: True
+[2026-02-06 05:58:19.279413] Attempting to send to samikshajagne7@gmail.com from ai.intern@cetl.in
+   Account Email Requested: ai.intern@cetl.in
+   Sender Found: True
+[2026-02-06 05:58:24.351991] SMTP SUCCESS: Sent from ai.intern@cetl.in to samikshajagne7@gmail.com
+[2026-02-06 05:58:24.353381] Send Result: True
+[2026-03-09 07:30:22.426976] Attempting to send to samikshajagne2@gmail.com from purchase.it@rmc.in
+   Account Email Requested: purchase.it@rmc.in
+   Sender Found: True
+[2026-03-09 07:30:24.760991] SMTP ERROR: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2ae83e78f6csm136958835ad.23 - gsmtp')
+Traceback (most recent call last):
+  File "D:\anticrisp\email_service.py", line 113, in _send_raw
+    server.login(from_email, password)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Users\yashj\anaconda3\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ~~~~~~~~~^
+        authmethod, getattr(self, method_name),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        initial_response_ok=initial_response_ok)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yashj\anaconda3\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2ae83e78f6csm136958835ad.23 - gsmtp')
+
+[2026-03-09 07:30:24.763060] Send Result: False
+[2026-03-09 07:36:22.370884] Attempting to send to samikshajagne2@gmail.com from ai.intern@cetl.in
+   Account Email Requested: ai.intern@cetl.in
+   Sender Found: True
+[2026-03-09 07:36:26.534017] SMTP SUCCESS: Sent from ai.intern@cetl.in to samikshajagne2@gmail.com
+[2026-03-09 07:36:26.535220] Send Result: True
+[2026-03-09 09:05:57.099611] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-03-09 09:06:00.123126] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-03-09 09:06:00.124124] Send Result: True
+[2026-03-09 09:11:50.138771] Attempting to send to samikshajagne2@gmail.com from ai.intern@cetl.in
+   Account Email Requested: ai.intern@cetl.in
+   Sender Found: True
+[2026-03-09 09:11:53.290573] SMTP SUCCESS: Sent from ai.intern@cetl.in to samikshajagne2@gmail.com
+[2026-03-09 09:11:53.291646] Send Result: True
+[2026-03-09 09:13:20.251603] Attempting to send to samikshajagne2@gmail.com from ai.intern@cetl.in
+   Account Email Requested: ai.intern@cetl.in
+   Sender Found: True
+[2026-03-09 09:15:26.834676] SMTP SUCCESS: Sent from ai.intern@cetl.in to samikshajagne2@gmail.com
+[2026-03-09 09:15:26.838354] Send Result: True
+[2026-03-09 09:17:08.742800] Attempting to send to samikshajagne2@gmail.com from ai.intern@cetl.in
+   Account Email Requested: ai.intern@cetl.in
+   Sender Found: True
+[2026-03-09 09:17:11.785703] SMTP SUCCESS: Sent from ai.intern@cetl.in to samikshajagne2@gmail.com
+[2026-03-09 09:17:11.786855] Send Result: True
+[2026-03-09 10:06:36.826351] Attempting to send to samikshajagne2@gmail.com from ai.intern@cetl.in
+   Account Email Requested: ai.intern@cetl.in
+   Sender Found: True
+[2026-03-09 10:06:40.494054] SMTP SUCCESS: Sent from ai.intern@cetl.in to samikshajagne2@gmail.com
+[2026-03-09 10:06:40.494631] Send Result: True
+[2026-03-09 10:59:46.522607] Attempting to send to samikshajagne2@gmail.com from doremon140220@gmail.com
+   Account Email Requested: doremon140220@gmail.com
+   Sender Found: True
+[2026-03-09 10:59:50.401713] SMTP SUCCESS: Sent from doremon140220@gmail.com to samikshajagne2@gmail.com
+[2026-03-09 10:59:50.402186] Send Result: True
+[2026-03-12 10:22:07.203923] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-03-12 10:22:10.286504] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-03-12 10:22:10.287068] Send Result: True
+[2026-03-12 10:37:21.230204] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-03-12 10:37:24.194569] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-03-12 10:37:24.195108] Send Result: True
+[2026-03-12 10:47:12.503878] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-03-12 10:47:15.559544] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-03-12 10:47:15.560528] Send Result: True
+[2026-03-13 06:01:46.144942] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-03-13 06:01:49.667835] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-03-13 06:01:49.668597] Send Result: True
+[2026-03-13 06:16:29.692498] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-03-13 06:16:32.771145] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-03-13 06:16:32.772519] Send Result: True
+[2026-03-16 05:37:08.415784] Attempting to send to samikshajagne2@gmail.com from planetofstories98@gmail.com
+   Account Email Requested: planetofstories98@gmail.com
+   Sender Found: True
+[2026-03-16 05:37:11.639974] SMTP SUCCESS: Sent from planetofstories98@gmail.com to samikshajagne2@gmail.com
+[2026-03-16 05:37:11.641750] Send Result: True
